@@ -66,14 +66,14 @@ export const CardWrapper = ({
       <CardHeader>
         <Header label={headerLabel} />
       </CardHeader>
-      <CardContent>{children}</CardContent>
+      <CardContent className="w-full">{children}</CardContent>
       {showSocial && (
         <CardFooter>
           <Socials />
         </CardFooter>
       )}
       <CardFooter>
-        <a href={backButtonHref} className="btn">
+        <a href={backButtonHref} className="btn w-full">
           {backButtonLabel}
         </a>
       </CardFooter>
