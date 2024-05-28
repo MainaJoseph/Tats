@@ -60,19 +60,19 @@ export const CardWrapper = ({
 
   return (
     <Card
-      className="w-full shadow-lg border border-sky-300 rounded-md relative"
+      className="w-full shadow-lg border border-sky-300 rounded-md relative overflow-hidden"
       style={{ borderRadius }}
     >
-      <CardHeader>
+      <CardHeader className="rounded-t-md overflow-hidden">
         <Header label={headerLabel} />
       </CardHeader>
-      <CardContent className="w-full">{children}</CardContent>
+      <CardContent className="w-full overflow-hidden">{children}</CardContent>
       {showSocial && (
-        <CardFooter>
+        <CardFooter className="overflow-hidden">
           <Socials />
         </CardFooter>
       )}
-      <CardFooter>
+      <CardFooter className="rounded-b-md overflow-hidden">
         <a href={backButtonHref} className="btn w-full">
           {backButtonLabel}
         </a>
@@ -82,7 +82,7 @@ export const CardWrapper = ({
       <svg
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="none"
-        className="absolute h-full w-full"
+        className="absolute h-full w-full rounded-md"
         width="100%"
         height="100%"
       >
@@ -105,7 +105,7 @@ export const CardWrapper = ({
           transform,
         }}
       >
-        <div className="h-2 w-2 bg-sky-500" />
+        <div className="h-2 w-2 bg-sky-500 rounded-full" />
       </motion.div>
     </Card>
   );
