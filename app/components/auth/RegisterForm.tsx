@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { CardWrapper } from "./CardWrapper";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginSchema } from "@/schemas/index";
+import { RegisterSchema } from "@/schemas/index";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -19,22 +19,23 @@ import { FormSuccess } from "../form-success";
 import { login } from "@/actions/login";
 import { useState, useTransition } from "react";
 
-export const LoginForm = () => {
+export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof LoginSchema>>({
-    resolver: zodResolver(LoginSchema),
+  const form = useForm<z.infer<typeof RegisterSchema>>({
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: "",
       password: "",
+      name: "",
     },
   });
 
   const { errors } = form.formState;
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     setError("");
     setSuccess("");
 
@@ -53,13 +54,36 @@ export const LoginForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Welcome Back"
-      backButtonLabel="Don't have an account?"
-      backButtonHref="/auth/sign-up"
+      headerLabel="Create an account"
+      backButtonLabel="Already have an account?"
+      backButtonHref="/auth/login"
       showSocial
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className={errors.email ? "text-red-500" : ""}>
+                  Name
+                </FormLabel>
+                <Input
+                  {...field}
+                  placeholder="Your Name"
+                  disabled={isPending}
+                  className={`rounded-md border-[1px] ${
+                    errors.email
+                      ? "border-red-500 focus:border-red-500"
+                      : "focus:border-sky-300"
+                  }`}
+                />
+                <FormMessage className="text-red-500" />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="email"
