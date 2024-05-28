@@ -11,4 +11,8 @@
   .search-input input {
     @apply w-full bg-transparent outline-none;
   }
+
+  .input-placeholder::placeholder {
+    @apply text-slate-600;
+  }
 }

@@ -78,6 +78,7 @@ export const LoginForm = () => {
                       ? "border-red-500 focus:border-red-500"
                       : "focus:border-sky-300"
                   }`}
+                  style={{ borderRadius: "10px" }}
                 />
                 <FormMessage className="text-red-500" />
               </FormItem>
@@ -101,6 +102,7 @@ export const LoginForm = () => {
                       ? "border-red-500 focus:border-red-500"
                       : "focus:border-sky-300"
                   }`}
+                  style={{ borderRadius: "10px" }}
                 />
                 <FormMessage className="text-red-500" />
               </FormItem>
@@ -108,13 +110,14 @@ export const LoginForm = () => {
           />
           <FormError message={error || ""} />
           <FormSuccess message={success || ""} />
-          <Button
+          <button
             type="submit"
             disabled={isPending}
-            className="w-full hover:opacity-90 bg-black"
+            className="w-full hover:opacity-90 bg-black text-white py-3 rounded-md font-semibold text-sm"
+            style={{ borderRadius: "10px" }}
           >
             Login
-          </Button>
+          </button>
         </form>
       </Form>
     </CardWrapper>

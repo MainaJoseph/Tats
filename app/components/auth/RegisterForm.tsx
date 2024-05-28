@@ -66,18 +66,19 @@ export const RegisterForm = () => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className={errors.email ? "text-red-500" : ""}>
+                <FormLabel className={errors.name ? "text-red-500" : ""}>
                   Name
                 </FormLabel>
                 <Input
                   {...field}
                   placeholder="Your Name"
                   disabled={isPending}
-                  className={`rounded-md border-[1px] ${
-                    errors.email
+                  className={`input-placeholder rounded-md border-[1px] ${
+                    errors.name
                       ? "border-red-500 focus:border-red-500"
                       : "focus:border-sky-300"
                   }`}
+                  style={{ borderRadius: "10px" }}
                 />
                 <FormMessage className="text-red-500" />
               </FormItem>
@@ -97,11 +98,12 @@ export const RegisterForm = () => {
                   placeholder="youremail@gmail.com"
                   type="email"
                   disabled={isPending}
-                  className={`rounded-md border-[1px] ${
+                  className={`input-placeholder rounded-md border-[1px] ${
                     errors.email
                       ? "border-red-500 focus:border-red-500"
                       : "focus:border-sky-300"
                   }`}
+                  style={{ borderRadius: "10px" }}
                 />
                 <FormMessage className="text-red-500" />
               </FormItem>
@@ -120,11 +122,12 @@ export const RegisterForm = () => {
                   placeholder="******"
                   type="password"
                   disabled={isPending}
-                  className={`rounded-md border-[1px] ${
+                  className={`input-placeholder rounded-md border-[1px] ${
                     errors.password
                       ? "border-red-500 focus:border-red-500"
                       : "focus:border-sky-300"
                   }`}
+                  style={{ borderRadius: "10px" }}
                 />
                 <FormMessage className="text-red-500" />
               </FormItem>
@@ -132,13 +135,14 @@ export const RegisterForm = () => {
           />
           <FormError message={error || ""} />
           <FormSuccess message={success || ""} />
-          <Button
+          <button
             type="submit"
             disabled={isPending}
-            className="w-full hover:opacity-90 bg-black"
+            className="w-full hover:opacity-90 bg-black text-white py-3 rounded-md font-semibold text-sm"
+            style={{ borderRadius: "10px" }}
           >
-            Login
-          </Button>
+            Create an Account
+          </button>
         </form>
       </Form>
     </CardWrapper>
