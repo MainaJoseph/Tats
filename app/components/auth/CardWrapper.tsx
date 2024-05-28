@@ -73,11 +73,8 @@ export const CardWrapper = ({
         </CardFooter>
       )}
       <CardFooter className="rounded-b-md overflow-hidden">
-        <a href={backButtonHref} className="btn w-full">
-          {backButtonLabel}
-        </a>
+        <BackButton href={backButtonHref} label={backButtonLabel} />
       </CardFooter>
-      <BackButton href={backButtonHref} label={backButtonLabel} />
 
       <svg
         xmlns="http://www.w3.org/2000/svg"

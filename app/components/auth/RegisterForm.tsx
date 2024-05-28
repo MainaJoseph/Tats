@@ -16,8 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/moving-border";
 import { FormError } from "@/app/components/form-error";
 import { FormSuccess } from "../form-success";
-import { login } from "@/actions/login";
 import { useState, useTransition } from "react";
+import { register } from "@/actions/register";
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -40,7 +40,7 @@ export const RegisterForm = () => {
     setSuccess("");
 
     startTransition(() => {
-      login(values).then((data: { error?: string; success?: string }) => {
+      register(values).then((data: { error?: string; success?: string }) => {
         if (data.error) {
           setError(data.error);
           setSuccess("");
