@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Header } from "./Header";
 import { Socials } from "./Socials";
+import { BackButton } from "./BackButton";
 
 interface CardWrapperProps {
   children: React.ReactNode;
@@ -23,8 +24,7 @@ interface CardWrapperProps {
   backButtonHref: string;
   showSocial?: boolean;
   duration?: number;
-  rx?: string;
-  ry?: string;
+  borderRadius?: string;
 }
 
 export const CardWrapper = ({
@@ -34,8 +34,7 @@ export const CardWrapper = ({
   backButtonLabel,
   showSocial,
   duration = 5000, // Increased duration for slower movement
-  rx = "0%",
-  ry = "0%",
+  borderRadius = "1rem",
 }: CardWrapperProps) => {
   const pathRef = useRef<SVGRectElement>(null);
   const progress = useMotionValue<number>(0);
@@ -60,7 +59,10 @@ export const CardWrapper = ({
   const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px) translateX(-50%) translateY(-50%)`;
 
   return (
-    <Card className="w-full shadow-md border border-sky-300 rounded-md relative">
+    <Card
+      className="w-full shadow-lg border border-sky-300 rounded-md relative"
+      style={{ borderRadius }}
+    >
       <CardHeader>
         <Header label={headerLabel} />
       </CardHeader>
@@ -75,6 +77,8 @@ export const CardWrapper = ({
           {backButtonLabel}
         </a>
       </CardFooter>
+      <BackButton href={backButtonHref} label={backButtonLabel} />
+
       <svg
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="none"
@@ -87,8 +91,8 @@ export const CardWrapper = ({
           stroke="transparent"
           width="100%"
           height="100%"
-          rx={rx}
-          ry={ry}
+          rx={borderRadius}
+          ry={borderRadius}
           ref={pathRef}
         />
       </svg>

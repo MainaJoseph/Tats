@@ -9,7 +9,7 @@ export const Socials = () => {
     <div className="flex items-center w-full gap-x-2">
       <Button
         size="lg"
-        className="w-full rounded-md"
+        className="w-full rounded-md hover:bg-sky-300"
         variant="outline"
         onClick={() => {}}
       >
@@ -18,7 +18,7 @@ export const Socials = () => {
 
       <Button
         size="lg"
-        className="w-full rounded-md"
+        className="w-full rounded-md hover:bg-sky-300"
         variant="outline"
         onClick={() => {}}
       >
