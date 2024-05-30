@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,18 +23,20 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.className} text-slate-700`}>
-        <ToastContainer
-          position="top-center"
-          className="mr-6"
-          autoClose={3000}
-          theme="dark"
-          closeOnClick
-        />
+        <SessionProvider>
+          <ToastContainer
+            position="top-center"
+            className="mr-6"
+            autoClose={3000}
+            theme="dark"
+            closeOnClick
+          />
 
-        <div className="flex flex-col min-h-screen">
-          <NavBar />
-          <main className="flex-grow">{children}</main>
-        </div>
+          <div className="flex flex-col min-h-screen">
+            <NavBar />
+            <main className="flex-grow">{children}</main>
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );

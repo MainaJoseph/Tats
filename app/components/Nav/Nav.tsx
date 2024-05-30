@@ -10,11 +10,16 @@ import Container from "../Container";
 import { NavMenu } from "./NavMenu";
 import Search from "../search/Search";
 import Image from "next/image";
+import Avatar from "@/app/components/Avatar"; // Import the Avatar component
+import { useAuth } from "@/hooks/useAuth"; // Import the custom hook
+import { LuLogOut } from "react-icons/lu";
+import { signOut } from "next-auth/react"; // Import the signOut function
 
 const redressed = Redressed({ subsets: ["latin"], weight: ["400"] });
 
 const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isAuthenticated, user } = useAuth(); // Get authentication status and user data
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -37,21 +42,36 @@ const NavBar = () => {
             <div className="hidden md:flex items-center gap-4">
               <NavMenu />
               <Search />
-              <Link
-                href="/auth/login"
-                className="px-4 py-2 border rounded-full"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/auth/sign-up"
-                className="px-4 py-2 bg-black text-white rounded-full hover:opacity-50"
-              >
-                Sign up
-              </Link>
+              {isAuthenticated ? (
+                <Avatar src={user?.image} /> // Display Avatar if authenticated
+              ) : (
+                <>
+                  <Link
+                    href="/auth/login"
+                    className="px-4 py-2 border rounded-full"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/auth/sign-up"
+                    className="px-4 py-2 bg-black text-white rounded-full hover:opacity-50"
+                  >
+                    Sign up
+                  </Link>
+                </>
+              )}
+              <LuLogOut
+                size={22}
+                className="cursor-pointer hover:text-sky-300"
+                onClick={() => signOut()}
+              />
             </div>
             <div className="md:hidden flex items-center gap-4 w-full">
               <Search />
+              {isAuthenticated && (
+                <Avatar src={user?.image} /> // Display Avatar if authenticated
+              )}
+
               <button onClick={toggleMobileMenu}>
                 {isMobileMenuOpen ? (
                   <IoMdCloseCircle size={24} />
@@ -66,18 +86,22 @@ const NavBar = () => {
           <div className="md:hidden p-4">
             <NavMenu />
             <div className="mt-4 flex flex-col space-y-2">
-              <Link
-                href="/auth/login"
-                className="px-4 py-2 border rounded-full text-center"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/auth/sign-up"
-                className="px-4 py-2 bg-black text-white rounded-full text-center"
-              >
-                Sign up
-              </Link>
+              {!isAuthenticated && (
+                <>
+                  <Link
+                    href="/auth/login"
+                    className="px-4 py-2 border rounded-full text-center"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/auth/sign-up"
+                    className="px-4 py-2 bg-black text-white rounded-full text-center"
+                  >
+                    Sign up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
