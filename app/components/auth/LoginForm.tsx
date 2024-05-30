@@ -42,6 +42,7 @@ export const LoginForm = () => {
       login(values)
         .then((data: { error?: string; success?: string }) => {
           if (data.error) {
+            console.error("Login error:", data.error);
             setError(data.error);
             setSuccess("");
           } else {
@@ -49,7 +50,8 @@ export const LoginForm = () => {
             setSuccess(data.success || "Login successful!");
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error("Unexpected error during login process:", err);
           setError("An unexpected error occurred.");
           setSuccess("");
         });
