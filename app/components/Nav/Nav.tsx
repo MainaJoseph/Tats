@@ -1,3 +1,4 @@
+// NavBar Component
 "use client";
 
 import Link from "next/link";
@@ -10,8 +11,8 @@ import Container from "../Container";
 import { NavMenu } from "./NavMenu";
 import Search from "../search/Search";
 import Image from "next/image";
-import Avatar from "@/app/components/Avatar"; // Import the Avatar component
-import { useAuth } from "@/hooks/useAuth"; // Import the custom hook
+import Avatar from "@/app/components/Avatar";
+import { useAuth } from "@/hooks/useAuth";
 import { LuLogOut } from "react-icons/lu";
 import { signOut } from "next-auth/react"; // Import the signOut function
 
@@ -19,7 +20,7 @@ const redressed = Redressed({ subsets: ["latin"], weight: ["400"] });
 
 const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isAuthenticated, user } = useAuth(); // Get authentication status and user data
+  const { isAuthenticated, user } = useAuth();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -43,7 +44,10 @@ const NavBar = () => {
               <NavMenu />
               <Search />
               {isAuthenticated ? (
-                <Avatar src={user?.image} /> // Display Avatar if authenticated
+                <>
+                  <Avatar src={user?.image} />
+                  <LuLogOut size={22} onClick={() => signOut()} />{" "}
+                </>
               ) : (
                 <>
                   <Link
@@ -60,18 +64,15 @@ const NavBar = () => {
                   </Link>
                 </>
               )}
-              <LuLogOut
-                size={22}
-                className="cursor-pointer hover:text-sky-300"
-                onClick={() => signOut()}
-              />
             </div>
             <div className="md:hidden flex items-center gap-4 w-full">
               <Search />
               {isAuthenticated && (
-                <Avatar src={user?.image} /> // Display Avatar if authenticated
+                <>
+                  <Avatar src={user?.image} />
+                  <LuLogOut size={22} onClick={() => signOut()} />
+                </>
               )}
-
               <button onClick={toggleMobileMenu}>
                 {isMobileMenuOpen ? (
                   <IoMdCloseCircle size={24} />
