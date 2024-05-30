@@ -1,4 +1,9 @@
-import { auth } from "@/auth";
+//middleware.ts
+import authConfig from "@/authConfig";
+
+import NextAuth from "next-auth";
+
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
