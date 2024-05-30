@@ -39,5 +39,5 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
   //TO DO: Send verification Token Email
 
-  return Promise.resolve({ success: "User Created" });
+  return { success: "User Created" };
 };
