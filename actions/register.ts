@@ -5,6 +5,7 @@ import bycrypt from "bcrypt";
 import { db } from "@/lib/db";
 
 import { RegisterSchema } from "@/schemas";
+import { getUserByEmail } from "@/data/user";
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   // Validate on the server side
@@ -21,11 +22,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const hashedPassword = await bycrypt.hash(password, 10);
 
   //Checking if the email exists
-  const existingUser = await db.user.findUnique({
-    where: {
-      email,
-    },
-  });
+  const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
     return { error: "Email already in use!" };
@@ -42,5 +39,5 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
   //TO DO: Send verification Token Email
 
-  return Promise.resolve({ success: "Email sent" });
+  return Promise.resolve({ success: "User Created" });
 };
