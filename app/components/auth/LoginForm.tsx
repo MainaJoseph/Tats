@@ -41,13 +41,16 @@ export const LoginForm = () => {
     startTransition(() => {
       login(values)
         .then((data: { error?: string; success?: string }) => {
-          if (data.error) {
+          if (data?.error) {
             console.error("Login error:", data.error);
             setError(data.error);
             setSuccess("");
-          } else {
+          } else if (data?.success) {
             setError("");
-            setSuccess(data.success || "Login successful!");
+            setSuccess(data.success);
+          } else {
+            setError("Unexpected response format.");
+            setSuccess("");
           }
         })
         .catch((err) => {
