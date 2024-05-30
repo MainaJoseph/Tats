@@ -39,15 +39,20 @@ export const LoginForm = () => {
     setSuccess("");
 
     startTransition(() => {
-      login(values).then((data: { error?: string; success?: string }) => {
-        if (data.error) {
-          setError(data.error);
+      login(values)
+        .then((data: { error?: string; success?: string }) => {
+          if (data.error) {
+            setError(data.error);
+            setSuccess("");
+          } else {
+            setError("");
+            setSuccess(data.success || "Login successful!");
+          }
+        })
+        .catch(() => {
+          setError("An unexpected error occurred.");
           setSuccess("");
-        } else {
-          setError("");
-          setSuccess(data.success);
-        }
-      });
+        });
     });
   };
 
