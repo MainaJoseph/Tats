@@ -16,6 +16,18 @@ import { useAuth } from "@/hooks/useAuth";
 import { LuLogOut } from "react-icons/lu";
 import { signOut } from "next-auth/react"; // Import the signOut function
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 const redressed = Redressed({ subsets: ["latin"], weight: ["400"] });
 
 const NavBar = () => {
@@ -46,7 +58,40 @@ const NavBar = () => {
               {isAuthenticated ? (
                 <>
                   <Avatar src={user?.image} />
-                  <LuLogOut size={22} onClick={() => signOut()} />{" "}
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <LuLogOut size={22} />{" "}
+                    </AlertDialogTrigger>
+                    <AlertDialogContent
+                      className="bg-white text-slate-900"
+                      style={{ borderRadius: "5px" }}
+                    >
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure you want to logout?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You do not worry you can login at any point and resume
+                          where you left at.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel
+                          className="bg-rose-500 text-white hover:bg-rose-300"
+                          style={{ borderRadius: "5px" }}
+                        >
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-slate-900 text-white hover:bg-slate-600"
+                          style={{ borderRadius: "5px" }}
+                          onClick={() => signOut()}
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </>
               ) : (
                 <>
@@ -70,7 +115,11 @@ const NavBar = () => {
               {isAuthenticated && (
                 <>
                   <Avatar src={user?.image} />
-                  <LuLogOut size={22} onClick={() => signOut()} />
+                  <LuLogOut
+                    className=" cursor-pointer hover:text-red-500"
+                    size={22}
+                    onClick={() => signOut()}
+                  />
                 </>
               )}
               <button onClick={toggleMobileMenu}>
