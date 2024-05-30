@@ -116,7 +116,7 @@ export const LoginForm = () => {
             className="w-full hover:opacity-90 bg-black text-white py-3 rounded-md font-semibold text-sm"
             style={{ borderRadius: "10px" }}
           >
-            Login
+            {isPending ? "Loading..." : "Login"}
           </button>
         </form>
       </Form>

@@ -141,7 +141,7 @@ export const RegisterForm = () => {
             className="w-full hover:opacity-90 bg-black text-white py-3 rounded-md font-semibold text-sm"
             style={{ borderRadius: "10px" }}
           >
-            Create an Account
+            {isPending ? "Loading..." : "Create an Account"}
           </button>
         </form>
       </Form>
