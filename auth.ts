@@ -8,21 +8,19 @@ import { db } from "./lib/db";
 import { Role } from "@prisma/client";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/error",
+  },
+  events: {
+    async linkAccount({ user }) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() },
+      });
+    },
+  },
   callbacks: {
-    // async signIn({ user }) {
-    //   if (!user.id) {
-    //     return false;
-    //   }
-
-    //   const existingUser = await getUserById(user.id);
-
-    //   if (!existingUser || !existingUser.emailVerified) {
-    //     return false;
-    //   }
-
-    //   return true;
-    // },
-
     async session({ token, session }) {
       console.log({
         sessionToken: token,

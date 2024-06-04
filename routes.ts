@@ -12,7 +12,7 @@ export const publicRoutes = ["/"];
  * @type {string[]}
  */
 
-export const authRoutes = ["/auth/login", "/auth/sign-up"];
+export const authRoutes = ["/auth/login", "/auth/sign-up", "/auth/error"];
 
 /**
  * Prefix for API authentication Routes
