@@ -1,4 +1,5 @@
-// auth.ts
+//auth.ts
+
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "@/authConfig";
@@ -8,6 +9,20 @@ import { Role } from "@prisma/client";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
+    // async signIn({ user }) {
+    //   if (!user.id) {
+    //     return false;
+    //   }
+
+    //   const existingUser = await getUserById(user.id);
+
+    //   if (!existingUser || !existingUser.emailVerified) {
+    //     return false;
+    //   }
+
+    //   return true;
+    // },
+
     async session({ token, session }) {
       console.log({
         sessionToken: token,

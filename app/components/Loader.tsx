@@ -13,7 +13,7 @@ const Loader = () => {
       items-center 
     "
     >
-      <CirclesWithBar color="blue" />
+      <CirclesWithBar color="black" />
     </div>
   );
 };
