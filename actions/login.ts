@@ -7,6 +7,7 @@ import { AuthError } from "next-auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { generateVerificationToken } from "@/lib/tokens";
 import { getUserByEmail } from "@/data/user";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   // Validate on the server side
@@ -30,6 +31,12 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     //generate a new verification token
     const verificationToken = await generateVerificationToken(
       existingUser.email
+    );
+
+    // Send verification Token Email
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token
     );
 
     return { success: "Confirmation Email Sent" };

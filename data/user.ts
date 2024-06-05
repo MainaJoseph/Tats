@@ -1,3 +1,4 @@
+//data/users.ts
 import { db } from "@/lib/db";
 
 //get user By Email
