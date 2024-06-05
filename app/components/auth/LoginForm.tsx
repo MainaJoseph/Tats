@@ -126,6 +126,7 @@ export const LoginForm = () => {
             )}
           />
           <FormError message={error || urlError || ""} />
+          {/* Add 2FA */}
           <FormSuccess message={success || ""} />
           <button
             type="submit"
