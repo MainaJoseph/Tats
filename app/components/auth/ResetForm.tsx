@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { FormError } from "@/app/components/form-error";
 import { FormSuccess } from "../form-success";
-import { login } from "@/actions/login";
+import { reset } from "@/actions/reset";
 import { useState, useTransition } from "react";
 import { ScaleLoader } from "react-spinners";
 
@@ -40,12 +40,12 @@ export const ResetForm = () => {
 
     console.log("Values>>>", values);
 
-    // startTransition(() => {
-    //   login(values).then((data) => {
-    //     setError(data?.error);
-    //     setSuccess(data?.success);
-    //   });
-    // });
+    startTransition(() => {
+      reset(values).then((data) => {
+        setError(data?.error);
+        setSuccess(data?.success);
+      });
+    });
   };
 
   return (
