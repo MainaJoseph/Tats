@@ -68,6 +68,13 @@ export const CardWrapper = ({
       </CardHeader>
       <CardContent className="w-full overflow-hidden">{children}</CardContent>
       {showSocial && (
+        <CardFooter className="overflow-hidden flex items-center justify-center space-x-2">
+          <div className="flex-grow border-t border-gray-300" />
+          <span className="px-2 text-sm text-gray-500">OR</span>
+          <div className="flex-grow border-t border-gray-300" />
+        </CardFooter>
+      )}
+      {showSocial && (
         <CardFooter className="overflow-hidden">
           <Socials />
         </CardFooter>

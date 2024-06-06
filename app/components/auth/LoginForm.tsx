@@ -8,17 +8,19 @@ import { LoginSchema } from "@/schemas/index";
 import { useForm } from "react-hook-form";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/moving-border";
 import { FormError } from "@/app/components/form-error";
 import { FormSuccess } from "../form-success";
 import { login } from "@/actions/login";
 import { useState, useTransition } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const LoginForm = () => {
   const searchParams = useSearchParams();
@@ -121,6 +123,15 @@ export const LoginForm = () => {
                   }`}
                   style={{ borderRadius: "10px" }}
                 />
+                <FormControl />
+                <Button
+                  size="sm"
+                  variant="link"
+                  asChild
+                  className="px-0 font-normal"
+                >
+                  <Link href="/auth/reset">Forgot Password?</Link>
+                </Button>
                 <FormMessage className="text-red-500" />
               </FormItem>
             )}
