@@ -21,6 +21,7 @@ import { login } from "@/actions/login";
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ScaleLoader } from "react-spinners";
 
 export const LoginForm = () => {
   const searchParams = useSearchParams();
@@ -48,26 +49,33 @@ export const LoginForm = () => {
     setSuccess("");
 
     startTransition(() => {
-      login(values)
-        .then((data: { error?: string; success?: string }) => {
-          if (data?.error) {
-            console.error("Login error:", data.error);
-            setError(data.error);
-            setSuccess("");
-          } else if (data?.success) {
-            setError("");
-            setSuccess(data.success);
-          } else {
-            setError("Unexpected response format.");
-            setSuccess("");
-          }
-        })
-        .catch((err) => {
-          console.error("Unexpected error during login process:", err);
-          setError("An unexpected error occurred.");
-          setSuccess("");
-        });
+      login(values).then((data) => {
+        setError(data?.error);
+        setSuccess(data?.success);
+      });
     });
+
+    // startTransition(() => {
+    //   login(values)
+    //     .then((data: { error?: string; success?: string }) => {
+    //       if (data?.error) {
+    //         console.error("Login error:", data.error);
+    //         setError(data.error);
+    //         setSuccess("");
+    //       } else if (data?.success) {
+    //         setError("");
+    //         setSuccess(data.success);
+    //       } else {
+    //         setError("Unexpected response format.");
+    //         setSuccess("");
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       console.error("Unexpected error during login process:", err);
+    //       setError("An unexpected error occurred.");
+    //       setSuccess("");
+    //     });
+    // });
   };
 
   return (
@@ -89,7 +97,7 @@ export const LoginForm = () => {
                 </FormLabel>
                 <Input
                   {...field}
-                  placeholder="youremail@gmail.com"
+                  placeholder="john.doe@example.com"
                   type="email"
                   disabled={isPending}
                   className={`rounded-md border-[1px] ${
@@ -145,7 +153,17 @@ export const LoginForm = () => {
             className="w-full hover:opacity-90 bg-black text-white py-3 rounded-md font-semibold text-sm"
             style={{ borderRadius: "10px" }}
           >
-            {isPending ? "Loading..." : "Login"}
+            {isPending ? (
+              <ScaleLoader
+                height={15}
+                width={2}
+                radius={2}
+                margin={2}
+                color="white"
+              />
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
       </Form>

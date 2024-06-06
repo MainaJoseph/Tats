@@ -18,6 +18,7 @@ import { FormError } from "@/app/components/form-error";
 import { FormSuccess } from "../form-success";
 import { useState, useTransition } from "react";
 import { register } from "@/actions/register";
+import { ScaleLoader } from "react-spinners";
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -141,7 +142,17 @@ export const RegisterForm = () => {
             className="w-full hover:opacity-90 bg-black text-white py-3 rounded-md font-semibold text-sm"
             style={{ borderRadius: "10px" }}
           >
-            {isPending ? "Loading..." : "Create an Account"}
+            {isPending ? (
+              <ScaleLoader
+                height={15}
+                width={2}
+                radius={2}
+                margin={2}
+                color="white"
+              />
+            ) : (
+              "Create an account"
+            )}
           </button>
         </form>
       </Form>

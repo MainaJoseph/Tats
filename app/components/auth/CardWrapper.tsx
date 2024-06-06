@@ -60,7 +60,7 @@ export const CardWrapper = ({
 
   return (
     <Card
-      className="w-full shadow-lg border border-sky-300 rounded-md relative overflow-hidden"
+      className="w-auto shadow-lg border border-sky-300 rounded-md relative overflow-hidden"
       style={{ borderRadius }}
     >
       <CardHeader className="rounded-t-md overflow-hidden">

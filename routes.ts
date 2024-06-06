@@ -12,7 +12,12 @@ export const publicRoutes = ["/", "/auth/new-verification"];
  * @type {string[]}
  */
 
-export const authRoutes = ["/auth/login", "/auth/sign-up", "/auth/error"];
+export const authRoutes = [
+  "/auth/login",
+  "/auth/sign-up",
+  "/auth/error",
+  "/auth/reset",
+];
 
 /**
  * Prefix for API authentication Routes
