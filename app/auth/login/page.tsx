@@ -2,7 +2,7 @@ import { LoginForm } from "@/app/components/auth/LoginForm";
 
 const LoginPage = () => {
   return (
-    <div>
+    <div className="flex flex-col">
       <LoginForm />
     </div>
   );
