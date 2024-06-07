@@ -5,9 +5,12 @@ import { LoginSchema } from "@/schemas";
 import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { generateVerificationToken } from "@/lib/tokens";
+import {
+  generateVerificationToken,
+  generateTwoFactorToken,
+} from "@/lib/tokens";
 import { getUserByEmail } from "@/data/user";
-import { sendVerificationEmail } from "@/lib/mail";
+import { sendVerificationEmail, sendTwoFactorTokenEmail } from "@/lib/mail";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   // Validate on the server side
@@ -40,6 +43,14 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     );
 
     return { success: "Confirmation Email Sent" };
+  }
+
+  //Check if existing user has 2FA enabled
+  if (existingUser.isTwoFactorEnabled && existingUser.email) {
+    const twoFactorToken = await generateTwoFactorToken(existingUser.email);
+    await sendTwoFactorTokenEmail(twoFactorToken.email, twoFactorToken.token);
+
+    return { twoFactor: true };
   }
 
   try {
