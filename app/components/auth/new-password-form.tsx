@@ -33,6 +33,7 @@ export const NewPasswordForm = () => {
     resolver: zodResolver(NewPasswordSchema),
     defaultValues: {
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -83,8 +84,34 @@ export const NewPasswordForm = () => {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel
+                  className={errors.confirmPassword ? "text-red-500" : ""}
+                >
+                  Confirm Password
+                </FormLabel>
+                <Input
+                  {...field}
+                  placeholder="******"
+                  type="password"
+                  disabled={isPending}
+                  className={`rounded-md border-[1px] ${
+                    errors.confirmPassword
+                      ? "border-red-500 focus:border-red-500"
+                      : "focus:border-sky-300"
+                  }`}
+                  style={{ borderRadius: "10px" }}
+                />
+                <FormMessage className="text-red-500" />
+              </FormItem>
+            )}
+          />
+
           <FormError message={error || ""} />
-          {/* Add 2FA */}
           <FormSuccess message={success || ""} />
           <button
             type="submit"
