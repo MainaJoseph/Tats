@@ -2,11 +2,10 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
-
+import { auth } from "@/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NavBar from "./components/Nav/Nav";
-import Footer from "./components/footer/Footer";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700"] });
 
@@ -20,10 +19,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
   return (
-    <html lang="en">
-      <body className={`${poppins.className} text-slate-700`}>
-        <SessionProvider>
+    <SessionProvider session={session}>
+      <html lang="en">
+        <body className={`${poppins.className} text-slate-700`}>
           <ToastContainer
             position="top-center"
             className="mr-6"
@@ -36,8 +36,8 @@ export default async function RootLayout({
             <NavBar />
             <main className="flex-grow">{children}</main>
           </div>
-        </SessionProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }
