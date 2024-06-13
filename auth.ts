@@ -75,6 +75,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Ensure token.isTwoFactorEnabled and session.user are defined before assignment
       if (session.user) {
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+        session.user.createdAt = token.createdAt as Date; // Add this line
       }
 
       return session;
@@ -90,6 +91,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
+      token.createdAt = existingUser.createdAt; // Add this line
+
+      console.log("JWT Token:", token); // Add this line
 
       return token;
     },

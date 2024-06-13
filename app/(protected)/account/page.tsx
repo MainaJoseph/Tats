@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import AccountProfile from "./AccountProfile";
+import { AccountProfile } from "./AccountProfile";
 
 const Account = async () => {
   const session = await auth();
