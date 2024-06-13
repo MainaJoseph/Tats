@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import Avatar from "@/app/components/Avatar";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 export const AccountProfile = () => {
   const user = useCurrentUser();
@@ -46,6 +47,10 @@ export const AccountProfile = () => {
                   <p className="text-sm font-semibold text-slate-500">
                     Two Factor Authentication
                   </p>
+                  <Separator
+                    orientation="vertical"
+                    className="text-slate-900"
+                  />
                   <Badge
                     variant={
                       user?.isTwoFactorEnabled ? "success" : "destructive"
