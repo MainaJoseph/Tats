@@ -17,6 +17,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { UpdatedTabs } from "./UpdatedTabs";
+import UserName from "./user-name";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const AccountProfile = () => {
   return (
@@ -27,7 +29,10 @@ const AccountProfile = () => {
           <div className="flex flex-col gap-4 md:flex md:justify-start md:w-1/3 ">
             <div className="font-bold text-2xl">My Profile</div>
             <div className="flex flex-col gap-8 shadow-md">
-              <div>Name</div>
+              <div>
+                UserName
+                {/* <UserName user={user}/> */}
+              </div>
               <div className="flex ml-5 flex-row gap-1 items-center cursor-pointer  text-slate-700 hover:text-sky-400">
                 <MdManageAccounts size={30} />
                 <div className="text-sm text-center font-semibold">

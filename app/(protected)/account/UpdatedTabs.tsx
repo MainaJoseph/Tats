@@ -1,5 +1,9 @@
 "use client";
 
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { NewPasswordSchema } from "@/schemas/index";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,13 +13,60 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { FormError } from "@/app/components/form-error";
+import { newPasswordAccount } from "@/actions/new-password-account";
+import { useState, useTransition } from "react";
+import { ScaleLoader } from "react-spinners";
+import { FormSuccess } from "@/app/components/form-success";
+
+// Assuming you have a way to get the logged-in user's ID
+import { useSession } from "next-auth/react";
 
 export function UpdatedTabs() {
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
+  const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("account");
+
+  const form = useForm<z.infer<typeof NewPasswordSchema>>({
+    resolver: zodResolver(NewPasswordSchema),
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const { errors } = form.formState;
+
+  const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
+    setError("");
+    setSuccess("");
+
+    if (userId) {
+      startTransition(() => {
+        newPasswordAccount(values, userId).then((data) => {
+          setError(data?.error);
+          setSuccess(data?.success);
+        });
+      });
+    } else {
+      setError("User not logged in");
+    }
+  };
 
   return (
     <Tabs className="w-full" value={activeTab} onValueChange={setActiveTab}>
@@ -58,15 +109,29 @@ export function UpdatedTabs() {
           <CardContent className="space-y-2">
             <div className="space-y-1">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue="Pedro Duarte" />
+              <Input
+                id="name"
+                placeholder="Enter your name"
+                style={{ borderRadius: "10px" }}
+              />
             </div>
             <div className="space-y-1">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" defaultValue="@peduarte" />
+              <Input
+                id="username"
+                placeholder="Change your username"
+                className="rounded-md"
+                style={{ borderRadius: "10px" }}
+              />
             </div>
           </CardContent>
           <CardFooter>
-            <Button>Save changes</Button>
+            <Button
+              className="py-2 border-[1px] bg-black text-white hover:bg-slate-700"
+              style={{ borderRadius: "10px" }}
+            >
+              Save changes
+            </Button>
           </CardFooter>
         </Card>
       </TabsContent>
@@ -79,18 +144,88 @@ export function UpdatedTabs() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Label htmlFor="current">Current password</Label>
-              <Input id="current" type="password" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="new">New password</Label>
-              <Input id="new" type="password" />
-            </div>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        className={errors.password ? "text-red-500" : ""}
+                      >
+                        Password
+                      </FormLabel>
+                      <Input
+                        {...field}
+                        placeholder="******"
+                        type="password"
+                        disabled={isPending}
+                        className={`rounded-md border-[1px] ${
+                          errors.password
+                            ? "border-red-500 focus:border-red-500"
+                            : "focus:border-sky-300"
+                        }`}
+                        style={{ borderRadius: "10px" }}
+                      />
+                      <FormMessage className="text-red-500" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        className={errors.confirmPassword ? "text-red-500" : ""}
+                      >
+                        Confirm Password
+                      </FormLabel>
+                      <Input
+                        {...field}
+                        placeholder="******"
+                        type="password"
+                        disabled={isPending}
+                        className={`rounded-md border-[1px] ${
+                          errors.confirmPassword
+                            ? "border-red-500 focus:border-red-500"
+                            : "focus:border-sky-300"
+                        }`}
+                        style={{ borderRadius: "10px" }}
+                      />
+                      <FormMessage className="text-red-500" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormError message={error || ""} />
+                <FormSuccess message={success || ""} />
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="w-full hover:opacity-90 bg-black text-white py-3 rounded-md font-semibold text-sm"
+                  style={{ borderRadius: "10px" }}
+                >
+                  {isPending ? (
+                    <ScaleLoader
+                      height={15}
+                      width={2}
+                      radius={2}
+                      margin={2}
+                      color="white"
+                    />
+                  ) : (
+                    "Reset Password"
+                  )}
+                </button>
+              </form>
+            </Form>
           </CardContent>
-          <CardFooter>
-            <Button>Save password</Button>
-          </CardFooter>
         </Card>
       </TabsContent>
     </Tabs>
