@@ -42,6 +42,7 @@ export function UpdatedTabs() {
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("account");
 
+  //for form submission
   const form = useForm<z.infer<typeof NewPasswordSchema>>({
     resolver: zodResolver(NewPasswordSchema),
     defaultValues: {
@@ -50,12 +51,15 @@ export function UpdatedTabs() {
     },
   });
 
+  //For checking form errors
   const { errors } = form.formState;
 
+  //Submit functionf
   const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
     setError("");
     setSuccess("");
 
+    //Validating and checking if user has logged in
     if (userId) {
       startTransition(() => {
         newPasswordAccount(values, userId).then((data) => {
@@ -127,7 +131,7 @@ export function UpdatedTabs() {
           </CardContent>
           <CardFooter>
             <Button
-              className="py-2 border-[1px] bg-black text-white hover:bg-slate-700"
+              className="w-full py-2 border-[1px] bg-black text-white hover:bg-slate-700"
               style={{ borderRadius: "10px" }}
             >
               Save changes

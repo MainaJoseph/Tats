@@ -1,24 +1,10 @@
-import Container from "@/app/components/Container";
-import {
-  MdLogout,
-  MdManageAccounts,
-  MdOutlineBorderColor,
-} from "react-icons/md";
+"use client";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import Container from "@/app/components/Container";
+import { MdManageAccounts } from "react-icons/md";
+
 import { UpdatedTabs } from "./UpdatedTabs";
-import UserName from "./user-name";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { LogoutAccount } from "./logout-account";
 
 const AccountProfile = () => {
   return (
@@ -39,36 +25,7 @@ const AccountProfile = () => {
                   Personal Information
                 </div>
               </div>
-              <AlertDialog>
-                <AlertDialogTrigger>
-                  <div className="flex ml-5 flex-row gap-1 items-center cursor-pointer  text-slate-700 hover:text-orange-400 mb-7">
-                    <MdLogout size={27} />
-                    <div className="text-sm text-center font-semibold">
-                      Logout
-                    </div>
-                  </div>
-                </AlertDialogTrigger>
-                {/* Confirmation Dialog */}
-                <AlertDialogContent className="bg-white text-slate-800">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      You will be logged out from Nova. But do not worry you can
-                      login again😊.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-slate-700 hover:bg-slate-500 text-white transition translate-y-1">
-                      Cancel
-                    </AlertDialogCancel>
-                    <AlertDialogAction className="bg-rose-500 hover:bg-rose-300 text-white transition translate-y-1">
-                      Logout
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <LogoutAccount />
             </div>
           </div>
           {/* div 2 */}
