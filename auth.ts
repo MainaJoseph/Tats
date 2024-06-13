@@ -72,6 +72,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.role = token.role as Role;
       }
 
+      // Ensure token.isTwoFactorEnabled and session.user are defined before assignment
+      if (session.user) {
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+      }
+
       return session;
     },
 
