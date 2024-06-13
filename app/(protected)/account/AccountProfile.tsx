@@ -8,6 +8,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { format } from "date-fns";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import Avatar from "@/app/components/Avatar";
+import { Badge } from "@/components/ui/badge";
 
 export const AccountProfile = () => {
   const user = useCurrentUser();
@@ -22,7 +23,7 @@ export const AccountProfile = () => {
         <div className="flex flex-col md:flex-row justify-items-start gap-6">
           <div className="flex flex-col gap-4 md:flex md:justify-start md:w-1/3">
             <div className="font-bold text-2xl">My Profile</div>
-            <div className="w-3/4 flex flex-col gap-1 border-none">
+            <div className="w-full flex flex-col gap-1 border-none">
               <div className="ml-3">
                 <div className="flex flex-row items-center space-x-4">
                   <Avatar />
@@ -38,8 +39,21 @@ export const AccountProfile = () => {
 
                 <div className="flex flex-row gap-1 text-slate-900 font-normal text-xs mt-4 ml-10">
                   <FaRegCalendarAlt />
-                  <span> Joined:</span> {""}
+                  <span> Joined on :</span> {""}
                   <span className="font-semibold">{formattedDate}</span>
+                </div>
+                <div className="flex flex-row gap-4 mt-4 ml-10 items-center">
+                  <p className="text-sm font-semibold text-slate-500">
+                    Two Factor Authentication
+                  </p>
+                  <Badge
+                    variant={
+                      user?.isTwoFactorEnabled ? "success" : "destructive"
+                    }
+                    className="text-white"
+                  >
+                    {user?.isTwoFactorEnabled ? "ON" : "OFF"}
+                  </Badge>
                 </div>
               </div>
             </div>
