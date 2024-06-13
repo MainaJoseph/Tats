@@ -84,6 +84,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (!existingUser) return token; // Added check to ensure existingUser is found
 
       token.role = existingUser.role;
+      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;
     },

@@ -54,7 +54,7 @@ export function UpdatedTabs() {
   //For checking form errors
   const { errors } = form.formState;
 
-  //Submit functionf
+  //Submit function
   const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
     setError("");
     setSuccess("");
