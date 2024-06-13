@@ -91,9 +91,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
-      token.createdAt = existingUser.createdAt; // Add this line
+      token.createdAt = existingUser.createdAt;
 
-      console.log("JWT Token:", token); // Add this line
+      console.log("JWT Token:", token); // Console Log Created At
 
       return token;
     },

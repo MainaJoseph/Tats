@@ -6,12 +6,14 @@ import { UpdatedTabs } from "./UpdatedTabs";
 import { LogoutAccount } from "./logout-account";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { format } from "date-fns";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import Avatar from "@/app/components/Avatar";
 
 export const AccountProfile = () => {
   const user = useCurrentUser();
 
   const formattedDate = user?.createdAt
-    ? format(new Date(user.createdAt), "PPP")
+    ? format(new Date(user.createdAt), "MMM yyyy")
     : "";
 
   return (
@@ -20,18 +22,28 @@ export const AccountProfile = () => {
         <div className="flex flex-col md:flex-row justify-items-start gap-6">
           <div className="flex flex-col gap-4 md:flex md:justify-start md:w-1/3">
             <div className="font-bold text-2xl">My Profile</div>
-            <div className="flex flex-col gap-1">
-              <div className="text-slate-900 font-semibold text-md">
-                {user?.name}
-              </div>
-              <div className="text-slate-900 font-normal text-sm">
-                {user?.email}
-              </div>
-              <div className="text-slate-900 font-normal text-sm">
-                {formattedDate}
+            <div className="w-3/4 flex flex-col gap-1 border-none">
+              <div className="ml-3">
+                <div className="flex flex-row items-center space-x-4">
+                  <Avatar />
+                  <div className="flex flex-col">
+                    <div className="text-slate-900 font-semibold text-md">
+                      {user?.name}
+                    </div>
+                    <div className="text-slate-900 font-normal text-sm">
+                      {user?.email}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-row gap-1 text-slate-900 font-normal text-xs mt-4 ml-10">
+                  <FaRegCalendarAlt />
+                  <span> Joined:</span> {""}
+                  <span className="font-semibold">{formattedDate}</span>
+                </div>
               </div>
             </div>
-            <div className="flex flex-col gap-8 shadow-md">
+            <div className="flex flex-col gap-8 shadow-md mt-5">
               <div className="flex ml-5 flex-row gap-1 items-center cursor-pointer text-slate-700 hover:text-sky-400">
                 <MdManageAccounts size={30} />
                 <div className="text-sm text-center font-semibold mt-2">
