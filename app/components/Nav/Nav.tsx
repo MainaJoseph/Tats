@@ -1,9 +1,7 @@
-// NavBar Component
 "use client";
 
 import Link from "next/link";
 import { Redressed } from "next/font/google";
-import { FcEngineering } from "react-icons/fc";
 import { IoMenu } from "react-icons/io5";
 import { IoMdCloseCircle } from "react-icons/io";
 import { useState } from "react";
@@ -11,7 +9,6 @@ import Container from "../Container";
 import { NavMenu } from "./NavMenu";
 import Search from "../search/Search";
 import Image from "next/image";
-import { useAuth } from "@/hooks/useAuth";
 import { LuLogOut } from "react-icons/lu";
 import { signOut } from "next-auth/react"; // Import the signOut function
 
@@ -27,15 +24,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import AvatarClient from "../AvatarClient";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const redressed = Redressed({ subsets: ["latin"], weight: ["400"] });
 
 const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isAuthenticated, user } = useAuth();
+  const isAuthenticated = useCurrentUser();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleReloadHome = () => {
+    window.location.href = "/";
   };
 
   return (
@@ -45,6 +47,7 @@ const NavBar = () => {
           <div className="flex items-center justify-between gap-3 md:gap-0">
             <Link
               href="/"
+              onClick={handleReloadHome}
               className={`${redressed.className} font-bold text-3xl flex flex-row`}
             >
               Tats
