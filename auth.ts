@@ -7,6 +7,7 @@ import { getUserById } from "./data/user";
 import { db } from "./lib/db";
 import { Role } from "@prisma/client";
 import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation";
+import { getAccountByUserId } from "./lib/account";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
@@ -78,6 +79,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.createdAt = token.createdAt as Date; // Add this line
       }
 
+      if (session.user) {
+        session.user.name = token.name;
+        session.user.email = token.email as string;
+        session.user.isOAuth = token.isOAuth as boolean;
+      }
+
       return session;
     },
 
@@ -89,6 +96,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (!existingUser) return token; // Added check to ensure existingUser is found
 
+      const existingAccount = await getAccountByUserId(existingUser.id); //Await for any existing account
+
+      token.isOAuth = !!existingAccount;
+      token.name = existingUser.name;
+      token.email = existingUser.email;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       token.createdAt = existingUser.createdAt;

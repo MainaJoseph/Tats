@@ -32,6 +32,7 @@ import { FormSuccess } from "@/app/components/form-success";
 
 // Assuming you have a way to get the logged-in user's ID
 import { useSession } from "next-auth/react";
+import SettingsPage from "./settings-page";
 
 export function UpdatedTabs() {
   const { data: session } = useSession();
@@ -111,32 +112,8 @@ export function UpdatedTabs() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                placeholder="Enter your name"
-                style={{ borderRadius: "10px" }}
-              />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                placeholder="Change your username"
-                className="rounded-md"
-                style={{ borderRadius: "10px" }}
-              />
-            </div>
+            <SettingsPage />
           </CardContent>
-          <CardFooter>
-            <Button
-              className="w-full py-2 border-[1px] bg-black text-white hover:bg-slate-700"
-              style={{ borderRadius: "10px" }}
-            >
-              Save changes
-            </Button>
-          </CardFooter>
         </Card>
       </TabsContent>
       <TabsContent value="password">
