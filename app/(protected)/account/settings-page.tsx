@@ -4,8 +4,7 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { settings } from "@/actions/settings";
-import { Button } from "@/components/ui/button";
-import { startTransition, useTransition, useState } from "react";
+import { useTransition, useState } from "react";
 import { useSession } from "next-auth/react";
 
 import { SettingSchema } from "@/schemas";
@@ -28,12 +27,10 @@ import { FormError } from "@/app/components/form-error";
 const SettingsPage = () => {
   const user = useCurrentUser();
 
-  const [error, setError] = useState<string | undefined>();
-  const [success, setSuccess] = useState<string | undefined>();
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
   const { update } = useSession();
   const [isPending, startTransition] = useTransition();
-
-  console.log(user);
 
   //Define our form
   const form = useForm<z.infer<typeof SettingSchema>>({
@@ -41,6 +38,7 @@ const SettingsPage = () => {
     defaultValues: {
       name: user?.name || undefined,
       email: user?.email || undefined,
+      isTwoFactorEnabled: user?.isTwoFactorEnabled || false,
     },
   });
 
