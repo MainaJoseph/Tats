@@ -6,7 +6,7 @@ const AvatarPic = () => {
   const user = useCurrentUser();
   return (
     <div>
-      <Avatar className="p-2">
+      <Avatar className="p-2 rounded-full">
         <AvatarImage src={user?.image || ""} />
         <AvatarFallback className="bg-slate-700">
           <FaUser className="text-white" />
