@@ -10,12 +10,6 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import Avatar from "@/app/components/Avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { TwoFactorClient } from "./enable-client-2fa";
 
 export const AccountProfile = () => {
   const user = useCurrentUser();
@@ -49,33 +43,23 @@ export const AccountProfile = () => {
                   <span> Joined on :</span> {""}
                   <span className="font-semibold">{formattedDate}</span>
                 </div>
-                <Popover>
-                  <PopoverTrigger>
-                    <div className="flex flex-row gap-4 mt-4 ml-10 items-center">
-                      <p className="text-sm font-semibold text-slate-500">
-                        Two Factor Authentication
-                      </p>
-                      <Separator
-                        orientation="vertical"
-                        className="text-slate-900"
-                      />
-                      <Badge
-                        variant={
-                          user?.isTwoFactorEnabled ? "success" : "destructive"
-                        }
-                        className="text-white"
-                      >
-                        {user?.isTwoFactorEnabled ? "ON" : "OFF"}
-                      </Badge>
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className=" bg-slate-600 text-white mt-4"
-                    style={{ borderRadius: "10px" }}
+                <div className="flex flex-row gap-4 mt-4 ml-10 items-center">
+                  <p className="text-sm font-semibold text-slate-500">
+                    Two Factor Authentication
+                  </p>
+                  <Separator
+                    orientation="vertical"
+                    className="text-slate-900"
+                  />
+                  <Badge
+                    variant={
+                      user?.isTwoFactorEnabled ? "success" : "destructive"
+                    }
+                    className="text-white"
                   >
-                    <TwoFactorClient />
-                  </PopoverContent>
-                </Popover>
+                    {user?.isTwoFactorEnabled ? "ON" : "OFF"}
+                  </Badge>
+                </div>
               </div>
             </div>
             <div className="flex flex-col gap-8 shadow-md mt-5">
