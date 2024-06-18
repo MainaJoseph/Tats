@@ -7,7 +7,7 @@ const AvatarPic = () => {
   return (
     <div className="rounded-full">
       <Avatar className="p-2 ">
-        <AvatarImage src={user?.image || ""} />
+        <AvatarImage src={user?.image || ""} className=" rounded-full" />
         <AvatarFallback className="bg-slate-700">
           <FaUser className="text-white" />
         </AvatarFallback>
