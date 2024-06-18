@@ -5,8 +5,8 @@ import { FaUser } from "react-icons/fa";
 const AvatarPic = () => {
   const user = useCurrentUser();
   return (
-    <div>
-      <Avatar className="p-2 rounded-full">
+    <div className="rounded-full">
+      <Avatar className="p-2 ">
         <AvatarImage src={user?.image || ""} />
         <AvatarFallback className="bg-slate-700">
           <FaUser className="text-white" />
