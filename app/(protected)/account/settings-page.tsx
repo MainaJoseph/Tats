@@ -20,6 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScaleLoader } from "react-spinners";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { FormSuccess } from "@/app/components/form-success";
+import { FormError } from "@/app/components/form-error";
 
 const SettingsPage = () => {
   const user = useCurrentUser();
@@ -81,6 +83,8 @@ const SettingsPage = () => {
               )}
             />
           </div>
+          <FormError message={error} />
+          <FormSuccess message={success} />
           <button
             type="submit"
             disabled={isPending}
@@ -99,8 +103,6 @@ const SettingsPage = () => {
               "Save"
             )}
           </button>
-          {error && <div className="text-red-500">{error}</div>}
-          {success && <div className="text-green-500">{success}</div>}
         </form>
       </Form>
     </div>
