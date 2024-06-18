@@ -7,7 +7,7 @@ import { LogoutAccount } from "./logout-account";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { format } from "date-fns";
 import { FaRegCalendarAlt } from "react-icons/fa";
-import Avatar from "@/app/components/Avatar";
+import Avatar from "@/app/components/avatar/Avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 

@@ -23,7 +23,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import AvatarClient from "../AvatarClient";
+import AvatarClient from "../avatar/AvatarClient";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 const redressed = Redressed({ subsets: ["latin"], weight: ["400"] });

@@ -26,10 +26,9 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LuLogOut } from "react-icons/lu";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import AvatarPic from "./Avatar";
+import { LogoutAccount } from "./logout-account";
 
 const AvatarClient = () => {
   return (
@@ -103,17 +102,7 @@ const AvatarClient = () => {
             <span>Support</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="hover:bg-slate-600 cursor-pointer !important">
-            <div className="flex flex-row gap-2">
-              <LuLogOut
-                className="cursor-pointer hover:text-red-500"
-                size={22}
-                onClick={() => signOut()}
-              />
-              <span>Logout</span>
-            </div>
-            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-          </DropdownMenuItem>
+          <LogoutAccount />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
