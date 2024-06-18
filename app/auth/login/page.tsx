@@ -3,7 +3,7 @@ import HomeButton from "@/app/components/auth/home-button";
 
 const LoginPage = () => {
   return (
-    <div className=" flex flex-col md:flex-row gap-20 md:gap-0 ">
+    <div className=" flex flex-col md:flex-row gap-20 ">
       <div>
         <HomeButton />
       </div>
