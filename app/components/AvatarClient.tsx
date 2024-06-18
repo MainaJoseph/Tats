@@ -33,7 +33,7 @@ import Link from "next/link";
 
 const AvatarClient = () => {
   return (
-    <div>
+    <div style={{ borderRadius: "5px" }}>
       <DropdownMenu>
         <DropdownMenuTrigger className="border-none">
           <Avatar />
