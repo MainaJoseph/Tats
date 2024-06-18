@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { Role } from "@prisma/client";
 
 export const NewPasswordSchema = z
   .object({
@@ -30,4 +31,7 @@ export const RegisterSchema = z.object({
 
 export const SettingSchema = z.object({
   name: z.optional(z.string()),
+  isTwoFactorEnabled: z.optional(z.boolean()),
+  role: z.enum([Role.ADMIN, Role.USER]),
+  email: z.optional(z.string().email()),
 });

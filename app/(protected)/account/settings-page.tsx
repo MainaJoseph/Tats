@@ -12,11 +12,13 @@ import { SettingSchema } from "@/schemas";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { ScaleLoader } from "react-spinners";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -38,6 +40,7 @@ const SettingsPage = () => {
     resolver: zodResolver(SettingSchema),
     defaultValues: {
       name: user?.name || undefined,
+      email: user?.email || undefined,
     },
   });
 
@@ -79,9 +82,62 @@ const SettingsPage = () => {
                       style={{ borderRadius: "10px" }}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
+            {user?.isOAuth === false && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className=" font-semibold">Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="youremail@example.com"
+                          type="email"
+                          disabled={isPending}
+                          className=" rounded-md"
+                          style={{ borderRadius: "10px" }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="isTwoFactorEnabled"
+                  render={({ field }) => (
+                    <FormItem
+                      className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm"
+                      style={{ borderRadius: "10px" }}
+                    >
+                      <div className="space-y-0.5">
+                        <FormLabel className="font-semibold">
+                          Two Factor Authentication
+                        </FormLabel>
+                        <FormDescription>
+                          Enable two factor authentication for your account
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          disabled={isPending}
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className=" border-slate-600"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
