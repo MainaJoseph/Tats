@@ -45,3 +45,15 @@ export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
     html: `<p>Your 2FA token is ${token}</p>`,
   });
 };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+//function to send email after password change
+export const sendPasswordChangeEmail = async (email: string) => {
+  await resend.emails.send({
+    from: "onboarding@resend.dev",
+    to: email,
+    subject: "Password Updated",
+    html: `<p>Your Password was successfully updated. If it was not you report or login and change your password immidietely</p>`,
+  });
+};

@@ -5,6 +5,8 @@ import { db } from "@/lib/db";
 import { SettingSchema } from "@/schemas";
 import { getUserByEmail, getUserById } from "@/data/user";
 import { currentUser } from "@/lib/auth";
+import { generateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export const settings = async (values: z.infer<typeof SettingSchema>) => {
   const user = await currentUser();
@@ -33,6 +35,17 @@ export const settings = async (values: z.infer<typeof SettingSchema>) => {
     if (existingUser && existingUser.id !== user.id) {
       return { error: "Emali already in use!" };
     }
+
+    //create a new token for them to verify
+    const verificationToken = await generateVerificationToken(values.email);
+
+    //send verification email
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token
+    );
+
+    return { success: "Verification Email sent" };
   }
 
   await db.user.update({
