@@ -12,7 +12,6 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import Avatar from "./Avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,13 +29,14 @@ import {
 import { LuLogOut } from "react-icons/lu";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import AvatarPic from "./Avatar";
 
 const AvatarClient = () => {
   return (
     <div style={{ borderRadius: "5px" }}>
       <DropdownMenu>
         <DropdownMenuTrigger className="border-none">
-          <Avatar />
+          <AvatarPic />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className="w-56 bg-slate-800 text-white rounded-md"

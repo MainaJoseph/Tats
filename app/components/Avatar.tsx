@@ -1,24 +1,19 @@
-import Image from "next/image";
-import { FaUserCircle } from "react-icons/fa";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { FaUser } from "react-icons/fa";
 
-interface AvatarProps {
-  src?: string | null | undefined;
-}
-
-const Avatar: React.FC<AvatarProps> = ({ src }) => {
-  if (src) {
-    return (
-      <Image
-        src={src}
-        alt="avatar"
-        className="rounded-full"
-        height={40}
-        width={40}
-      />
-    );
-  } else {
-    return <FaUserCircle size={24} />;
-  }
+const AvatarPic = () => {
+  const user = useCurrentUser();
+  return (
+    <div>
+      <Avatar className="p-2">
+        <AvatarImage src={user?.image || ""} />
+        <AvatarFallback className="bg-slate-700">
+          <FaUser className="text-white" />
+        </AvatarFallback>
+      </Avatar>
+    </div>
+  );
 };
 
-export default Avatar;
+export default AvatarPic;
