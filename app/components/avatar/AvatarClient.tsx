@@ -46,7 +46,7 @@ const AvatarClient = () => {
           <DropdownMenuGroup>
             <DropdownMenuItem className="hover:bg-slate-600 cursor-pointer !important">
               <User className="mr-2 h-4 w-4" />
-              <Link href="">Profile</Link>
+              <Link href="/account">Profile</Link>
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
 
