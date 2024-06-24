@@ -5,10 +5,15 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
+import { format } from "date-fns";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import SidebarItem from "./SidebarItem";
 import ClickOutside from "../ClickOutside";
 import { Redressed } from "next/font/google";
+import { Avatar } from "@/components/ui/avatar";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { Badge } from "@/components/ui/badge";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -293,16 +298,21 @@ const menuGroups = [
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const pathname = usePathname();
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
+  const user = useCurrentUser();
+
+  const formattedDate = user?.createdAt
+    ? format(new Date(user.createdAt), "MMM yyyy")
+    : "";
 
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
-        className={`absolute left-0 top-0 z-10 flex h-screen w-75.5 flex-col overflow-y-hidden bg-slate-800 text-white duration-300 ease-linear  lg:static lg:translate-x-0 ${
+        className={`absolute left-0 top-0 z-10 flex h-screen w-105.5 flex-col overflow-y-hidden overflow-x-hidden bg-slate-800 text-white duration-300 ease-linear  lg:static lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* <!-- SIDEBAR HEADER --> */}
-        <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
+        <div className="flex  items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 mt-2 md:mt-4">
           <div className="flex flex-row gap-2">
             {" "}
             <Link
@@ -362,6 +372,32 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           </nav>
           {/* <!-- Sidebar Menu --> */}
         </div>
+        {/* bottom div */}
+        <a
+          href="/account"
+          className="absolute bottom-0 left-0 w-full p-4 cursor-pointer"
+        >
+          <div className="flex flex-col gap-1 mt-1 mb-1 shadow-md">
+            <div className="ml-2 mr-2">
+              <div className="flex flex-row items-center space-x-4">
+                <div className="flex flex-col">
+                  <div className="text-white font-semibold text-md">
+                    {user?.name}
+                  </div>
+                  <div className="text-white font-normal text-sm">
+                    {user?.email}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-row gap-1 text-white font-normal text-xs mt-4">
+                <FaRegCalendarAlt />
+                <span> Joined on :</span> {""}
+                <span className="font-semibold">{formattedDate}</span>
+              </div>
+            </div>
+          </div>
+        </a>
       </aside>
     </ClickOutside>
   );
