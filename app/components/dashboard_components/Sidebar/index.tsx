@@ -306,7 +306,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           <div className="flex flex-row gap-2">
             {" "}
             <Link
-              href="/"
+              href="/dashboard"
               className={`${redressed.className} font-bold text-3xl flex flex-row`}
             >
               Tats
