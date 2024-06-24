@@ -6,6 +6,9 @@ import DropdownUser from "./DropdownUser";
 import Image from "next/image";
 import { IoMenuSharp } from "react-icons/io5";
 import AvatarClient from "../../avatar/AvatarClient";
+import { Redressed } from "next/font/google";
+
+const redressed = Redressed({ subsets: ["latin"], weight: ["400"] });
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
@@ -58,9 +61,18 @@ const Header = (props: {
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
 
-          <Link className="block flex-shrink-0 lg:hidden" href="/">
-            <Image width={32} height={32} src="/tats.png" alt="Logo" />
-          </Link>
+          <div className="flex flex-row gap-2">
+            {" "}
+            <Link
+              href="/dashboard"
+              className={`${redressed.className} font-bold text-3xl flex flex-row text-slate-950`}
+            >
+              Tats
+              <span className="mt-0">
+                <Image src="/tats.png" alt="Tats" width={50} height={50} />
+              </span>
+            </Link>
+          </div>
         </div>
 
         <div className="hidden sm:block">

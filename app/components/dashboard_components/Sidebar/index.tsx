@@ -10,9 +10,8 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import SidebarItem from "./SidebarItem";
 import ClickOutside from "../ClickOutside";
 import { Redressed } from "next/font/google";
-import { Avatar } from "@/components/ui/avatar";
+
 import { FaRegCalendarAlt } from "react-icons/fa";
-import { Badge } from "@/components/ui/badge";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface SidebarProps {
