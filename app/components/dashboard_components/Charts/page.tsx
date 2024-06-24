@@ -1,5 +1,3 @@
-"use client";
-
 import ChartOne from "./ChartOne";
 import ChartTwo from "./ChartTwo";
 import ChartThree from "./ChartThree";
