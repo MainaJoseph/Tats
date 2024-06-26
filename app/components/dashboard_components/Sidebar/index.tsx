@@ -15,9 +15,9 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { IoMenuSharp } from "react-icons/io5";
 import { AiOutlineDash } from "react-icons/ai";
-import { MdOutlineArrowBack, MdOutlineArrowForward } from "react-icons/md";
 import { ImShrink } from "react-icons/im";
 import { CgArrowsShrinkH } from "react-icons/cg";
+import { RxAvatar } from "react-icons/rx";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -377,11 +377,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
             ))}
           </nav>
         </div>
-        {!compactView && (
-          <a
-            href="/account"
-            className="absolute bottom-0 left-0 w-full p-4 cursor-pointer"
-          >
+        <a
+          href="/account"
+          className="absolute bottom-0 left-0 w-full p-4 cursor-pointer"
+        >
+          {!compactView ? (
             <div className="flex flex-col gap-1 mt-1 mb-1 shadow-md">
               <div className="ml-2 mr-2">
                 <div className="flex flex-row justify-between items-start">
@@ -404,8 +404,12 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 </div>
               </div>
             </div>
-          </a>
-        )}
+          ) : (
+            <div className="flex justify-center">
+              <RxAvatar size={24} className="text-white" />
+            </div>
+          )}
+        </a>
       </aside>
     </ClickOutside>
   );
