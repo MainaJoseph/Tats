@@ -81,7 +81,8 @@ export function UpdatedTabs() {
           style={{
             padding: "12px",
             borderRadius: "10px",
-            backgroundColor: activeTab === "account" ? "black" : "transparent",
+            backgroundColor:
+              activeTab === "account" ? "#434c56" : "transparent",
             color: activeTab === "account" ? "white" : "black",
             border: activeTab === "account" ? "none" : "1px solid #87CEEB",
           }}
@@ -94,7 +95,8 @@ export function UpdatedTabs() {
           style={{
             padding: "12px",
             borderRadius: "10px",
-            backgroundColor: activeTab === "password" ? "black" : "transparent",
+            backgroundColor:
+              activeTab === "password" ? "#434c56" : "transparent",
             color: activeTab === "password" ? "white" : "black",
             border: activeTab === "password" ? "none" : "1px solid #87CEEB",
           }}
@@ -189,7 +191,7 @@ export function UpdatedTabs() {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="w-full hover:opacity-90 bg-black text-white py-3 rounded-md font-semibold text-sm"
+                  className="w-full hover:opacity-90 bg-slate-800 text-white py-3 rounded-md font-semibold text-sm"
                   style={{ borderRadius: "10px" }}
                 >
                   {isPending ? (

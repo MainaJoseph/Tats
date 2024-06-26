@@ -14,6 +14,10 @@ import { Redressed } from "next/font/google";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { IoMenuSharp } from "react-icons/io5";
+import { AiOutlineDash } from "react-icons/ai";
+import { MdOutlineArrowBack, MdOutlineArrowForward } from "react-icons/md";
+import { ImShrink } from "react-icons/im";
+import { CgArrowsShrinkH } from "react-icons/cg";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -296,14 +300,13 @@ const menuGroups = [
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
+  const [compactView, setCompactView] = useState(false);
   const handleItemClick = () => {
-    // Close sidebar when a menu item is clicked
     setSidebarOpen(false);
   };
   const pathname = usePathname();
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
   const user = useCurrentUser();
-
   const formattedDate = user?.createdAt
     ? format(new Date(user.createdAt), "MMM yyyy")
     : "";
@@ -311,44 +314,53 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
-        className={`absolute left-0 top-0 z-10 flex h-screen w-105.5 flex-col overflow-y-hidden overflow-x-hidden bg-slate-800 text-white duration-300 ease-linear  lg:static lg:translate-x-0 ${
+        className={`absolute left-0 top-0 z-10 flex h-screen ${
+          compactView ? "w-20" : "w-64"
+        } flex-col overflow-y-hidden bg-slate-800 text-white duration-300 ease-linear lg:static lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* <!-- SIDEBAR HEADER --> */}
-        <div className="flex  items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 mt-2 md:mt-4">
-          <div className="flex flex-row gap-2">
-            {" "}
+        <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 mt-2 md:mt-4">
+          <div className="flex items-center gap-2">
             <Link
               href="/dashboard"
-              className={`${redressed.className} font-bold text-3xl flex flex-row`}
+              className={`${redressed.className} font-bold text-3xl flex items-center`}
             >
-              <span className="mt-0">
-                <Image src="/tatswhite.png" alt="Tats" width={50} height={50} />
-              </span>
-              Tats
+              <Image src="/tatswhite.png" alt="Tats" width={50} height={50} />
+              {!compactView && <span className="ml-2">Tats</span>}
             </Link>
           </div>
-
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-controls="sidebar"
-            className="block lg:hidden"
-          >
-            <IoMenuSharp size={25} />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setCompactView(!compactView)}
+              aria-controls="sidebar"
+              className="hidden lg:block"
+            >
+              {compactView ? (
+                <CgArrowsShrinkH size={25} />
+              ) : (
+                <ImShrink size={17} />
+              )}
+            </button>
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-controls="sidebar"
+              className="block lg:hidden"
+            >
+              <IoMenuSharp size={25} />
+            </button>
+          </div>
         </div>
-        {/* <!-- SIDEBAR HEADER --> */}
 
         <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-          {/* <!-- Sidebar Menu --> */}
           <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
             {menuGroups.map((group, groupIndex) => (
               <div key={groupIndex}>
-                <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
-                  {group.name}
-                </h3>
-
+                {!compactView && (
+                  <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
+                    {group.name}
+                  </h3>
+                )}
                 <ul className="mb-6 flex flex-col gap-1.5">
                   {group.menuItems.map((menuItem, menuIndex) => (
                     <SidebarItem
@@ -356,41 +368,44 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                       item={menuItem}
                       pageName={pageName}
                       setPageName={setPageName}
-                      onClick={handleItemClick} // Pass onClick handler to SidebarItem
+                      onClick={handleItemClick}
+                      compactView={compactView}
                     />
                   ))}
                 </ul>
               </div>
             ))}
           </nav>
-          {/* <!-- Sidebar Menu --> */}
         </div>
-        {/* bottom div */}
-        <a
-          href="/account"
-          className="absolute bottom-0 left-0 w-full p-4 cursor-pointer"
-        >
-          <div className="flex flex-col gap-1 mt-1 mb-1 shadow-md">
-            <div className="ml-2 mr-2">
-              <div className="flex flex-row items-center space-x-4">
-                <div className="flex flex-col">
-                  <div className="text-white font-semibold text-md">
-                    {user?.name}
+        {!compactView && (
+          <a
+            href="/account"
+            className="absolute bottom-0 left-0 w-full p-4 cursor-pointer"
+          >
+            <div className="flex flex-col gap-1 mt-1 mb-1 shadow-md">
+              <div className="ml-2 mr-2">
+                <div className="flex flex-row justify-between items-start">
+                  <div className="flex flex-col">
+                    <div className="text-white font-semibold text-md">
+                      {user?.name}
+                    </div>
+                    <div className="text-white font-normal text-sm">
+                      {user?.email}
+                    </div>
                   </div>
-                  <div className="text-white font-normal text-sm">
-                    {user?.email}
+                  <div className="text-white ml-1">
+                    <AiOutlineDash className="font-bold text-white mr-2" />
                   </div>
                 </div>
-              </div>
-
-              <div className="flex flex-row gap-1 text-white font-normal text-xs mt-4">
-                <FaRegCalendarAlt />
-                <span> Joined on :</span> {""}
-                <span className="font-semibold">{formattedDate}</span>
+                <div className="flex flex-row gap-1 text-white font-normal text-xs mt-4">
+                  <FaRegCalendarAlt />
+                  <span> Joined on :</span>
+                  <span className="font-semibold">{formattedDate}</span>
+                </div>
               </div>
             </div>
-          </div>
-        </a>
+          </a>
+        )}
       </aside>
     </ClickOutside>
   );

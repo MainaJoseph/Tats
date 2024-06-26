@@ -3,9 +3,8 @@ import DefaultLayout from "@/app/components/dashboard_components/Layouts/Default
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title:
-    "Next.js E-commerce Dashboard | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Home for TailAdmin Dashboard Template",
+  title: "Tats dashboard",
+  description: "This is where you can configurethe Tats settings",
 };
 
 export default function SettingsPage() {

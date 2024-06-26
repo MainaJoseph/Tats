@@ -1,10 +1,9 @@
 import React from "react";
 import Link from "next/link";
-
 import { usePathname } from "next/navigation";
 import SidebarDropdown from "./SidebarDropdown";
 
-const SidebarItem = ({ item, pageName, setPageName }: any) => {
+const SidebarItem = ({ item, pageName, setPageName, compactView }: any) => {
   const handleClick = () => {
     const updatedPageName =
       pageName !== item.label.toLowerCase() ? item.label.toLowerCase() : "";
@@ -25,17 +24,19 @@ const SidebarItem = ({ item, pageName, setPageName }: any) => {
 
   return (
     <>
-      <li>
+      <li className="relative">
         <Link
           href={item.route}
           onClick={handleClick}
           className={`${
             isItemActive ? "bg-slate-500 rounded-[11px] dark:bg-meta-4" : ""
-          } group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4`}
+          } group flex items-center ${
+            compactView ? "justify-center" : "gap-2.5"
+          } rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4`}
         >
-          {item.icon}
-          {item.label}
-          {item.children && (
+          <span className="flex items-center">{item.icon}</span>
+          {!compactView && <span>{item.label}</span>}
+          {item.children && !compactView && (
             <svg
               className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
                 pageName === item.label.toLowerCase() && "rotate-180"
@@ -56,13 +57,13 @@ const SidebarItem = ({ item, pageName, setPageName }: any) => {
           )}
         </Link>
 
-        {item.children && (
+        {item.children && !compactView && (
           <div
             className={`translate transform overflow-hidden ${
               pageName !== item.label.toLowerCase() && "hidden"
             }`}
           >
-            <SidebarDropdown item={item.children} />
+            <SidebarDropdown item={item.children} compactView={compactView} />
           </div>
         )}
       </li>
