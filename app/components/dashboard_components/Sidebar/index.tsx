@@ -301,9 +301,25 @@ const menuGroups = [
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const [compactView, setCompactView] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "h") {
+        event.preventDefault();
+        setCompactView(!compactView);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [compactView]);
+
   const handleItemClick = () => {
     setSidebarOpen(false);
   };
+
   const pathname = usePathname();
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
   const user = useCurrentUser();
