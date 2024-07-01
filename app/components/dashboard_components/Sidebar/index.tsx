@@ -170,8 +170,8 @@ const menuGroups = [
             </defs>
           </svg>
         ),
-        label: "Tables",
-        route: "/tables",
+        label: "Transactions",
+        route: "/transactions",
       },
     ],
   },
