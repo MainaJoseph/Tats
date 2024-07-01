@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import DarkModeSwitcher from "./DarkModeSwitcher";
 import DropdownMessage from "./DropdownMessage";
@@ -7,6 +9,10 @@ import Image from "next/image";
 import { IoMenuSharp } from "react-icons/io5";
 import AvatarClient from "../../avatar/AvatarClient";
 import { Redressed } from "next/font/google";
+import { FaArrowDown } from "react-icons/fa";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { SheetSide } from "../../reports_components/report-sheet";
+// Import the SheetSide component
 
 const redressed = Redressed({ subsets: ["latin"], weight: ["400"] });
 
@@ -90,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
             <DropdownMessage />
             {/* <!-- Chat Notification Area --> */}
           </ul>
-
+          <SheetSide /> {/* Add the SheetSide component here */}
           {/* <!-- User Area --> */}
           <AvatarClient />
           {/* <!-- User Area --> */}
