@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { IoMdArrowDropdown } from "react-icons/io";
+import Image from "next/image";
 
 export function SheetSide() {
   return (
@@ -24,7 +25,10 @@ export function SheetSide() {
       </SheetTrigger>
       <SheetContent side="top" className="bg-white text-slate-800">
         <SheetHeader>
-          <SheetTitle className="font-bold">Tats Report</SheetTitle>
+          <SheetTitle className="flex flex-row items-center font-bold">
+            <Image src="/tats.png" alt="Tats" width={40} height={40} />
+            Tats Report
+          </SheetTitle>
           <SheetDescription className="font-semibold">
             Explore our Latest & Advanced Reporting tool
           </SheetDescription>
