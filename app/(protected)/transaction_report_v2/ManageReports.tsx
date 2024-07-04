@@ -49,7 +49,7 @@ const ManageReports: React.FC = () => {
       const formattedEndDate = selectedDateRange[1]?.format("YYYY-MM-DD");
 
       const response = await axios.get(
-        "http://20.4.219.173:8800/transactions",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions`,
         {
           params: {
             fromDateTime: `${formattedStartDate}T00:00:00`,

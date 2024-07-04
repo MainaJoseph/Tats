@@ -39,7 +39,7 @@ const TransactionClient: React.FC = () => {
       console.log("Fetching transactions for date:", formattedDate);
 
       const response = await axios.get(
-        `http://20.4.219.173:8800/transactions?fromDate=${formattedDate}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions?fromDate=${formattedDate}`
       );
       // console.log("API response:", response.data);
 
