@@ -207,7 +207,7 @@ const ManageReports: React.FC = () => {
               paginationModel: { page: 0, pageSize: 9 },
             },
           }}
-          pageSizeOptions={[9, 20, 50, 100, 200]}
+          pageSizeOptions={[9, 20, 50, 100]}
           checkboxSelection
           disableRowSelectionOnClick
         />

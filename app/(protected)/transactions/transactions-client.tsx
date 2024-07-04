@@ -100,7 +100,7 @@ const TransactionClient: React.FC = () => {
               paginationModel: { page: 0, pageSize: 9 },
             },
           }}
-          pageSizeOptions={[9, 20]}
+          pageSizeOptions={[9, 20, 50, 100]}
           checkboxSelection
           disableRowSelectionOnClick
         />
