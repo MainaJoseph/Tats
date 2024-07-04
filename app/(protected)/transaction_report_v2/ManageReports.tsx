@@ -47,11 +47,6 @@ const ManageReports: React.FC = () => {
     try {
       const formattedStartDate = selectedDateRange[0]?.format("YYYY-MM-DD");
       const formattedEndDate = selectedDateRange[1]?.format("YYYY-MM-DD");
-      //   console.log(
-      //     "Fetching transactions for date range:",
-      //     formattedStartDate,
-      //     formattedEndDate
-      //   );
 
       const response = await axios.get(
         "http://20.4.219.173:8800/transactions",
@@ -62,7 +57,6 @@ const ManageReports: React.FC = () => {
           },
         }
       );
-      //   console.log("API response:", response.data);
 
       // Extract and map transactions data
       const mappedTransactions = response.data.map((item: any) => ({
