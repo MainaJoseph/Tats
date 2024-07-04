@@ -1,5 +1,6 @@
 import DefaultLayout from "@/app/components/dashboard_components/Layouts/DefaultLayout";
 import { Metadata } from "next";
+import ManageReports from "./ManageReports";
 
 export const metadata: Metadata = {
   title: "Tats Transactions Detailed Report",
@@ -10,7 +11,9 @@ export default function TransactionReportV2Page() {
   return (
     <>
       <DefaultLayout>
-        <div>hello</div>
+        <div>
+          <ManageReports />
+        </div>
       </DefaultLayout>
     </>
   );
