@@ -46,7 +46,9 @@ export function SheetSide() {
             <div>
               <h2 className="font-bold text-lg mb-2">Detailed Reports</h2>
               <ul className="list-disc list-inside cursor-pointer">
-                <li className="hover:underline">Transactions Reports V2</li>
+                <li className="hover:underline hover:font-semibold">
+                  <a href="/transaction_report_v2">Transactions Reports V2</a>
+                </li>
                 <li className="hover:underline">Inventory Report</li>
                 <li className="hover:underline">Performance Report</li>
               </ul>
