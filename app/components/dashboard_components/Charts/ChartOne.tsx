@@ -18,8 +18,19 @@ interface ChartOneState {
   data: number[];
 }
 
-const getCurrentDate = () => {
+const getCurrentDateTime = () => {
   const date = new Date();
+  return date.toISOString().slice(0, 19).replace("T", " "); // returns YYYY-MM-DD HH:mm:ss format
+};
+
+const getPastDate = (daysAgo: number) => {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  return date.toISOString().split("T")[0]; // returns YYYY-MM-DD format
+};
+
+const getStartOfYearDate = () => {
+  const date = new Date(new Date().getFullYear(), 0, 1);
   return date.toISOString().split("T")[0]; // returns YYYY-MM-DD format
 };
 
@@ -27,7 +38,7 @@ const getDailyCategories = () => {
   const date = new Date();
   const hours = Array.from(
     { length: date.getHours() + 1 },
-    (_, i) => `${i}:00`
+    (_, i) => `${i.toString().padStart(2, "0")}:00`
   );
   return hours;
 };
@@ -55,61 +66,55 @@ const getMonthlyCategories = () => {
   return months;
 };
 
-const ChartOne: React.FC = () => {
+const ChartOne: React.FC<{ onSumCountChange: (sumCount: number) => void }> = ({
+  onSumCountChange,
+}) => {
   const [series, setSeries] = useState<ChartOneState[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [timeFrame, setTimeFrame] = useState<string>("day");
 
   const fetchData = async (timeFrame: string) => {
-    const currentDate = getCurrentDate();
+    const currentDateTime = getCurrentDateTime();
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     let url = "";
     let newCategories: string[] = [];
-    let fromDateTime = currentDate;
+    let fromDateTime = currentDateTime;
 
     switch (timeFrame) {
       case "day":
-        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDate}`;
+        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDateTime}`;
         newCategories = getDailyCategories();
         break;
       case "week":
-        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=day`;
+        fromDateTime = getPastDate(7);
+        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=day&fromDateTime=${fromDateTime}&toDateTime=${currentDateTime}`;
         newCategories = getWeeklyCategories();
         break;
       case "month":
-        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=month&fromDateTime=${currentDate}`;
+        fromDateTime = getStartOfYearDate();
+        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=month&fromDateTime=${fromDateTime}&toDateTime=${currentDateTime}`;
         newCategories = getMonthlyCategories();
         break;
       default:
-        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDate}`;
+        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDateTime}`;
     }
 
     try {
-      let response = await axios.get(url);
-      let data = response.data;
+      const response = await axios.get(url);
+      const data = response.data;
       const products: string[] = data.products;
       const report: ReportItem[] = data.report;
 
-      if (timeFrame === "week" && report.length > 0) {
-        fromDateTime = report.reduce((earliest, item) => {
-          const itemDate = new Date(item.datetime);
-          return itemDate < new Date(earliest) ? item.datetime : earliest;
-        }, report[0].datetime);
-
-        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=day&fromDateTime=${fromDateTime}&toDateTime=${currentDate}`;
-        response = await axios.get(url);
-        data = response.data;
-      }
-
       const newSeries = products.map((product: string) => ({
         name: product,
-        data: data.report
+        data: report
           .filter((item: ReportItem) => item.productname === product)
           .map((item: ReportItem) => item.amount),
       }));
 
       setSeries(newSeries);
       setCategories(newCategories);
+      onSumCountChange(data.sumCount); // Update sumCount when data changes
     } catch (error) {
       console.error("Error fetching data:", error);
     }
