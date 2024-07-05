@@ -76,7 +76,7 @@ const ECommerce: React.FC = () => {
         </CardDataStats>
 
         <CardDataStats
-          title="Sum Count"
+          title="Customers Served"
           total={sumCount.toString()}
           rate=""
           levelUp
