@@ -62,25 +62,26 @@ const ChartOne: React.FC = () => {
 
   const fetchData = async (timeFrame: string) => {
     const currentDate = getCurrentDate();
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     let url = "";
     let newCategories: string[] = [];
     let fromDateTime = currentDate;
 
     switch (timeFrame) {
       case "day":
-        url = `https://tats.phan-tec.com/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDate}`;
+        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDate}`;
         newCategories = getDailyCategories();
         break;
       case "week":
-        url = `https://tats.phan-tec.com/reports/v2/2?clientId=2&reportType=day`;
+        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=day`;
         newCategories = getWeeklyCategories();
         break;
       case "month":
-        url = `https://tats.phan-tec.com/reports/v2/2?clientId=2&reportType=month&fromDateTime=${currentDate}`;
+        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=month&fromDateTime=${currentDate}`;
         newCategories = getMonthlyCategories();
         break;
       default:
-        url = `https://tats.phan-tec.com/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDate}`;
+        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDate}`;
     }
 
     try {
@@ -95,7 +96,7 @@ const ChartOne: React.FC = () => {
           return itemDate < new Date(earliest) ? item.datetime : earliest;
         }, report[0].datetime);
 
-        url = `https://tats.phan-tec.com/reports/v2/2?clientId=2&reportType=day&fromDateTime=${fromDateTime}&toDateTime=${currentDate}`;
+        url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=day&fromDateTime=${fromDateTime}&toDateTime=${currentDate}`;
         response = await axios.get(url);
         data = response.data;
       }
