@@ -14,11 +14,11 @@ import { MdCalendarToday } from "react-icons/md";
 interface Transaction {
   id: number;
   fdcName: string;
-  fdcNumber: string;
+  // fdcNumber: string;
   fdcDateTime: string;
   productName: string;
   price: number;
-  volume: number;
+  // volume: number;
   amount: number;
 }
 
@@ -47,11 +47,11 @@ const TransactionClient: React.FC = () => {
       const mappedTransactions = response.data.map((item: any) => ({
         id: item.id,
         fdcName: item.fdcName,
-        fdcNumber: item.fdcNumber,
+        // fdcNumber: item.fdcNumber,
         fdcDateTime: item.fdcDateTime,
         productName: item.productName,
         price: item.price,
-        volume: item.volume,
+        // volume: item.volume,
         amount: item.amount,
       }));
 
@@ -71,11 +71,11 @@ const TransactionClient: React.FC = () => {
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "fdcName", headerName: "FDC Name", width: 150 },
-    { field: "fdcNumber", headerName: "FDC Number", width: 100 },
+    // { field: "fdcNumber", headerName: "FDC Number", width: 100 },
     { field: "fdcDateTime", headerName: "FDC DateTime", width: 250 },
     { field: "productName", headerName: "Product Name", width: 150 },
     { field: "price", headerName: "Price", width: 150 },
-    { field: "volume", headerName: "Volume", width: 150 },
+    // { field: "volume", headerName: "Volume", width: 150 },
     { field: "amount", headerName: "Amount", width: 150 },
   ];
 
