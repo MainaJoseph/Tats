@@ -317,7 +317,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [compactView]);
+  }, [compactView, setCompactView]);
 
   useEffect(() => {
     setSidebarOpen(false); // Close sidebar on route change
