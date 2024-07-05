@@ -4,13 +4,11 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-
 import { format } from "date-fns";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import SidebarItem from "./SidebarItem";
 import ClickOutside from "../ClickOutside";
 import { Redressed } from "next/font/google";
-
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { IoMenuSharp } from "react-icons/io5";
@@ -304,7 +302,7 @@ const menuGroups = [
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
-  const [compactView, setCompactView] = useState(false);
+  const [compactView, setCompactView] = useLocalStorage("compactView", false);
   const pathname = usePathname(); // Hook to get the current path
 
   useEffect(() => {
