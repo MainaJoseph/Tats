@@ -64,6 +64,7 @@ const ChartOne: React.FC = () => {
     const currentDate = getCurrentDate();
     let url = "";
     let newCategories: string[] = [];
+    let fromDateTime = currentDate;
 
     switch (timeFrame) {
       case "day":
@@ -71,7 +72,7 @@ const ChartOne: React.FC = () => {
         newCategories = getDailyCategories();
         break;
       case "week":
-        url = `https://tats.phan-tec.com/reports/v2/2?clientId=2&reportType=day&fromDateTime=${currentDate}`;
+        url = `https://tats.phan-tec.com/reports/v2/2?clientId=2&reportType=day`;
         newCategories = getWeeklyCategories();
         break;
       case "month":
@@ -83,14 +84,25 @@ const ChartOne: React.FC = () => {
     }
 
     try {
-      const response = await axios.get(url);
-      const data = response.data;
+      let response = await axios.get(url);
+      let data = response.data;
       const products: string[] = data.products;
       const report: ReportItem[] = data.report;
 
+      if (timeFrame === "week" && report.length > 0) {
+        fromDateTime = report.reduce((earliest, item) => {
+          const itemDate = new Date(item.datetime);
+          return itemDate < new Date(earliest) ? item.datetime : earliest;
+        }, report[0].datetime);
+
+        url = `https://tats.phan-tec.com/reports/v2/2?clientId=2&reportType=day&fromDateTime=${fromDateTime}&toDateTime=${currentDate}`;
+        response = await axios.get(url);
+        data = response.data;
+      }
+
       const newSeries = products.map((product: string) => ({
         name: product,
-        data: report
+        data: data.report
           .filter((item: ReportItem) => item.productname === product)
           .map((item: ReportItem) => item.amount),
       }));
@@ -116,7 +128,7 @@ const ChartOne: React.FC = () => {
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#3C50E0", "#80CAEE"],
+    colors: ["#80CAEE", "#3C50E0"], // Inverted colors
     chart: {
       fontFamily: "Satoshi, sans-serif",
       height: 335,
@@ -173,7 +185,7 @@ const ChartOne: React.FC = () => {
     markers: {
       size: 4,
       colors: "#fff",
-      strokeColors: ["#3056D3", "#80CAEE"],
+      strokeColors: ["#80CAEE", "#3C50E0"], // Inverted colors
       strokeWidth: 3,
       strokeOpacity: 0.9,
       strokeDashArray: 0,
@@ -207,26 +219,7 @@ const ChartOne: React.FC = () => {
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8">
       <div className="flex flex-wrap items-start justify-between gap-3 sm:flex-nowrap">
-        <div className="flex w-full flex-wrap gap-3 sm:gap-5">
-          <div className="flex min-w-47.5">
-            <span className="mr-2 mt-1 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-primary">
-              <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-primary"></span>
-            </span>
-            <div className="w-full">
-              <p className="font-semibold text-primary">Total Revenue</p>
-              <p className="text-sm font-medium">12.04.2022 - 12.05.2022</p>
-            </div>
-          </div>
-          <div className="flex min-w-47.5">
-            <span className="mr-2 mt-1 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-secondary">
-              <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-secondary"></span>
-            </span>
-            <div className="w-full">
-              <p className="font-semibold text-secondary">Total Sales</p>
-              <p className="text-sm font-medium">12.04.2022 - 12.05.2022</p>
-            </div>
-          </div>
-        </div>
+        <div className="flex w-full flex-wrap gap-3 sm:gap-5"></div>
         <div className="flex w-full max-w-45 justify-end">
           <div className="inline-flex items-center rounded-md bg-whiter p-1.5 dark:bg-meta-4">
             <button
