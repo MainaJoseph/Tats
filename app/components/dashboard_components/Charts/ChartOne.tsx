@@ -227,7 +227,7 @@ const ChartOne: React.FC = () => {
                 timeFrame === "day"
                   ? "bg-blue-500 text-white"
                   : "bg-white text-black"
-              } hover:bg-blue-700 hover:text-white`}
+              } hover:bg-blue-300 hover:text-white`}
               onClick={() => handleTimeFrameChange("day")}
             >
               Day
@@ -237,7 +237,7 @@ const ChartOne: React.FC = () => {
                 timeFrame === "week"
                   ? "bg-blue-500 text-white"
                   : "bg-white text-black"
-              } hover:bg-blue-700 hover:text-white`}
+              } hover:bg-blue-300 hover:text-white`}
               onClick={() => handleTimeFrameChange("week")}
             >
               Week
@@ -247,7 +247,7 @@ const ChartOne: React.FC = () => {
                 timeFrame === "month"
                   ? "bg-blue-500 text-white"
                   : "bg-white text-black"
-              } hover:bg-blue-700 hover:text-white`}
+              } hover:bg-blue-300 hover:text-white`}
               onClick={() => handleTimeFrameChange("month")}
             >
               Month
