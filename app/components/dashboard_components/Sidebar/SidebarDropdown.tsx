@@ -2,7 +2,20 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const SidebarDropdown = ({ item, compactView }: any) => {
+interface ChildMenuItem {
+  label: string;
+  route: string;
+}
+
+interface SidebarDropdownProps {
+  item: ChildMenuItem[];
+  compactView: boolean;
+}
+
+const SidebarDropdown: React.FC<SidebarDropdownProps> = ({
+  item,
+  compactView,
+}) => {
   const pathname = usePathname();
 
   return (
@@ -12,7 +25,7 @@ const SidebarDropdown = ({ item, compactView }: any) => {
           compactView ? "pl-2" : "pl-6"
         }`}
       >
-        {item.map((subItem: any, index: number) => (
+        {item.map((subItem, index) => (
           <li key={index}>
             <Link
               href={subItem.route}
