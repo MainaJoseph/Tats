@@ -76,12 +76,14 @@ const ChartOne: React.FC<{
   onProductSumAmountsChange: (
     productSumAmounts: Record<string, number>
   ) => void;
+  onProductSumCountChange: (productSumCount: Record<string, number>) => void;
 }> = ({
   onSumCountChange,
   onSumVolumeChange,
   onProductSumVolumesChange,
   onSumAmountChange,
   onProductSumAmountsChange,
+  onProductSumCountChange,
 }) => {
   const [series, setSeries] = useState<ChartOneState[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -133,6 +135,7 @@ const ChartOne: React.FC<{
       onProductSumVolumesChange(data.productSumVolumes); // Update productSumVolumes when data changes
       onSumAmountChange(data.sumAmount); // Update sumAmount when data changes
       onProductSumAmountsChange(data.productSumAmounts); // Update productSumAmounts when data changes
+      onProductSumCountChange(data.productSumCount); // Update productSumCounts when data changes
     } catch (error) {
       console.error("Error fetching data:", error);
     }

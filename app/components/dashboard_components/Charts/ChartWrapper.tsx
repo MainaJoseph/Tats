@@ -16,6 +16,9 @@ const ChartWrapper: React.FC = () => {
   const [productSumAmounts, setProductSumAmounts] = useState<
     Record<string, number>
   >({});
+  const [productSumCount, setProductSumCount] = useState<
+    Record<string, number>
+  >({});
 
   const handleSumCountChange = (newSumCount: number) => {
     setSumCount(newSumCount);
@@ -41,6 +44,12 @@ const ChartWrapper: React.FC = () => {
     setProductSumAmounts(newProductSumAmounts);
   };
 
+  const handleProductSumCountChange = (
+    newProductSumCount: Record<string, number>
+  ) => {
+    setProductSumCount(newProductSumCount);
+  };
+
   return (
     <>
       <Breadcrumb pageName="Chart" />
@@ -52,6 +61,7 @@ const ChartWrapper: React.FC = () => {
           onProductSumVolumesChange={handleProductSumVolumesChange}
           onSumAmountChange={handleSumAmountChange}
           onProductSumAmountsChange={handleProductSumAmountsChange}
+          onProductSumCountChange={handleProductSumCountChange}
         />
         <ChartTwo />
         <ChartThree />
