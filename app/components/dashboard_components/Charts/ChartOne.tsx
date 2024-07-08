@@ -66,9 +66,13 @@ const getMonthlyCategories = () => {
   return months;
 };
 
-const ChartOne: React.FC<{ onSumCountChange: (sumCount: number) => void }> = ({
-  onSumCountChange,
-}) => {
+const ChartOne: React.FC<{
+  onSumCountChange: (sumCount: number) => void;
+  onSumVolumeChange: (sumVolume: number) => void;
+  onProductSumVolumesChange: (
+    productSumVolumes: Record<string, number>
+  ) => void;
+}> = ({ onSumCountChange, onSumVolumeChange, onProductSumVolumesChange }) => {
   const [series, setSeries] = useState<ChartOneState[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [timeFrame, setTimeFrame] = useState<string>("day");
@@ -115,6 +119,8 @@ const ChartOne: React.FC<{ onSumCountChange: (sumCount: number) => void }> = ({
       setSeries(newSeries);
       setCategories(newCategories);
       onSumCountChange(data.sumCount); // Update sumCount when data changes
+      onSumVolumeChange(data.sumVolume); // Update sumVolume when data changes
+      onProductSumVolumesChange(data.productSumVolumes); // Update productSumVolumes when data changes
     } catch (error) {
       console.error("Error fetching data:", error);
     }
