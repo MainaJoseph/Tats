@@ -12,6 +12,11 @@ const truncateToTwoDecimals = (num: number): string => {
   return num.toFixed(2);
 };
 
+// Format number with commas as thousand separators
+const formatNumberWithCommas = (num: number): string => {
+  return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 const ECommerce: React.FC = () => {
   const [sumCount, setSumCount] = useState<number>(0);
   const [sumVolume, setSumVolume] = useState<number>(0);
@@ -64,7 +69,7 @@ const ECommerce: React.FC = () => {
         </CardDataStats>
         <CardDataStats
           title="Amount Stats"
-          total={`Total Amount: ${truncateToTwoDecimals(sumAmount)}`}
+          total={`Total Amount: ${formatNumberWithCommas(sumAmount)}`}
           rate=""
           levelDown
         >
@@ -96,7 +101,8 @@ const ECommerce: React.FC = () => {
             <div className="flex flex-row gap-3 items-start justify-start font-bold">
               {Object.keys(productSumAmounts).map((product) => (
                 <div key={product} className="mr-4">
-                  {product}: {truncateToTwoDecimals(productSumAmounts[product])}
+                  {product}:{" "}
+                  {formatNumberWithCommas(productSumAmounts[product])}
                 </div>
               ))}
             </div>
