@@ -19,7 +19,7 @@ interface SidebarItemProps {
   item: MenuItem;
   pageName: string;
   setPageName: (name: string) => void;
-  onClick: () => void; // Add the onClick property here
+  onClick: () => void;
   compactView: boolean;
 }
 
@@ -27,14 +27,17 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   item,
   pageName,
   setPageName,
-  onClick, // Add the onClick prop here
+  onClick,
   compactView,
 }) => {
   const handleClick = () => {
     const updatedPageName =
       pageName !== item.label.toLowerCase() ? item.label.toLowerCase() : "";
     setPageName(updatedPageName);
-    onClick(); // Call the onClick function
+    onClick();
+    if (item.route) {
+      window.location.href = item.route; // Refresh the page by setting the window location
+    }
   };
 
   const pathname = usePathname();
