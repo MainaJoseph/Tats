@@ -156,7 +156,10 @@ const ChartTwo: React.FC = () => {
       <div className="mb-4 justify-between gap-4  sm:flex ">
         <div>
           <h4 className="text-xl font-semibold text-black dark:text-white">
-            Profit this week
+            {selectedWeek === "This Week"
+              ? "Products this week"
+              : "Products last week"}
+            {/* If this week is selected and Product Last week if last week is selected */}
           </h4>
         </div>
         <div>
