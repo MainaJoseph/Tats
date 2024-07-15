@@ -51,6 +51,15 @@ const menuGroups = [
         ],
       },
       {
+        icon: <MdFormatListBulletedAdd className="text-white" size={22} />,
+        label: "Manage Stations",
+        route: "#",
+        children: [
+          { label: "Stations", route: "/forms/form-elements" },
+          { label: "Add stations", route: "/add_stations" },
+        ],
+      },
+      {
         icon: <MdOutlineCalendarMonth className="text-white" size={22} />,
         label: "Calendar",
         route: "/calendar",
@@ -59,15 +68,6 @@ const menuGroups = [
         icon: <IoMdPersonAdd className="text-white" size={22} />,
         label: "Profile",
         route: "/profile",
-      },
-      {
-        icon: <MdFormatListBulletedAdd className="text-white" size={22} />,
-        label: "Forms",
-        route: "#",
-        children: [
-          { label: "Form Elements", route: "/forms/form-elements" },
-          { label: "Form Layout", route: "/forms/form-layout" },
-        ],
       },
     ],
   },
@@ -137,7 +137,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
         className={`absolute left-0 top-0 z-10 flex h-screen ${
-          compactView ? "w-20" : "w-64"
+          compactView ? "w-20" : "w-76"
         } flex-col overflow-y-hidden bg-slate-800 text-white duration-300 ease-linear lg:static lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
