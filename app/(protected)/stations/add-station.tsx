@@ -7,8 +7,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { StationSchema, StationData } from "../../../schemas/index";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { ScaleLoader } from "react-spinners";
 
 const AddStationForm: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const { toast } = useToast();
   const {
     register,
@@ -25,6 +29,7 @@ const AddStationForm: React.FC = () => {
   });
 
   const onSubmit = async (data: StationData) => {
+    setIsLoading(true);
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL_STATION_ID}/stations`,
@@ -35,18 +40,14 @@ const AddStationForm: React.FC = () => {
           client: { id: 1 },
         }
       );
-      // console.log("Station added successfully:", response.data);
-      reset(); // Reset form after successful submission
-      // Show success message
-
+      reset();
       toast({
         title: "Station Added Successfully",
-        description: `${data.name} has been added to the system.`,
+        description: `${data.name} has been added to the Tats.`,
         className: "bg-slate-800 text-white rounded-md",
       });
     } catch (error) {
       console.error("Error adding station:", error);
-      // Show error message
       toast({
         title: "Error Adding Station",
         description:
@@ -54,6 +55,8 @@ const AddStationForm: React.FC = () => {
         variant: "destructive",
         className: "bg-slate-800 text-white rounded-md",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -125,7 +128,17 @@ const AddStationForm: React.FC = () => {
         className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-300"
         style={{ borderRadius: "10px" }}
       >
-        Add Station
+        {isLoading ? (
+          <ScaleLoader
+            height={15}
+            width={2}
+            radius={2}
+            margin={2}
+            color="white"
+          />
+        ) : (
+          "Add Station"
+        )}
       </button>
     </form>
   );
