@@ -35,3 +35,14 @@ export const SettingSchema = z.object({
   // role: z.enum([Role.ADMIN, Role.USER]),
   email: z.optional(z.string().email()),
 });
+
+// New StationSchema
+export const StationSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  location: z.string().min(1, { message: "Location is required" }),
+  nozzleIdentifierName: z.enum(["pumpAddress", "nozzle"], {
+    required_error: "Nozzle Identifier Name is required",
+  }),
+});
+
+export type StationData = z.infer<typeof StationSchema>;
