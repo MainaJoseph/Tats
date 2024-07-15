@@ -1,11 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ChartOne from "../Charts/ChartOne";
 import ChartThree from "../Charts/ChartThree";
 import ChartTwo from "../Charts/ChartTwo";
 import ChatCard from "../Chat/ChatCard";
 import TableOne from "../Tables/TableOne";
 import CardDataStats from "../CardDataStats";
+import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonCard } from "../../SkeletonCard";
 
 // Truncate function to round off to two decimal places
 const truncateToTwoDecimals = (num: number): string => {
@@ -18,6 +20,7 @@ const formatNumberWithCommas = (num: number): string => {
 };
 
 const ECommerce: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [sumCount, setSumCount] = useState<number>(0);
   const [sumVolume, setSumVolume] = useState<number>(0);
   const [sumAmount, setSumAmount] = useState<number>(0);
@@ -30,6 +33,24 @@ const ECommerce: React.FC = () => {
   const [productSumCount, setProductSumCount] = useState<
     Record<string, number>
   >({});
+
+  useEffect(() => {
+    // Simulate a fetch call
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+      </div>
+    );
+  }
 
   return (
     <>

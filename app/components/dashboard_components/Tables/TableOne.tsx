@@ -61,7 +61,7 @@ const TableOne = () => {
               NAME
             </h5>
           </div>
-          <div className="p-2.5 text-center xl:p-5">
+          <div className="p-2.5 text-start xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               LOCATION
             </h5>
