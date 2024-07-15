@@ -1,17 +1,19 @@
 import DefaultLayout from "@/app/components/dashboard_components/Layouts/DefaultLayout";
 import { Metadata } from "next";
-import AddStationForm from "./add-station";
+import StationsClient from "./stations-client";
 
 export const metadata: Metadata = {
-  title: "Add station",
-  description: "Add stations here",
+  title: "View station",
+  description: "View and Manage stations here",
 };
 
 export default function AddStations() {
   return (
     <>
       <DefaultLayout>
-        <AddStationForm />
+        <div>
+          <StationsClient />
+        </div>
       </DefaultLayout>
     </>
   );

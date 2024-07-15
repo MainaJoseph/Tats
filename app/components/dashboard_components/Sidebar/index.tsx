@@ -55,7 +55,7 @@ const menuGroups = [
         label: "Manage Stations",
         route: "#",
         children: [
-          { label: "Stations", route: "/forms/form-elements" },
+          { label: "Stations", route: "/stations" },
           { label: "Add stations", route: "/add_stations" },
         ],
       },
