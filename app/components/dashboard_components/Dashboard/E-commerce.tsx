@@ -11,6 +11,7 @@ import { BsFuelPumpDieselFill } from "react-icons/bs";
 import { MdAttachMoney } from "react-icons/md";
 import { FaUserFriends } from "react-icons/fa";
 import { BiHide } from "react-icons/bi";
+import TableTwo from "../Tables/TableTwo";
 
 // Truncate function to round off to two decimal places
 const truncateToTwoDecimals = (num: number): string => {
@@ -157,7 +158,11 @@ const ECommerce: React.FC = () => {
         <div className="col-span-12 xl:col-span-8">
           <TableOne />
         </div>
+
         <ChatCard />
+        {/* <div className="col-span-12 xl:col-span-12">
+          <TableTwo />
+        </div> */}
       </div>
     </>
   );

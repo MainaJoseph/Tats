@@ -152,7 +152,10 @@ const ChartTwo: React.FC = () => {
   };
 
   return (
-    <div className="col-span-12 rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+    <div
+      className="col-span-12 rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4"
+      style={{ borderRadius: "10px" }}
+    >
       <div className="mb-4 flex justify-between items-center gap-4 sm:flex-row">
         <h4 className="text-xl font-semibold text-black dark:text-white">
           {selectedWeek === "This Week"
