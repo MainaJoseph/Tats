@@ -1,120 +1,122 @@
-import { BRAND } from "@/types/dashboard_types/brand";
-import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-const brandData: BRAND[] = [
-  {
-    logo: "/images/brand/brand-01.svg",
-    name: "Google",
-    visitors: 3.5,
-    revenues: "5,768",
-    sales: 590,
-    conversion: 4.8,
-  },
-  {
-    logo: "/images/brand/brand-02.svg",
-    name: "Twitter",
-    visitors: 2.2,
-    revenues: "4,635",
-    sales: 467,
-    conversion: 4.3,
-  },
-  {
-    logo: "/images/brand/brand-03.svg",
-    name: "Github",
-    visitors: 2.1,
-    revenues: "4,290",
-    sales: 420,
-    conversion: 3.7,
-  },
-  {
-    logo: "/images/brand/brand-04.svg",
-    name: "Vimeo",
-    visitors: 1.5,
-    revenues: "3,580",
-    sales: 389,
-    conversion: 2.5,
-  },
-  {
-    logo: "/images/brand/brand-05.svg",
-    name: "Facebook",
-    visitors: 3.5,
-    revenues: "6,768",
-    sales: 390,
-    conversion: 4.2,
-  },
-];
+interface Station {
+  id: number;
+  name: string;
+  location: string;
+  nozzleIdentifierName: string;
+  pumps: {
+    [key: string]: {
+      nozzles: {
+        id: string;
+        label: string;
+      }[];
+      rdgIndex: string;
+    };
+  };
+  client: {
+    id: number;
+  };
+}
 
 const TableOne = () => {
+  const [stations, setStations] = useState<Station[]>([]);
+  const [showAll, setShowAll] = useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchStations = async () => {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      try {
+        const response = await fetch(`${apiBaseUrl}/clients/2/stations`);
+        const data: Station[] = await response.json();
+        setStations(data);
+      } catch (error) {
+        console.error("Failed to fetch stations", error);
+      }
+    };
+
+    fetchStations();
+  }, []);
+
+  const displayedStations = showAll ? stations : stations.slice(0, 5);
+
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-        Top Channels
+        Station Details
       </h4>
 
       <div className="flex flex-col">
-        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
+        <div className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
           <div className="p-2.5 xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Source
+              STATION ID
+            </h5>
+          </div>
+          <div className="p-2.5 text-start xl:p-5">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              NAME
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Visitors
+              LOCATION
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Revenues
+              NUMBER OF PUMPS
             </h5>
           </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
+          <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Sales
-            </h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Conversion
+              NOZZLE IDENTIFIER
             </h5>
           </div>
         </div>
 
-        {brandData.map((brand, key) => (
+        {displayedStations.map((station) => (
           <div
-            className={`grid grid-cols-3 sm:grid-cols-5 ${
-              key === brandData.length - 1
-                ? ""
-                : "border-b border-stroke dark:border-strokedark"
-            }`}
-            key={key}
+            className="grid grid-cols-5 border-b border-stroke dark:border-strokedark"
+            key={station.id}
           >
             <div className="flex items-center gap-3 p-2.5 xl:p-5">
-              <div className="flex-shrink-0">
-                <Image src={brand.logo} alt="Brand" width={48} height={48} />
-              </div>
-              <p className="hidden text-black dark:text-white sm:block">
-                {brand.name}
+              <p className="text-black dark:text-white">{station.id}</p>
+            </div>
+
+            <div className="flex items-start justify-start p-2.5 xl:p-5">
+              <p className="text-black dark:text-white">{station.name}</p>
+            </div>
+
+            <div className="flex items-center justify-center p-2.5 xl:p-5">
+              <p className="text-black dark:text-white">{station.location}</p>
+            </div>
+
+            <div className="flex items-center justify-center p-2.5 xl:p-5">
+              <p className="text-black dark:text-white">
+                {Object.keys(station.pumps).length}
               </p>
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{brand.visitors}K</p>
-            </div>
-
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-meta-3">${brand.revenues}</p>
-            </div>
-
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-black dark:text-white">{brand.sales}</p>
-            </div>
-
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-meta-5">{brand.conversion}%</p>
+              <p className="text-black dark:text-white">
+                {station.nozzleIdentifierName}
+              </p>
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="mt-4 flex justify-center">
+        <button
+          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
+          onClick={() => router.push("/manage_stations")}
+        >
+          Show All Details
+        </button>
       </div>
     </div>
   );
