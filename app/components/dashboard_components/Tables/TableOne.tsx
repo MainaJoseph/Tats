@@ -28,9 +28,9 @@ const TableOne = () => {
 
   useEffect(() => {
     const fetchStations = async () => {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL_STATION_ID;
       try {
-        const response = await fetch(`${apiBaseUrl}/clients/2/stations`);
+        const response = await fetch(`${apiBaseUrl}/stations`);
         const data: Station[] = await response.json();
         setStations(data);
       } catch (error) {
