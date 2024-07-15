@@ -14,7 +14,7 @@ interface Station {
       }[];
       rdgIndex: string;
     };
-  };
+  } | null; // Change this to allow null
   client: {
     id: number;
   };
@@ -97,10 +97,11 @@ const TableOne = () => {
             <div className="flex items-center justify-center p-2.5 xl:p-5">
               <p className="text-black dark:text-white">{station.location}</p>
             </div>
-
             <div className="flex items-center justify-center p-2.5 xl:p-5">
               <p className="text-black dark:text-white">
-                {Object.keys(station.pumps).length}
+                {station.pumps && Object.keys(station.pumps).length > 0
+                  ? Object.keys(station.pumps).length
+                  : "No pumps available"}
               </p>
             </div>
 
