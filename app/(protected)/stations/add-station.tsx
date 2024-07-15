@@ -35,7 +35,7 @@ const AddStationForm: React.FC = () => {
           client: { id: 1 },
         }
       );
-      console.log("Station added successfully:", response.data);
+      // console.log("Station added successfully:", response.data);
       reset(); // Reset form after successful submission
       // Show success message
 
