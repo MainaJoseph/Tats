@@ -21,6 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import AddStationModal from "./add-station-modal";
 
 interface Station {
   id: number;
@@ -44,6 +46,7 @@ interface Station {
 const StationsClient = () => {
   const [stations, setStations] = useState<Station[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -102,13 +105,6 @@ const StationsClient = () => {
     onGlobalFilterChange: setGlobalFilter,
   });
 
-  const handleAddStation = () => {
-    // Implement the logic to add a new station
-    console.log("Add station button clicked");
-    // You might want to navigate to a new page or open a modal here
-    // For example: router.push('/add-station');
-  };
-
   return (
     <div
       className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1"
@@ -119,13 +115,23 @@ const StationsClient = () => {
       </h4>
 
       <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <Button
-          onClick={handleAddStation}
-          className="bg-blue-500 hover:bg-blue-600 text-white sm:order-2"
-          style={{ borderRadius: "5px" }}
-        >
-          Add Station
-        </Button>
+        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+          <DialogTrigger asChild>
+            <Button
+              className="bg-blue-500 hover:bg-blue-600 text-white sm:order-2"
+              style={{ borderRadius: "5px" }}
+              onClick={() => setIsAddModalOpen(true)}
+            >
+              Add Station
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className="sm:max-w-[425px] bg-white text-slate-900 rounded-md"
+            style={{ borderRadius: "5px" }}
+          >
+            <AddStationModal onClose={() => setIsAddModalOpen(false)} />
+          </DialogContent>
+        </Dialog>
         <Input
           placeholder="Search stations..."
           value={globalFilter ?? ""}
