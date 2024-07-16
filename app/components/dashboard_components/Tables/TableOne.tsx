@@ -117,7 +117,9 @@ const TableOne = () => {
       <div className="mt-4 flex justify-center">
         <button
           className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700 shadow-md"
-          onClick={() => router.push("/manage_stations")}
+          onClick={() => {
+            window.location.href = "/stations";
+          }}
         >
           Show All Details
         </button>
