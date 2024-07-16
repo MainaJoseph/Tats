@@ -1,4 +1,5 @@
 "use client";
+
 import Loader from "@/app/components/Loader";
 // import "jsvectormap/dist/jsvectormap.css";
 // import "flatpickr/dist/flatpickr.min.css";
