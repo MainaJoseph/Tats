@@ -11,6 +11,14 @@ const redressed = Redressed({ subsets: ["latin"], weight: ["400"] });
 export default function NotFound() {
   const router = useRouter();
 
+  const handleGoBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
   const handleGoHome = () => {
     router.push("/");
   };
@@ -44,14 +52,22 @@ export default function NotFound() {
                   Page Not Found
                 </h2>
                 <p className="text-white text-lg font-mono">
-                  Your search has ventured beyond the known universe.
+                  Your search has ventured beyond our known universe.
                 </p>
-                <button
-                  onClick={handleGoHome}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-6 rounded-full hover:opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 shadow-lg"
-                >
-                  Return to Home
-                </button>
+                <div className="flex flex-row gap-12">
+                  <button
+                    onClick={handleGoBack}
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-6 rounded-full hover:opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 shadow-lg"
+                  >
+                    Go Back
+                  </button>
+                  <button
+                    onClick={handleGoHome}
+                    className="bg-gradient-to-r from-purple-600 to-blue-500 text-white font-bold py-3 px-6 rounded-full hover:opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 shadow-lg"
+                  >
+                    Go Home
+                  </button>
+                </div>
               </div>
               <div className="w-full md:w-1/2 mt-8 md:mt-0">
                 <Image
