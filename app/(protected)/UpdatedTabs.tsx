@@ -32,7 +32,7 @@ import { FormSuccess } from "@/app/components/form-success";
 
 // Assuming you have a way to get the logged-in user's ID
 import { useSession } from "next-auth/react";
-import SettingsPage from "./settings-page";
+import SettingsPage from "./account/settings-page";
 
 export function UpdatedTabs() {
   const { data: session } = useSession();

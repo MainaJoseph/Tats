@@ -2,14 +2,15 @@
 
 import Container from "@/app/components/Container";
 import { MdManageAccounts } from "react-icons/md";
-import { UpdatedTabs } from "./UpdatedTabs";
-import { LogoutAccount } from "./logout-account";
+
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { format } from "date-fns";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import Avatar from "@/app/components/avatar/Avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { LogoutAccount } from "./logout-account";
+import { UpdatedTabs } from "../UpdatedTabs";
 
 export const AccountProfile = () => {
   const user = useCurrentUser();
