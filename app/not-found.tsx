@@ -3,45 +3,67 @@
 import Image from "next/image";
 import Container from "./components/Container";
 import { useRouter } from "next/navigation";
+import { Redressed } from "next/font/google";
+import Link from "next/link";
 
-export default function Notfound() {
-  const router = useRouter(); // Initialize the useRouter hook
+const redressed = Redressed({ subsets: ["latin"], weight: ["400"] });
+
+export default function NotFound() {
+  const router = useRouter();
 
   const handleGoHome = () => {
-    router.push("/"); // Navigate to the homepage when the button is clicked
+    router.push("/");
   };
+
   return (
-    <div className="md:mt-10">
+    <div className="min-h-screen flex items-center justify-center bg-slate-950">
       <Container>
-        <div className="flex flex-row md:flex-row justify-between mt-3">
-          <div className="flex flex-col gap-4 md:flex md:justify-start md:w-1/2 ">
-            <div className="font-bold text-3xl md:text-7xl mt-7 md:mt-14">
-              404-error
-            </div>
-            <div className="md:ml-10 font-semibold text-md md:text-3xl">
-              PAGE NOT FOUND
-            </div>
-            <div className="text-slate-800">
-              Your search has ventures beyound the known universe
-            </div>
-            <div className="mt-4 md:mt-10 items-center">
-              <button
-                onClick={handleGoHome}
-                className="bg-black text-white py-2 md:py-3 px-4 md:w-full rounded-tl-xl rounded-br-xl hover:opacity-80 transition  shadow-xl"
+        <div className="bg-gradient-to-r from-slate-700 to-slate-950 text-white rounded-lg shadow-2xl overflow-hidden">
+          <div className="p-8">
+            <div className="flex flex-row items-center">
+              <Image
+                src="/tatswhite.png"
+                alt="Logo"
+                width={100}
+                height={100}
+                className="object-contain "
+              />
+              <Link
+                href="/"
+                className={`${redressed.className} font-bold text-5xl flex items-center text-white`}
               >
-                Go Back Home
-              </button>
+                Tats
+              </Link>
             </div>
-          </div>
-          {/* ////////////////////////////////// */}
-          <div className="w-full mb-3 md:mt-4 md:mb-[-50px] md:z-10">
-            <Image
-              className="mx-auto max-w-full h-auto"
-              src="/astro.png"
-              alt="Nova app"
-              width={400}
-              height={500}
-            />
+            <div className="flex flex-col md:flex-row items-center justify-between">
+              <div className="md:w-1/2 space-y-6">
+                <h1 className="font-bold text-4xl md:text-6xl text-white tracking-tight">
+                  404 Error
+                </h1>
+                <h2 className="font-semibold text-2xl md:text-3xl text-white">
+                  Page Not Found
+                </h2>
+                <p className="text-white text-lg font-mono">
+                  Your search has ventured beyond the known universe.
+                </p>
+                <button
+                  onClick={handleGoHome}
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-6 rounded-full hover:opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 shadow-lg"
+                >
+                  Return to Home
+                </button>
+              </div>
+              <div className="w-full md:w-1/2 mt-8 md:mt-0">
+                <Image
+                  className="mx-auto max-w-full h-auto object-cover rounded-lg shadow-md "
+                  src="/astro.png"
+                  alt="Lost in space"
+                  width={500}
+                  height={500}
+                  priority
+                />
+              </div>
+            </div>
           </div>
         </div>
       </Container>
