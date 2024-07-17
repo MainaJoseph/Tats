@@ -116,9 +116,8 @@ const PumpsPageClient = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   whileHover={{ scale: 1.03 }}
-                  onClick={() => setSelectedPump(index)}
                 >
-                  <Card className="border-0 shadow-lg rounded-xl overflow-hidden bg-white/80 hover:shadow-2xl transition-all duration-300 cursor-pointer">
+                  <Card className="border-0 shadow-lg rounded-xl overflow-hidden bg-white/80 hover:shadow-2xl transition-all duration-300">
                     <CardContent className="p-6">
                       <div className="flex flex-col items-center mb-6">
                         <h2 className="text-4xl font-bold text-slate-600 mb-4">
@@ -150,6 +149,29 @@ const PumpsPageClient = () => {
                             </span>
                           </div>
                         ))}
+                      </div>
+                      <div className="flex justify-between mt-4 space-x-2">
+                        <Button
+                          onClick={() => setSelectedPump(index)}
+                          className="bg-sky-400 hover:bg-sky-600 text-white flex-1"
+                          style={{ borderRadius: "6px" }}
+                        >
+                          Details
+                        </Button>
+                        <Button
+                          onClick={() => {}}
+                          className="bg-blue-600 hover:bg-blue-800 text-white flex-1"
+                          style={{ borderRadius: "6px" }}
+                        >
+                          Transactions
+                        </Button>
+                        <Button
+                          onClick={() => {}}
+                          className="bg-yellow-400 hover:bg-yellow-600 text-white flex-1"
+                          style={{ borderRadius: "6px" }}
+                        >
+                          Remap
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
