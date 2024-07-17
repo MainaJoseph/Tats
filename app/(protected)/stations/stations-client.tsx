@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import AddStationModal from "./add-station-modal";
+import { BsFillFuelPumpDieselFill } from "react-icons/bs";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Station {
   id: number;
@@ -48,6 +50,7 @@ const StationsClient = () => {
   const [globalFilter, setGlobalFilter] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchStations = async () => {
@@ -91,7 +94,32 @@ const StationsClient = () => {
       accessorKey: "nozzleIdentifierName",
       header: "NOZZLE IDENTIFIER",
     },
+    {
+      id: "actions",
+      cell: ({ row }) => (
+        <Button
+          onClick={() => handleViewPumps(row.original)}
+          className="bg-green-500 hover:bg-green-600 text-white"
+          style={{ borderRadius: "5px" }}
+        >
+          <BsFillFuelPumpDieselFill />
+        </Button>
+      ),
+    },
   ];
+
+  const handleViewPumps = (station: Station) => {
+    if (!station.pumps || Object.keys(station.pumps).length === 0) {
+      toast({
+        title: "No Pumps Available",
+        description: `Station ${station.name} has no pumps.`,
+        variant: "destructive",
+        className: "bg-slate-800 text-white",
+      });
+    } else {
+      router.push(`/stations/${encodeURIComponent(station.name)}/pumps`);
+    }
+  };
 
   const table = useReactTable({
     data: stations,
