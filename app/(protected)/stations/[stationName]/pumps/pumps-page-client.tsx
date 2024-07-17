@@ -38,13 +38,17 @@ const PumpsPageClient = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedPump, setSelectedPump] = useState<number | null>(null);
 
+  const stationName = Array.isArray(params.stationName)
+    ? params.stationName.join(" ")
+    : params.stationName;
+
   useEffect(() => {
     const fetchPumpDetails = async () => {
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       setIsLoading(true);
       try {
         const response = await fetch(
-          `${apiBaseUrl}/stations/pumps/${params.stationName}`
+          `${apiBaseUrl}/stations/pumps/${encodeURIComponent(stationName)}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch pump details");
@@ -53,7 +57,9 @@ const PumpsPageClient = () => {
         if (data.pumps.length === 0) {
           toast({
             title: "No Pumps Available",
-            description: `Station ${params.stationName} has no pumps.`,
+            description: `Station ${decodeURIComponent(
+              stationName
+            )} has no pumps.`,
             variant: "destructive",
           });
           router.back();
@@ -68,10 +74,10 @@ const PumpsPageClient = () => {
       }
     };
 
-    if (params.stationName) {
+    if (stationName) {
       fetchPumpDetails();
     }
-  }, [params.stationName, router, toast]);
+  }, [stationName, router, toast]);
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
@@ -95,7 +101,7 @@ const PumpsPageClient = () => {
             Back to Stations
           </Button>
           <h1 className="text-5xl font-bold mb-8 text-slate-700 text-center">
-            Pump Details for {params.stationName}
+            Pump Details for {decodeURIComponent(stationName)}
           </h1>
         </motion.div>
         {pumpDetails && (
