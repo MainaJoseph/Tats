@@ -4,17 +4,29 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { Card, CardContent } from "@/components/ui/card";
+import { BsFillFuelPumpDieselFill, BsDropletFill } from "react-icons/bs";
+import { motion, AnimatePresence } from "framer-motion";
+
+interface Nozzle {
+  id: string;
+  label: string;
+}
+
+interface Pump {
+  label: string;
+  rdgIndex: string;
+  nozzles: Nozzle[];
+}
 
 interface PumpDetails {
   nozzleIdentifierName: string;
-  pumps: {
-    label: string;
-    rdgIndex: string;
-    nozzles: {
-      id: string;
-      label: string;
-    }[];
-  }[];
+  pumps: Pump[];
+}
+
+interface PumpModalProps {
+  pump: Pump;
+  onClose: () => void;
 }
 
 const PumpsPageClient = () => {
@@ -24,6 +36,7 @@ const PumpsPageClient = () => {
   const [pumpDetails, setPumpDetails] = useState<PumpDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedPump, setSelectedPump] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchPumpDetails = async () => {
@@ -59,47 +72,158 @@ const PumpsPageClient = () => {
     }
   }, [params.stationName, router, toast]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Button onClick={() => router.back()} className="mb-4">
-        Back to Stations
-      </Button>
-      <h1 className="text-2xl font-bold mb-4">
-        Pump Details for {params.stationName}
-      </h1>
-      {pumpDetails && (
-        <div>
-          <p className="mb-4">
-            Nozzle Identifier: {pumpDetails.nozzleIdentifierName}
-          </p>
-          <div className="space-y-6">
-            {pumpDetails.pumps.map((pump, index) => (
-              <div key={index} className="border p-4 rounded-lg shadow">
-                <h2 className="text-xl font-semibold mb-2">{pump.label}</h2>
-                <p className="mb-2">RDG Index: {pump.rdgIndex}</p>
-                <h3 className="text-lg font-medium mb-2">Nozzles:</h3>
-                <ul className="list-disc list-inside">
-                  {pump.nozzles.map((nozzle) => (
-                    <li key={nozzle.id}>
-                      {nozzle.label} (ID: {nozzle.id})
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-200 to-purple-200 py-12">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Button
+            onClick={() => router.back()}
+            className="mb-8 bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 transform hover:scale-105"
+            style={{ borderRadius: "6px" }}
+          >
+            Back to Stations
+          </Button>
+          <h1 className="text-5xl font-bold mb-8 text-slate-700 text-center">
+            Pump Details for {params.stationName}
+          </h1>
+        </motion.div>
+        {pumpDetails && (
+          <div>
+            <p className="mb-8 text-xl text-slate-700 font-semibold text-center">
+              Nozzle Identifier: {pumpDetails.nozzleIdentifierName}
+            </p>
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              {pumpDetails.pumps.map((pump, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.03 }}
+                  onClick={() => setSelectedPump(index)}
+                >
+                  <Card className="border-0 shadow-lg rounded-xl overflow-hidden bg-white/80 hover:shadow-2xl transition-all duration-300 cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col items-center mb-6">
+                        <h2 className="text-4xl font-bold text-slate-600 mb-4">
+                          {pump.label}
+                        </h2>
+                        <BsFillFuelPumpDieselFill
+                          size={80}
+                          className="text-blue-500"
+                        />
+                      </div>
+                      <p className="mb-6 text-slate-700 font-semibold text-center">
+                        RDG Index: {pump.rdgIndex}
+                      </p>
+                      <div className="border-t border-blue-200 pt-4">
+                        <h3 className="font-bold mb-4 text-blue-700 text-xl">
+                          Nozzles:
+                        </h3>
+                        {pump.nozzles.map((nozzle) => (
+                          <div
+                            key={nozzle.id}
+                            className="flex justify-between items-center mb-2 bg-blue-50 p-2 rounded hover:bg-blue-100 transition-colors duration-200"
+                          >
+                            <span className="font-semibold text-slate-600 flex items-center">
+                              <BsDropletFill className="mr-2 text-blue-500" />
+                              {nozzle.label}
+                            </span>
+                            <span className="font-mono text-slate-800">
+                              ID: {nozzle.id}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
+      <AnimatePresence>
+        {selectedPump !== null && pumpDetails && (
+          <PumpModal
+            pump={pumpDetails.pumps[selectedPump]}
+            onClose={() => setSelectedPump(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
+
+const PumpModal: React.FC<PumpModalProps> = ({ pump, onClose }) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    onClick={onClose}
+  >
+    <motion.div
+      initial={{ scale: 0.9, y: 50 }}
+      animate={{ scale: 1, y: 0 }}
+      exit={{ scale: 0.9, y: 50 }}
+      className="bg-white rounded-lg p-8 max-w-lg w-full"
+      style={{ borderRadius: "9px" }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <h2 className="text-3xl font-bold text-blue-600 mb-4">
+        {pump.label} Details
+      </h2>
+      <p className="text-xl mb-4">RDG Index: {pump.rdgIndex}</p>
+      <h3 className="text-2xl font-semibold mb-2">Nozzles:</h3>
+      {pump.nozzles.map((nozzle) => (
+        <div key={nozzle.id} className="mb-2">
+          <span className="font-semibold">{nozzle.label}:</span> {nozzle.id}
+        </div>
+      ))}
+      <Button
+        onClick={onClose}
+        className="mt-6 bg-blue-600 hover:bg-blue-700 text-white"
+        style={{ borderRadius: "6px" }}
+      >
+        Close
+      </Button>
+    </motion.div>
+  </motion.div>
+);
+
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center h-screen">
+    <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-blue-500"></div>
+  </div>
+);
+
+interface ErrorMessageProps {
+  message: string;
+}
+
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => (
+  <div className="flex justify-center items-center h-screen">
+    <div
+      className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md"
+      role="alert"
+    >
+      <p className="font-bold">Error</p>
+      <p>{message}</p>
+    </div>
+  </div>
+);
 
 export default PumpsPageClient;
