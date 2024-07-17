@@ -77,7 +77,10 @@ const PumpsPageClient = () => {
   if (error) return <ErrorMessage message={error} />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-200 to-purple-200 py-12">
+    <div
+      className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-200 to-purple-200 py-12"
+      style={{ borderRadius: "6px" }}
+    >
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
