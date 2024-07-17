@@ -40,10 +40,11 @@ const PumpsPageClient = () => {
 
   useEffect(() => {
     const fetchPumpDetails = async () => {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       setIsLoading(true);
       try {
         const response = await fetch(
-          `https://tats.phan-tec.com/stations/pumps/${params.stationName}`
+          `${apiBaseUrl}/stations/pumps/${params.stationName}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch pump details");
@@ -195,7 +196,7 @@ const PumpModal: React.FC<PumpModalProps> = ({ pump, onClose }) => (
       ))}
       <Button
         onClick={onClose}
-        className="mt-6 bg-blue-600 hover:bg-blue-700 text-white"
+        className="mt-6 bg-rose-400 hover:bg-rose-500 text-white"
         style={{ borderRadius: "6px" }}
       >
         Close
