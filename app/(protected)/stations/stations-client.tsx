@@ -23,8 +23,10 @@ import {
 } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import AddStationModal from "./add-station-modal";
+
 import { BsFillFuelPumpDieselFill } from "react-icons/bs";
 import { useToast } from "@/components/ui/use-toast";
+import AddPumpModal from "./AddPumpModal";
 
 interface Station {
   id: number;
@@ -45,10 +47,18 @@ interface Station {
   };
 }
 
+interface ApiError {
+  message: string;
+}
+
+type ErrorType = ApiError | Error;
+
 const StationsClient = () => {
   const [stations, setStations] = useState<Station[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAddPumpModalOpen, setIsAddPumpModalOpen] = useState(false);
+  const [selectedStation, setSelectedStation] = useState<Station | null>(null);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -66,6 +76,24 @@ const StationsClient = () => {
 
     fetchStations();
   }, []);
+
+  const handleViewPumps = (station: Station) => {
+    if (!station.pumps || Object.keys(station.pumps).length === 0) {
+      toast({
+        title: "No Pumps Available",
+        description: `Station ${station.name} has no pumps.`,
+        variant: "destructive",
+        className: "bg-slate-800 text-white",
+      });
+    } else {
+      router.push(`/stations/${encodeURIComponent(station.name)}/pumps`);
+    }
+  };
+
+  const handleAddPump = (station: Station) => {
+    setSelectedStation(station);
+    setIsAddPumpModalOpen(true);
+  };
 
   const columns: ColumnDef<Station>[] = [
     {
@@ -106,20 +134,19 @@ const StationsClient = () => {
         </Button>
       ),
     },
+    {
+      id: "addPump",
+      cell: ({ row }) => (
+        <Button
+          onClick={() => handleAddPump(row.original)}
+          className="bg-blue-500 hover:bg-blue-600 text-white"
+          style={{ borderRadius: "5px" }}
+        >
+          Add Pump
+        </Button>
+      ),
+    },
   ];
-
-  const handleViewPumps = (station: Station) => {
-    if (!station.pumps || Object.keys(station.pumps).length === 0) {
-      toast({
-        title: "No Pumps Available",
-        description: `Station ${station.name} has no pumps.`,
-        variant: "destructive",
-        className: "bg-slate-800 text-white",
-      });
-    } else {
-      router.push(`/stations/${encodeURIComponent(station.name)}/pumps`);
-    }
-  };
 
   const table = useReactTable({
     data: stations,
@@ -238,6 +265,51 @@ const StationsClient = () => {
           Next
         </Button>
       </div>
+
+      <Dialog open={isAddPumpModalOpen} onOpenChange={setIsAddPumpModalOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-white text-slate-900 rounded-md">
+          {selectedStation && (
+            <AddPumpModal
+              stationId={selectedStation.id}
+              onClose={() => setIsAddPumpModalOpen(false)}
+              onAddPump={(pumpData) => {
+                setStations(
+                  stations.map((station) =>
+                    station.id === selectedStation.id
+                      ? {
+                          ...station,
+                          pumps: {
+                            ...station.pumps,
+                            [Object.keys(station.pumps || {}).length + 1]: {
+                              ...pumpData,
+                              rdgIndex: pumpData.rdgIndex.toString(),
+                            },
+                          },
+                        }
+                      : station
+                  )
+                );
+                setIsAddPumpModalOpen(false);
+                toast({
+                  title: "Pump Added",
+                  description:
+                    "The pump has been successfully added to the station.",
+                  variant: "default",
+                  className: "bg-green-500 text-white",
+                });
+              }}
+              onError={(error: ErrorType) => {
+                toast({
+                  title: "Error",
+                  description: `Failed to add pump: ${error.message}`,
+                  variant: "destructive",
+                  className: "bg-red-500 text-white",
+                });
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
