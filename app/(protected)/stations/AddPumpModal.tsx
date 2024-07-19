@@ -11,6 +11,7 @@ import { ScaleLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
 import { AddPumpSchema } from "@/schemas";
 import * as z from "zod";
+import { FormErrorSecond } from "@/app/components/form-error-2";
 
 interface AddPumpModalProps {
   stationId: number;
@@ -49,6 +50,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
     nozzles: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const validateForm = () => {
     try {
@@ -97,6 +99,8 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
     }
 
     setIsLoading(true);
+    setFormError(null);
+
     const pumpData = {
       label,
       rdgIndex: parseInt(rdgIndex, 10),
@@ -107,8 +111,56 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
     };
 
     try {
-      // console.log("Sending data to server:", JSON.stringify(pumpData, null, 2));
+      // Check if pump label or RDG index already exists
+      const checkResponse = await fetch(
+        `https://tats.phan-tec.com/stations/${stationId}/pumps`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
+      console.log("Check response status:", checkResponse.status);
+      console.log("Check response headers:", checkResponse.headers);
+
+      if (!checkResponse.ok) {
+        const errorText = await checkResponse.text();
+        console.error("Check response not OK:", errorText);
+        throw new Error(
+          `Failed to check existing pumps: ${checkResponse.status} ${errorText}`
+        );
+      }
+
+      const responseData = await checkResponse.json();
+      console.log("Existing pumps response:", responseData);
+
+      const existingPumps = responseData.pumps || [];
+
+      const labelExists = existingPumps.some(
+        (pump: any) => pump.label === label
+      );
+      const rdgIndexExists = existingPumps.some(
+        (pump: any) => pump.rdgIndex === rdgIndex
+      );
+
+      if (labelExists || rdgIndexExists) {
+        let errorMessage = "";
+        if (labelExists && rdgIndexExists) {
+          errorMessage = "Pump label and RDG index already exist.";
+        } else if (labelExists) {
+          errorMessage = "Pump label already exists.";
+        } else {
+          errorMessage = "RDG index already exists.";
+        }
+        setFormError(errorMessage);
+        console.log("Setting form error:", errorMessage);
+        setIsLoading(false);
+        return;
+      }
+
+      // If pump doesn't exist, proceed with adding the new pump
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       const response = await fetch(
         `${apiBaseUrl}/station/managePumps/${stationId}`,
@@ -121,10 +173,10 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
         }
       );
 
-      const responseData = await response.json();
+      const addPumpResponseData = await response.json();
 
       if (response.ok) {
-        console.log("Server response:", responseData);
+        console.log("Server response:", addPumpResponseData);
         onAddPump(pumpData);
         onClose();
 
@@ -136,12 +188,14 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
 
         window.location.reload();
       } else {
-        console.error("Server error response:", responseData);
-        if (responseData.reasons) {
-          console.error("Validation reasons:", responseData.reasons);
+        console.error("Server error response:", addPumpResponseData);
+        if (addPumpResponseData.reasons) {
+          console.error("Validation reasons:", addPumpResponseData.reasons);
         }
         throw new Error(
-          responseData.message || responseData.error || "Failed to add pump"
+          addPumpResponseData.message ||
+            addPumpResponseData.error ||
+            "Failed to add pump"
         );
       }
     } catch (error) {
@@ -161,7 +215,6 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
       setIsLoading(false);
     }
   };
-
   return (
     <div
       className="bg-white p-6 rounded-lg shadow-lg"
@@ -250,7 +303,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
           </Button>
         </div>
       </div>
-      <DialogFooter className="mt-6 flex justify-end space-x-2">
+      <DialogFooter className="mt-6 flex flex-col space-y-2">
         <Button
           onClick={handleSubmit}
           className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
@@ -269,6 +322,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
             "Add Pump"
           )}
         </Button>
+        <FormErrorSecond message={formError} />
       </DialogFooter>
     </div>
   );
