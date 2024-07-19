@@ -107,7 +107,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
     };
 
     try {
-      console.log("Sending data to server:", JSON.stringify(pumpData, null, 2));
+      // console.log("Sending data to server:", JSON.stringify(pumpData, null, 2));
 
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       const response = await fetch(
