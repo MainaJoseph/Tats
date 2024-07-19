@@ -112,8 +112,9 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
 
     try {
       // Check if pump label or RDG index already exists
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       const checkResponse = await fetch(
-        `https://tats.phan-tec.com/stations/${stationId}/pumps`,
+        `${apiBaseUrl}/stations/${stationId}/pumps`,
         {
           method: "GET",
           headers: {
@@ -122,8 +123,8 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
         }
       );
 
-      console.log("Check response status:", checkResponse.status);
-      console.log("Check response headers:", checkResponse.headers);
+      // console.log("Check response status:", checkResponse.status);
+      // console.log("Check response headers:", checkResponse.headers);
 
       if (!checkResponse.ok) {
         const errorText = await checkResponse.text();
@@ -134,7 +135,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
       }
 
       const responseData = await checkResponse.json();
-      console.log("Existing pumps response:", responseData);
+      // console.log("Existing pumps response:", responseData);
 
       const existingPumps = responseData.pumps || [];
 
@@ -155,13 +156,13 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
           errorMessage = "RDG index already exists.";
         }
         setFormError(errorMessage);
-        console.log("Setting form error:", errorMessage);
+        // console.log("Setting form error:", errorMessage);
         setIsLoading(false);
         return;
       }
 
       // If pump doesn't exist, proceed with adding the new pump
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
       const response = await fetch(
         `${apiBaseUrl}/station/managePumps/${stationId}`,
         {
@@ -176,7 +177,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
       const addPumpResponseData = await response.json();
 
       if (response.ok) {
-        console.log("Server response:", addPumpResponseData);
+        // console.log("Server response:", addPumpResponseData);
         onAddPump(pumpData);
         onClose();
 
@@ -188,7 +189,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
 
         window.location.reload();
       } else {
-        console.error("Server error response:", addPumpResponseData);
+        // console.error("Server error response:", addPumpResponseData);
         if (addPumpResponseData.reasons) {
           console.error("Validation reasons:", addPumpResponseData.reasons);
         }
@@ -303,27 +304,29 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
           </Button>
         </div>
       </div>
-      <DialogFooter className="mt-6 flex flex-col space-y-2">
-        <Button
-          onClick={handleSubmit}
-          className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-          style={{ borderRadius: "10px" }}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ScaleLoader
-              height={15}
-              width={2}
-              radius={2}
-              margin={2}
-              color="white"
-            />
-          ) : (
-            "Add Pump"
-          )}
-        </Button>
+      <div className="flex flex-col gap-3">
+        <DialogFooter className="mt-6 flex flex-col gap-3">
+          <Button
+            onClick={handleSubmit}
+            className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+            style={{ borderRadius: "10px" }}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ScaleLoader
+                height={15}
+                width={2}
+                radius={2}
+                margin={2}
+                color="white"
+              />
+            ) : (
+              "Add Pump"
+            )}
+          </Button>
+        </DialogFooter>
         <FormErrorSecond message={formError} />
-      </DialogFooter>
+      </div>
     </div>
   );
 };
