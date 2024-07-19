@@ -9,7 +9,7 @@ import AvatarClient from "../../avatar/AvatarClient";
 import { SheetSide } from "../../reports_components/report-sheet";
 import CommandDialogue from "./command-dialogue";
 import BreadcrumbComponent from "../../breed-crumb";
-import { usePathname } from "next/navigation"; // Import usePathname
+import { useParams, usePathname } from "next/navigation"; // Import usePathname
 
 const redressed = Redressed({ subsets: ["latin"], weight: ["400"] });
 
@@ -21,6 +21,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const pathname = usePathname(); // Use usePathname to get the current route
+  const params = useParams(); // Use useParams to get the stationName
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -41,6 +42,11 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
     { name: "Manage Stations", href: "/stations" },
     { name: "Add Stations", href: "/add_stations" },
     { name: "Account Profile", href: "/account" },
+    { name: "Pumps", href: `/stations/${params.stationName}/pumps` },
+    {
+      name: `Station: ${params.stationName}`,
+      href: `/stations/${params.stationName}`,
+    },
   ];
 
   // Determine the current page name based on the route
