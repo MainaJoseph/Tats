@@ -32,6 +32,11 @@ import {
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 
+// Add a custom CSS class for error messages
+const errorMessageStyle = {
+  color: "red",
+};
+
 const AddStationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -129,7 +134,7 @@ const AddStationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   style={{ borderRadius: "10px" }}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage style={errorMessageStyle} />
             </FormItem>
           )}
         />
@@ -147,7 +152,7 @@ const AddStationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   style={{ borderRadius: "10px" }}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage style={errorMessageStyle} />
             </FormItem>
           )}
         />
@@ -177,7 +182,7 @@ const AddStationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   <SelectItem value="nozzle">Nozzle</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
+              <FormMessage style={errorMessageStyle} />
             </FormItem>
           )}
         />

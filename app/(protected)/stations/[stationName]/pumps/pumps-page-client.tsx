@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface Nozzle {
   id: string;
-  label: string;
+  label: string; // Made label optional
 }
 
 interface Pump {
@@ -149,7 +149,7 @@ const PumpsPageClient = () => {
                           >
                             <span className="font-semibold text-slate-600 flex items-center">
                               <BsDropletFill className="mr-2 text-blue-500" />
-                              {nozzle.label}
+                              {nozzle.label || `Nozzle ${nozzle.id}`}
                             </span>
                             <span className="font-mono text-slate-800">
                               ID: {nozzle.id}
@@ -223,7 +223,10 @@ const PumpModal: React.FC<PumpModalProps> = ({ pump, onClose }) => (
       <h3 className="text-2xl font-semibold mb-2">Nozzles:</h3>
       {pump.nozzles.map((nozzle) => (
         <div key={nozzle.id} className="mb-2">
-          <span className="font-semibold">{nozzle.label}:</span> {nozzle.id}
+          <span className="font-semibold">
+            {nozzle.label || `Nozzle ${nozzle.id}`}:
+          </span>{" "}
+          {nozzle.id}
         </div>
       ))}
       <Button

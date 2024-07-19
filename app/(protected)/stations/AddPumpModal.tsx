@@ -21,6 +21,11 @@ interface ApiError {
 
 type ErrorType = ApiError | Error;
 
+interface Nozzle {
+  id: string;
+  label: string;
+}
+
 const AddPumpModal: React.FC<AddPumpModalProps> = ({
   stationId,
   onClose,
@@ -29,15 +34,19 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
 }) => {
   const [label, setLabel] = useState("");
   const [rdgIndex, setRdgIndex] = useState("");
-  const [nozzles, setNozzles] = useState([{ id: "", label: "" }]);
+  const [nozzles, setNozzles] = useState<Nozzle[]>([
+    { id: "1", label: "Side A" },
+  ]);
 
   const handleAddNozzle = () => {
-    setNozzles([...nozzles, { id: "", label: "" }]);
+    const newId = (nozzles.length + 1).toString();
+    const newLabel = `Side ${String.fromCharCode(65 + nozzles.length)}`;
+    setNozzles([...nozzles, { id: newId, label: newLabel }]);
   };
 
-  const handleNozzleChange = (index: number, field: string, value: string) => {
+  const handleNozzleLabelChange = (index: number, newLabel: string) => {
     const updatedNozzles = [...nozzles];
-    updatedNozzles[index] = { ...updatedNozzles[index], [field]: value };
+    updatedNozzles[index].label = newLabel;
     setNozzles(updatedNozzles);
   };
 
@@ -49,19 +58,19 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
   const handleSubmit = async () => {
     const pumpData = {
       label,
-      rdgIndex: parseInt(rdgIndex, 10), // Convert to number
-      nozzles: nozzles.filter((nozzle) => nozzle.id && nozzle.label), // Filter out empty nozzles
+      rdgIndex: parseInt(rdgIndex, 10),
+      nozzles: nozzles.map((nozzle) => ({
+        id: nozzle.id,
+        label: nozzle.label,
+      })),
     };
 
-    console.log(
-      "JSON payload being sent to the API:",
-      JSON.stringify(pumpData, null, 2)
-    );
+    console.log("Sending data to server:", JSON.stringify(pumpData, null, 2));
 
     try {
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       const response = await fetch(
-        `${apiBaseUrl}/stations/${stationId}/pumps`,
+        `${apiBaseUrl}/station/managePumps/${stationId}`,
         {
           method: "POST",
           headers: {
@@ -71,16 +80,20 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
         }
       );
 
+      const responseData = await response.json();
+
       if (response.ok) {
+        console.log("Server response:", responseData);
         onAddPump(pumpData);
         onClose();
       } else {
-        const errorData = await response.json();
-        console.error("Server error response:", errorData);
-        if (errorData.reasons) {
-          console.error("Validation reasons:", errorData.reasons);
+        console.error("Server error response:", responseData);
+        if (responseData.reasons) {
+          console.error("Validation reasons:", responseData.reasons);
         }
-        throw new Error(errorData.message || "Failed to add pump");
+        throw new Error(
+          responseData.message || responseData.error || "Failed to add pump"
+        );
       }
     } catch (error) {
       let errorMessage = "An unknown error occurred.";
@@ -89,8 +102,11 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
       } else if (typeof error === "string") {
         errorMessage = error;
       }
-      console.error("Error submitting pump data:", pumpData);
-      console.error("Error message:", errorMessage);
+      console.error(
+        "Error submitting pump data:",
+        JSON.stringify(pumpData, null, 2)
+      );
+      console.error("Full error object:", error);
       onError({ message: "Error adding pump: " + errorMessage });
     }
   };
@@ -146,19 +162,11 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
             {nozzles.map((nozzle, index) => (
               <div key={index} className="flex gap-2 items-center">
                 <Input
-                  placeholder="Nozzle ID"
-                  value={nozzle.id}
-                  onChange={(e) =>
-                    handleNozzleChange(index, "id", e.target.value)
-                  }
-                  className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  style={{ borderRadius: "10px" }}
-                />
-                <Input
-                  placeholder="Nozzle Label"
+                  type="text"
+                  placeholder={`Nozzle ${index + 1}`}
                   value={nozzle.label}
                   onChange={(e) =>
-                    handleNozzleChange(index, "label", e.target.value)
+                    handleNozzleLabelChange(index, e.target.value)
                   }
                   className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   style={{ borderRadius: "10px" }}

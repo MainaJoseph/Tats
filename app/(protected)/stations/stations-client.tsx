@@ -34,14 +34,13 @@ interface Station {
   location: string;
   nozzleIdentifierName: string;
   pumps: {
-    [key: string]: {
-      nozzles: {
-        id: string;
-        label: string;
-      }[];
-      rdgIndex: string;
-    };
-  } | null;
+    label: string;
+    rdgIndex: string;
+    nozzles: {
+      id: string;
+      label: string;
+    }[];
+  }[];
   client: {
     id: number;
   };
@@ -273,18 +272,19 @@ const StationsClient = () => {
               stationId={selectedStation.id}
               onClose={() => setIsAddPumpModalOpen(false)}
               onAddPump={(pumpData) => {
-                setStations(
-                  stations.map((station) =>
+                setStations((prevStations) =>
+                  prevStations.map((station) =>
                     station.id === selectedStation.id
                       ? {
                           ...station,
-                          pumps: {
-                            ...station.pumps,
-                            [Object.keys(station.pumps || {}).length + 1]: {
-                              ...pumpData,
-                              rdgIndex: pumpData.rdgIndex.toString(),
+                          pumps: [
+                            ...(station.pumps || []),
+                            {
+                              label: pumpData.label,
+                              rdgIndex: pumpData.rdgIndex,
+                              nozzles: pumpData.nozzles,
                             },
-                          },
+                          ],
                         }
                       : station
                   )
