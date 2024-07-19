@@ -8,6 +8,8 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getFilteredRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -58,6 +60,9 @@ const StationsClient = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAddPumpModalOpen, setIsAddPumpModalOpen] = useState(false);
   const [selectedStation, setSelectedStation] = useState<Station | null>(null);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "id", desc: false },
+  ]);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -98,6 +103,8 @@ const StationsClient = () => {
     {
       accessorKey: "id",
       header: "STATION ID",
+      cell: ({ row }) => parseInt(row.getValue("id")),
+      sortingFn: "basic",
     },
     {
       accessorKey: "name",
@@ -153,10 +160,13 @@ const StationsClient = () => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     state: {
       globalFilter,
+      sorting,
     },
     onGlobalFilterChange: setGlobalFilter,
+    onSortingChange: setSorting,
   });
 
   return (
@@ -202,12 +212,25 @@ const StationsClient = () => {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id} className="font-bold">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
+                    {header.isPlaceholder ? null : (
+                      <div
+                        {...{
+                          className: header.column.getCanSort()
+                            ? "cursor-pointer select-none"
+                            : "",
+                          onClick: header.column.getToggleSortingHandler(),
+                        }}
+                      >
+                        {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
+                        {{
+                          asc: " 🔼",
+                          desc: " 🔽",
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    )}
                   </TableHead>
                 ))}
               </TableRow>
