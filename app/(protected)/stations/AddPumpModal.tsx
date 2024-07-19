@@ -8,7 +8,9 @@ import {
 } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import { ScaleLoader } from "react-spinners";
-import { useToast } from "@/components/ui/use-toast"; // Import the useToast hook
+import { useToast } from "@/components/ui/use-toast";
+import { AddPumpSchema } from "@/schemas";
+import * as z from "zod";
 
 interface AddPumpModalProps {
   stationId: number;
@@ -41,6 +43,35 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
     { id: "1", label: "Side A" },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    label: "",
+    rdgIndex: "",
+    nozzles: "",
+  });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const validateForm = () => {
+    try {
+      AddPumpSchema.parse({
+        label,
+        rdgIndex: parseInt(rdgIndex, 10),
+        nozzles,
+      });
+      setErrors({ label: "", rdgIndex: "", nozzles: "" });
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors = { label: "", rdgIndex: "", nozzles: "" };
+        error.errors.forEach((err) => {
+          if (err.path[0] in newErrors) {
+            newErrors[err.path[0] as keyof typeof newErrors] = err.message;
+          }
+        });
+        setErrors(newErrors);
+      }
+      return false;
+    }
+  };
 
   const handleAddNozzle = () => {
     const newId = (nozzles.length + 1).toString();
@@ -60,6 +91,11 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
   };
 
   const handleSubmit = async () => {
+    setIsSubmitted(true);
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
     const pumpData = {
       label,
@@ -70,9 +106,9 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
       })),
     };
 
-    console.log("Sending data to server:", JSON.stringify(pumpData, null, 2));
-
     try {
+      console.log("Sending data to server:", JSON.stringify(pumpData, null, 2));
+
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       const response = await fetch(
         `${apiBaseUrl}/station/managePumps/${stationId}`,
@@ -92,14 +128,12 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
         onAddPump(pumpData);
         onClose();
 
-        // Show success toast
         toast({
           title: "Success",
           description: "Pump added successfully",
           variant: "default",
         });
 
-        // Reload the page
         window.location.reload();
       } else {
         console.error("Server error response:", responseData);
@@ -152,6 +186,9 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             style={{ borderRadius: "10px" }}
           />
+          {isSubmitted && errors.label && (
+            <p className="text-red-500 text-sm mt-1">{errors.label}</p>
+          )}
         </div>
         <div>
           <label
@@ -168,6 +205,9 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             style={{ borderRadius: "10px" }}
           />
+          {isSubmitted && errors.rdgIndex && (
+            <p className="text-red-500 text-sm mt-1">{errors.rdgIndex}</p>
+          )}
         </div>
         <div>
           <h3 className="text-lg font-semibold mb-2">Nozzles</h3>
@@ -198,6 +238,9 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
               </div>
             ))}
           </div>
+          {isSubmitted && errors.nozzles && (
+            <p className="text-red-500 text-sm mt-1">{errors.nozzles}</p>
+          )}
           <Button
             onClick={handleAddNozzle}
             className="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"

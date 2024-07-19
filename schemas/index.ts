@@ -46,3 +46,22 @@ export const StationSchema = z.object({
 });
 
 export type StationData = z.infer<typeof StationSchema>;
+
+// New AddPumpSchema
+export const AddPumpSchema = z.object({
+  label: z.string().min(1, { message: "Pump label is required" }),
+  rdgIndex: z
+    .number()
+    .int()
+    .positive({ message: "RDG index must be a positive integer" }),
+  nozzles: z
+    .array(
+      z.object({
+        id: z.string().min(1, { message: "Nozzle ID is required" }),
+        label: z.string().min(1, { message: "Nozzle label is required" }),
+      })
+    )
+    .min(1, { message: "At least one nozzle is required" }),
+});
+
+export type AddPumpData = z.infer<typeof AddPumpSchema>;
