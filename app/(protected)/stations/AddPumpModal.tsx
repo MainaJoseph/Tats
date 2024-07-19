@@ -7,6 +7,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { X } from "lucide-react";
+import { ScaleLoader } from "react-spinners";
+import { useToast } from "@/components/ui/use-toast"; // Import the useToast hook
 
 interface AddPumpModalProps {
   stationId: number;
@@ -32,11 +34,13 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
   onAddPump,
   onError,
 }) => {
+  const { toast } = useToast();
   const [label, setLabel] = useState("");
   const [rdgIndex, setRdgIndex] = useState("");
   const [nozzles, setNozzles] = useState<Nozzle[]>([
     { id: "1", label: "Side A" },
   ]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAddNozzle = () => {
     const newId = (nozzles.length + 1).toString();
@@ -56,6 +60,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     const pumpData = {
       label,
       rdgIndex: parseInt(rdgIndex, 10),
@@ -86,6 +91,16 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
         console.log("Server response:", responseData);
         onAddPump(pumpData);
         onClose();
+
+        // Show success toast
+        toast({
+          title: "Success",
+          description: "Pump added successfully",
+          variant: "default",
+        });
+
+        // Reload the page
+        window.location.reload();
       } else {
         console.error("Server error response:", responseData);
         if (responseData.reasons) {
@@ -108,6 +123,8 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
       );
       console.error("Full error object:", error);
       onError({ message: "Error adding pump: " + errorMessage });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -192,18 +209,22 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
       </div>
       <DialogFooter className="mt-6 flex justify-end space-x-2">
         <Button
-          onClick={onClose}
-          className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-          style={{ borderRadius: "10px" }}
-        >
-          Cancel
-        </Button>
-        <Button
           onClick={handleSubmit}
           className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
           style={{ borderRadius: "10px" }}
+          disabled={isLoading}
         >
-          Add Pump
+          {isLoading ? (
+            <ScaleLoader
+              height={15}
+              width={2}
+              radius={2}
+              margin={2}
+              color="white"
+            />
+          ) : (
+            "Add Pump"
+          )}
         </Button>
       </DialogFooter>
     </div>
