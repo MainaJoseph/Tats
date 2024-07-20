@@ -7,10 +7,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { BsFillFuelPumpDieselFill, BsDropletFill } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import AddPumpModalClient from "../../add-pump-modal-client";
 
 interface Nozzle {
   id: string;
-  label: string; // Made label optional
+  label: string;
 }
 
 interface Pump {
@@ -20,6 +22,7 @@ interface Pump {
 }
 
 interface PumpDetails {
+  stationId: number;
   nozzleIdentifierName: string;
   pumps: Pump[];
 }
@@ -27,6 +30,16 @@ interface PumpDetails {
 interface PumpModalProps {
   pump: Pump;
   onClose: () => void;
+}
+
+interface ApiError {
+  message: string;
+}
+
+interface NewPumpData {
+  label: string;
+  rdgIndex: string;
+  nozzles: Nozzle[];
 }
 
 const PumpsPageClient = () => {
@@ -37,11 +50,14 @@ const PumpsPageClient = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPump, setSelectedPump] = useState<number | null>(null);
+  const [isAddPumpModalOpen, setIsAddPumpModalOpen] = useState(false);
 
   // Ensure stationName is a string
   const stationName = Array.isArray(params.stationName)
     ? params.stationName.join(" ")
     : params.stationName;
+
+  const decodedStationName = decodeURIComponent(stationName);
 
   useEffect(() => {
     const fetchPumpDetails = async () => {
@@ -58,9 +74,7 @@ const PumpsPageClient = () => {
         if (data.pumps.length === 0) {
           toast({
             title: "No Pumps Available",
-            description: `Station ${decodeURIComponent(
-              stationName
-            )} has no pumps.`,
+            description: `Station ${decodedStationName} has no pumps.`,
             variant: "destructive",
           });
           router.back();
@@ -78,7 +92,11 @@ const PumpsPageClient = () => {
     if (stationName) {
       fetchPumpDetails();
     }
-  }, [stationName, router, toast]);
+  }, [stationName, router, toast, decodedStationName]);
+
+  const handleAddPump = () => {
+    setIsAddPumpModalOpen(true);
+  };
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
@@ -94,15 +112,24 @@ const PumpsPageClient = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Button
-            onClick={() => router.back()}
-            className="mb-8 bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 transform hover:scale-105"
-            style={{ borderRadius: "6px" }}
-          >
-            Back to Stations
-          </Button>
+          <div className="flex justify-between items-center mb-8">
+            <Button
+              onClick={() => router.back()}
+              className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 transform hover:scale-105"
+              style={{ borderRadius: "6px" }}
+            >
+              Back to Stations
+            </Button>
+            <Button
+              onClick={handleAddPump}
+              className="bg-green-500 hover:bg-green-600 text-white transition-all duration-300 transform hover:scale-105"
+              style={{ borderRadius: "6px" }}
+            >
+              Add Pump
+            </Button>
+          </div>
           <h1 className="text-5xl font-bold mb-8 text-slate-700 text-center">
-            Pump Details for {decodeURIComponent(stationName)}
+            Pump Details for {decodedStationName}
           </h1>
         </motion.div>
         {pumpDetails && (
@@ -196,6 +223,39 @@ const PumpsPageClient = () => {
           />
         )}
       </AnimatePresence>
+      <Dialog open={isAddPumpModalOpen} onOpenChange={setIsAddPumpModalOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-white text-slate-900 rounded-md">
+          {pumpDetails && (
+            <AddPumpModalClient
+              stationId={pumpDetails.stationId}
+              stationName={decodedStationName}
+              onClose={() => setIsAddPumpModalOpen(false)}
+              onAddPump={(pumpData: NewPumpData) => {
+                setPumpDetails((prevDetails) => ({
+                  ...prevDetails!,
+                  pumps: [...prevDetails!.pumps, pumpData],
+                }));
+                setIsAddPumpModalOpen(false);
+                toast({
+                  title: "Pump Added",
+                  description:
+                    "The pump has been successfully added to the station.",
+                  variant: "default",
+                  className: "bg-green-500 text-white",
+                });
+              }}
+              onError={(error: ApiError) => {
+                toast({
+                  title: "Error",
+                  description: `Failed to add pump: ${error.message}`,
+                  variant: "destructive",
+                  className: "bg-red-500 text-white",
+                });
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
