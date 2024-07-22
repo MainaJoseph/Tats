@@ -15,7 +15,7 @@ import { FormErrorSecond } from "@/app/components/form-error-2";
 
 interface AddPumpModalClientProps {
   stationId: number;
-  stationName: string; // Added stationName prop
+  stationName: string;
   onClose: () => void;
   onAddPump: (pumpData: any) => void;
   onError: (error: ErrorType) => void;
@@ -34,7 +34,7 @@ interface Nozzle {
 
 const AddPumpModalClient: React.FC<AddPumpModalClientProps> = ({
   stationId,
-  stationName, // Added stationName to destructuring
+  stationName,
   onClose,
   onAddPump,
   onError,
@@ -43,7 +43,7 @@ const AddPumpModalClient: React.FC<AddPumpModalClientProps> = ({
   const [label, setLabel] = useState("");
   const [rdgIndex, setRdgIndex] = useState("");
   const [nozzles, setNozzles] = useState<Nozzle[]>([
-    { id: "1", label: "Side A" },
+    { id: "", label: "Side A" },
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({
@@ -78,14 +78,16 @@ const AddPumpModalClient: React.FC<AddPumpModalClientProps> = ({
   };
 
   const handleAddNozzle = () => {
-    const newId = (nozzles.length + 1).toString();
-    const newLabel = `Side ${String.fromCharCode(65 + nozzles.length)}`;
-    setNozzles([...nozzles, { id: newId, label: newLabel }]);
+    setNozzles([...nozzles, { id: "", label: "" }]);
   };
 
-  const handleNozzleLabelChange = (index: number, newLabel: string) => {
+  const handleNozzleChange = (
+    index: number,
+    field: keyof Nozzle,
+    value: string
+  ) => {
     const updatedNozzles = [...nozzles];
-    updatedNozzles[index].label = newLabel;
+    updatedNozzles[index][field] = value;
     setNozzles(updatedNozzles);
   };
 
@@ -113,7 +115,6 @@ const AddPumpModalClient: React.FC<AddPumpModalClientProps> = ({
     };
 
     try {
-      // Check if pump label or RDG index already exists
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       const checkResponse = await fetch(
         `${apiBaseUrl}/stations/pumps/${encodeURIComponent(stationName)}`,
@@ -157,7 +158,6 @@ const AddPumpModalClient: React.FC<AddPumpModalClientProps> = ({
         return;
       }
 
-      // If pump doesn't exist, proceed with adding the new pump
       const response = await fetch(
         `${apiBaseUrl}/station/managePumps/${stationId}`,
         {
@@ -172,7 +172,6 @@ const AddPumpModalClient: React.FC<AddPumpModalClientProps> = ({
       const addPumpResponseData = await response.json();
 
       if (response.ok) {
-        // console.log("Server response:", addPumpResponseData);
         onAddPump(pumpData);
         onClose();
 
@@ -185,7 +184,6 @@ const AddPumpModalClient: React.FC<AddPumpModalClientProps> = ({
 
         window.location.reload();
       } else {
-        // console.error("Server error response:", addPumpResponseData);
         if (addPumpResponseData.reasons) {
           console.error("Validation reasons:", addPumpResponseData.reasons);
         }
@@ -271,10 +269,20 @@ const AddPumpModalClient: React.FC<AddPumpModalClientProps> = ({
               <div key={index} className="flex gap-2 items-center">
                 <Input
                   type="text"
-                  placeholder={`Nozzle ${index + 1}`}
+                  placeholder={`Nozzle ${index + 1} ID`}
+                  value={nozzle.id}
+                  onChange={(e) =>
+                    handleNozzleChange(index, "id", e.target.value)
+                  }
+                  className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  style={{ borderRadius: "10px" }}
+                />
+                <Input
+                  type="text"
+                  placeholder={`Nozzle ${index + 1} Label`}
                   value={nozzle.label}
                   onChange={(e) =>
-                    handleNozzleLabelChange(index, e.target.value)
+                    handleNozzleChange(index, "label", e.target.value)
                   }
                   className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   style={{ borderRadius: "10px" }}
