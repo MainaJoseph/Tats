@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { ScaleLoader } from "react-spinners";
+import { AiOutlineClose } from "react-icons/ai";
 
 interface Nozzle {
   id: string;
@@ -293,6 +294,14 @@ const PumpModal: React.FC<PumpModalProps> = ({
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const { toast } = useToast();
 
+  const params = useParams();
+
+  const stationName = Array.isArray(params.stationName)
+    ? params.stationName.join(" ")
+    : params.stationName;
+
+  const decodedStationName = decodeURIComponent(stationName);
+
   const handleDeletePump = async () => {
     setIsDeleting(true);
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -308,7 +317,15 @@ const PumpModal: React.FC<PumpModalProps> = ({
         throw new Error("Failed to delete pump");
       }
 
-      // ... rest of the function remains the same
+      // Call the onDeletePump function passed as a prop
+      onDeletePump(pump.rdgIndex);
+      onClose();
+      toast({
+        title: "Pump Deleted",
+        description: "The pump has been successfully deleted.",
+        variant: "default",
+        className: "bg-green-500 text-white",
+      });
     } catch (error) {
       console.error("Error deleting pump:", error);
       toast({
@@ -342,96 +359,87 @@ const PumpModal: React.FC<PumpModalProps> = ({
         >
           <Button
             onClick={onClose}
-            className="absolute top-2 right-2 bg-transparent hover:bg-rose-100 text-rose-500 hover:text-rose-700 p-2 rounded-full transition-colors duration-200"
-            style={{
-              width: "32px",
-              height: "32px",
-              minWidth: "unset",
-              padding: 0,
-            }}
+            className="absolute top-2 right-2 bg-transparent hover:bg-rose-100 text-rose-500 hover:text-rose-700 p-2 rounded-full transition-all duration-200"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            <AiOutlineClose size={24} />
           </Button>
-          <h2 className="text-3xl font-bold text-blue-600 mb-4">
-            {pump.label} Details
-          </h2>
-          <p className="text-xl mb-4">RDG Index: {pump.rdgIndex}</p>
-          <h3 className="text-2xl font-semibold mb-2">Nozzles:</h3>
-          {pump.nozzles.map((nozzle) => (
-            <div key={nozzle.id} className="mb-2">
-              <span className="font-semibold">
-                {nozzle.label || `Nozzle ${nozzle.id}`}:
-              </span>{" "}
-              {nozzle.id}
-            </div>
-          ))}
-          <Button
-            onClick={() => setShowDeleteAlert(true)}
-            className="mt-6 w-full bg-red-500 hover:bg-red-600 text-white transition-colors duration-200"
-            style={{ borderRadius: "6px" }}
-            disabled={isDeleting}
-          >
-            {isDeleting ? (
-              <ScaleLoader
-                height={15}
-                width={2}
-                radius={2}
-                margin={2}
-                color="white"
-              />
-            ) : (
-              "Delete Pump"
-            )}
-          </Button>
-        </motion.div>
-      </motion.div>
-
-      <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
-        <AlertDialogContent
-          className="bg-white text-slate-800 rounded-md"
-          style={{ borderRadius: "10px" }}
-        >
-          <AlertDialogHeader>
-            <AlertDialogTitle className="font-bold">
-              Are you absolutely sure?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete{" "}
-              <span className="font-bold">{pump.label} </span>
-              and remove it from our servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              onClick={() => setShowDeleteAlert(false)}
-              style={{ borderRadius: "6px" }}
-            >
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeletePump}
+          <h2 className="text-2xl font-bold mb-4 text-center">Pump Details</h2>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Label:
+            </label>
+            <p className="p-2 bg-gray-100 rounded-md">{pump.label}</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              RDG Index:
+            </label>
+            <p className="p-2 bg-gray-100 rounded-md">{pump.rdgIndex}</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Nozzles:
+            </label>
+            <ul className="p-2 bg-gray-100 rounded-md">
+              {pump.nozzles.map((nozzle) => (
+                <li
+                  key={nozzle.id}
+                  className="flex justify-between items-center mb-2"
+                >
+                  <span>{nozzle.label || `Nozzle ${nozzle.id}`}</span>
+                  <span>ID: {nozzle.id}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="mt-6 flex justify-end space-x-2">
+            <Button
+              onClick={() => setShowDeleteAlert(true)}
+              className="bg-red-500 hover:bg-red-600 text-white"
               disabled={isDeleting}
-              className="bg-red-500 hover:bg-rose-500/75"
               style={{ borderRadius: "6px" }}
             >
               {isDeleting ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </div>
+        </motion.div>
+      </motion.div>
+      {showDeleteAlert && (
+        <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
+          <AlertDialogContent
+            className="bg-white text-slate-800 rounded-md"
+            style={{ borderRadius: "10px" }}
+          >
+            <AlertDialogHeader>
+              <AlertDialogTitle className="font-bold">
+                Are you absolutely sure?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete{" "}
+                <span className="font-bold">{pump.label} </span> for{" "}
+                <span className="font-bold">{decodedStationName}</span> and
+                remove it from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                onClick={() => setShowDeleteAlert(false)}
+                style={{ borderRadius: "6px" }}
+              >
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeletePump}
+                disabled={isDeleting}
+                className="bg-red-500 hover:bg-rose-500/75"
+                style={{ borderRadius: "6px" }}
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </>
   );
 };
