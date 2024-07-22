@@ -399,7 +399,17 @@ const PumpModal: React.FC<PumpModalProps> = ({
               disabled={isDeleting}
               style={{ borderRadius: "6px" }}
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? (
+                <ScaleLoader
+                  height={15}
+                  width={2}
+                  radius={2}
+                  margin={2}
+                  color="white"
+                />
+              ) : (
+                "Delete"
+              )}
             </Button>
           </div>
         </motion.div>
