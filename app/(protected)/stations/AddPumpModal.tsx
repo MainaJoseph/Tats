@@ -40,9 +40,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
   const { toast } = useToast();
   const [label, setLabel] = useState("");
   const [rdgIndex, setRdgIndex] = useState("");
-  const [nozzles, setNozzles] = useState<Nozzle[]>([
-    { id: "1", label: "Side A" },
-  ]);
+  const [nozzles, setNozzles] = useState<Nozzle[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({
     label: "",
@@ -76,14 +74,16 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
   };
 
   const handleAddNozzle = () => {
-    const newId = (nozzles.length + 1).toString();
-    const newLabel = `Side ${String.fromCharCode(65 + nozzles.length)}`;
-    setNozzles([...nozzles, { id: newId, label: newLabel }]);
+    setNozzles([...nozzles, { id: "", label: "" }]);
   };
 
-  const handleNozzleLabelChange = (index: number, newLabel: string) => {
+  const handleNozzleChange = (
+    index: number,
+    field: keyof Nozzle,
+    value: string
+  ) => {
     const updatedNozzles = [...nozzles];
-    updatedNozzles[index].label = newLabel;
+    updatedNozzles[index][field] = value;
     setNozzles(updatedNozzles);
   };
 
@@ -123,9 +123,6 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
         }
       );
 
-      // console.log("Check response status:", checkResponse.status);
-      // console.log("Check response headers:", checkResponse.headers);
-
       if (!checkResponse.ok) {
         const errorText = await checkResponse.text();
         console.error("Check response not OK:", errorText);
@@ -135,8 +132,6 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
       }
 
       const responseData = await checkResponse.json();
-      // console.log("Existing pumps response:", responseData);
-
       const existingPumps = responseData.pumps || [];
 
       const labelExists = existingPumps.some(
@@ -156,7 +151,6 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
           errorMessage = "RDG index already exists.";
         }
         setFormError(errorMessage);
-        // console.log("Setting form error:", errorMessage);
         setIsLoading(false);
         return;
       }
@@ -177,10 +171,8 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
       const addPumpResponseData = await response.json();
 
       if (response.ok) {
-        // console.log("Server response:", addPumpResponseData);
         onAddPump(pumpData);
         onClose();
-
         toast({
           title: "Success",
           description: "Pump added successfully",
@@ -190,15 +182,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
 
         window.location.reload();
       } else {
-        // console.error("Server error response:", addPumpResponseData);
-        if (addPumpResponseData.reasons) {
-          console.error("Validation reasons:", addPumpResponseData.reasons);
-        }
-        throw new Error(
-          addPumpResponseData.message ||
-            addPumpResponseData.error ||
-            "Failed to add pump"
-        );
+        throw new Error(addPumpResponseData.message || "Failed to add pump");
       }
     } catch (error) {
       let errorMessage = "An unknown error occurred.";
@@ -275,10 +259,20 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
               <div key={index} className="flex gap-2 items-center">
                 <Input
                   type="text"
-                  placeholder={`Nozzle ${index + 1}`}
+                  placeholder={`Nozzle ${index + 1} ID`}
+                  value={nozzle.id}
+                  onChange={(e) =>
+                    handleNozzleChange(index, "id", e.target.value)
+                  }
+                  className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  style={{ borderRadius: "10px" }}
+                />
+                <Input
+                  type="text"
+                  placeholder={`Nozzle ${index + 1} Label`}
                   value={nozzle.label}
                   onChange={(e) =>
-                    handleNozzleLabelChange(index, e.target.value)
+                    handleNozzleChange(index, "label", e.target.value)
                   }
                   className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   style={{ borderRadius: "10px" }}
