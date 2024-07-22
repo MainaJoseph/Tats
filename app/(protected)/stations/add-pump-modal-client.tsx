@@ -182,7 +182,7 @@ const AddPumpModalClient: React.FC<AddPumpModalClientProps> = ({
           className: "bg-green-400 text-white",
         });
 
-        window.location.reload();
+        // window.location.reload();
       } else {
         if (addPumpResponseData.reasons) {
           console.error("Validation reasons:", addPumpResponseData.reasons);
