@@ -185,6 +185,7 @@ const AddPumpModal: React.FC<AddPumpModalProps> = ({
           title: "Success",
           description: "Pump added successfully",
           variant: "default",
+          className: "bg-green-400 text-white",
         });
 
         window.location.reload();

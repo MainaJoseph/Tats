@@ -9,6 +9,17 @@ import { BsFillFuelPumpDieselFill, BsDropletFill } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import AddPumpModalClient from "../../add-pump-modal-client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { ScaleLoader } from "react-spinners";
 
 interface Nozzle {
   id: string;
@@ -29,7 +40,9 @@ interface PumpDetails {
 
 interface PumpModalProps {
   pump: Pump;
+  stationId: number;
   onClose: () => void;
+  onDeletePump: (rdgIndex: string) => void;
 }
 
 interface ApiError {
@@ -52,7 +65,6 @@ const PumpsPageClient = () => {
   const [selectedPump, setSelectedPump] = useState<number | null>(null);
   const [isAddPumpModalOpen, setIsAddPumpModalOpen] = useState(false);
 
-  // Ensure stationName is a string
   const stationName = Array.isArray(params.stationName)
     ? params.stationName.join(" ")
     : params.stationName;
@@ -96,6 +108,16 @@ const PumpsPageClient = () => {
 
   const handleAddPump = () => {
     setIsAddPumpModalOpen(true);
+  };
+
+  const handleDeletePump = (rdgIndex: string) => {
+    setPumpDetails((prevDetails) => {
+      if (!prevDetails) return null;
+      return {
+        ...prevDetails,
+        pumps: prevDetails.pumps.filter((pump) => pump.rdgIndex !== rdgIndex),
+      };
+    });
   };
 
   if (isLoading) return <LoadingSpinner />;
@@ -219,7 +241,9 @@ const PumpsPageClient = () => {
         {selectedPump !== null && pumpDetails && (
           <PumpModal
             pump={pumpDetails.pumps[selectedPump]}
+            stationId={pumpDetails.stationId}
             onClose={() => setSelectedPump(null)}
+            onDeletePump={handleDeletePump}
           />
         )}
       </AnimatePresence>
@@ -260,45 +284,165 @@ const PumpsPageClient = () => {
   );
 };
 
-const PumpModal: React.FC<PumpModalProps> = ({ pump, onClose }) => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-    onClick={onClose}
-  >
-    <motion.div
-      initial={{ scale: 0.9, y: 50 }}
-      animate={{ scale: 1, y: 0 }}
-      exit={{ scale: 0.9, y: 50 }}
-      className="bg-white rounded-lg p-8 max-w-lg w-full"
-      style={{ borderRadius: "9px" }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <h2 className="text-3xl font-bold text-blue-600 mb-4">
-        {pump.label} Details
-      </h2>
-      <p className="text-xl mb-4">RDG Index: {pump.rdgIndex}</p>
-      <h3 className="text-2xl font-semibold mb-2">Nozzles:</h3>
-      {pump.nozzles.map((nozzle) => (
-        <div key={nozzle.id} className="mb-2">
-          <span className="font-semibold">
-            {nozzle.label || `Nozzle ${nozzle.id}`}:
-          </span>{" "}
-          {nozzle.id}
-        </div>
-      ))}
-      <Button
-        onClick={onClose}
-        className="mt-6 bg-rose-400 hover:bg-rose-500 text-white"
-        style={{ borderRadius: "6px" }}
+const PumpModal: React.FC<PumpModalProps> = ({
+  pump,
+  stationId,
+  onClose,
+  onDeletePump,
+}) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const { toast } = useToast();
+
+  const handleDeletePump = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch(
+        `https://tats.phantec.com/station/managePumps/${stationId}/${pump.rdgIndex}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete pump");
+      }
+
+      toast({
+        title: "Pump Deleted",
+        description: `Pump ${pump.label} has been successfully deleted.`,
+        variant: "default",
+        className: "bg-green-500 text-white",
+      });
+
+      onDeletePump(pump.rdgIndex);
+      onClose();
+    } catch (error) {
+      console.error("Error deleting pump:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete pump. Please try again.",
+        variant: "destructive",
+        className: "bg-red-500 text-white",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteAlert(false);
+    }
+  };
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+        onClick={(e) => e.stopPropagation()}
       >
-        Close
-      </Button>
-    </motion.div>
-  </motion.div>
-);
+        <motion.div
+          initial={{ scale: 0.9, y: 50 }}
+          animate={{ scale: 1, y: 0 }}
+          exit={{ scale: 0.9, y: 50 }}
+          className="bg-white rounded-lg p-8 max-w-lg w-full relative"
+          style={{ borderRadius: "9px" }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Button
+            onClick={onClose}
+            className="absolute top-2 right-2 bg-transparent hover:bg-rose-100 text-rose-500 hover:text-rose-700 p-2 rounded-full transition-colors duration-200"
+            style={{
+              width: "32px",
+              height: "32px",
+              minWidth: "unset",
+              padding: 0,
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </Button>
+          <h2 className="text-3xl font-bold text-blue-600 mb-4">
+            {pump.label} Details
+          </h2>
+          <p className="text-xl mb-4">RDG Index: {pump.rdgIndex}</p>
+          <h3 className="text-2xl font-semibold mb-2">Nozzles:</h3>
+          {pump.nozzles.map((nozzle) => (
+            <div key={nozzle.id} className="mb-2">
+              <span className="font-semibold">
+                {nozzle.label || `Nozzle ${nozzle.id}`}:
+              </span>{" "}
+              {nozzle.id}
+            </div>
+          ))}
+          <Button
+            onClick={() => setShowDeleteAlert(true)}
+            className="mt-6 w-full bg-red-500 hover:bg-red-600 text-white transition-colors duration-200"
+            style={{ borderRadius: "6px" }}
+            disabled={isDeleting}
+          >
+            {isDeleting ? (
+              <ScaleLoader
+                height={15}
+                width={2}
+                radius={2}
+                margin={2}
+                color="white"
+              />
+            ) : (
+              "Delete Pump"
+            )}
+          </Button>
+        </motion.div>
+      </motion.div>
+
+      <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
+        <AlertDialogContent
+          className="bg-white text-slate-800 rounded-md"
+          style={{ borderRadius: "10px" }}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-bold">
+              Are you absolutely sure?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete{" "}
+              <span className="font-bold">{pump.label} </span>
+              and remove it from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => setShowDeleteAlert(false)}
+              style={{ borderRadius: "6px" }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeletePump}
+              disabled={isDeleting}
+              className="bg-red-500 hover:bg-rose-500/75"
+              style={{ borderRadius: "6px" }}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+};
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center h-screen">
