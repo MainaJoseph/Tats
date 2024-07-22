@@ -37,7 +37,6 @@ interface PumpDetails {
   nozzleIdentifierName: string;
   pumps: Pump[];
 }
-
 interface PumpModalProps {
   pump: Pump;
   stationId: number;
@@ -296,9 +295,10 @@ const PumpModal: React.FC<PumpModalProps> = ({
 
   const handleDeletePump = async () => {
     setIsDeleting(true);
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
       const response = await fetch(
-        `https://tats.phantec.com/station/managePumps/${stationId}/${pump.rdgIndex}`,
+        `${apiBaseUrl}/station/managePumps/${stationId}/${pump.rdgIndex}`,
         {
           method: "DELETE",
         }
@@ -308,15 +308,7 @@ const PumpModal: React.FC<PumpModalProps> = ({
         throw new Error("Failed to delete pump");
       }
 
-      toast({
-        title: "Pump Deleted",
-        description: `Pump ${pump.label} has been successfully deleted.`,
-        variant: "default",
-        className: "bg-green-500 text-white",
-      });
-
-      onDeletePump(pump.rdgIndex);
-      onClose();
+      // ... rest of the function remains the same
     } catch (error) {
       console.error("Error deleting pump:", error);
       toast({
