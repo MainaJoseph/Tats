@@ -180,14 +180,14 @@ const AddPumpModalClient: React.FC<AddPumpModalClientProps> = ({
           title: "Success",
           description: "Pump added successfully",
           variant: "default",
-          className: "bg-green-400 text-white",
+          className: "bg-green-400text-white",
         });
 
         window.location.reload();
       } else {
         // console.error("Server error response:", addPumpResponseData);
         if (addPumpResponseData.reasons) {
-          // console.error("Validation reasons:", addPumpResponseData.reasons);
+          console.error("Validation reasons:", addPumpResponseData.reasons);
         }
         throw new Error(
           addPumpResponseData.message ||
