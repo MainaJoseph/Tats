@@ -12,7 +12,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { X } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
-import { RemapPumpSchema, RemapPumpData } from "@/schemas"; // Import from schemas file
+import { RemapPumpSchema, RemapPumpData } from "@/schemas";
+import { FormErrorSecond } from "@/app/components/form-error-2";
 
 interface Nozzle {
   id: string;
@@ -46,6 +47,7 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
     control,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<RemapPumpData>({
     resolver: zodResolver(RemapPumpSchema),
     defaultValues: {
@@ -63,7 +65,56 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
   const onSubmit = async (data: RemapPumpData) => {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
-      const response = await fetch(
+      // First, check if the label or RDG index already exists
+      let checkResponse;
+      try {
+        checkResponse = await fetch(
+          `${apiBaseUrl}/stations/${stationId}/pumps`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Error fetching existing pumps:", error);
+        // If the check fails, we'll proceed with the remapping
+        console.warn(
+          "Unable to check for existing pumps. Proceeding with remap."
+        );
+      }
+
+      if (checkResponse && checkResponse.ok) {
+        const responseData = await checkResponse.json();
+        const existingPumps = responseData.pumps || [];
+
+        const labelExists = existingPumps.some(
+          (p: any) => p.label === data.label && p.rdgIndex !== pump.rdgIndex
+        );
+        const rdgIndexExists = existingPumps.some(
+          (p: any) => p.rdgIndex === data.rdgIndex && p.label !== pump.label
+        );
+
+        if (labelExists || rdgIndexExists) {
+          if (labelExists) {
+            setError("label", {
+              type: "manual",
+              message: "Pump label already exists",
+            });
+          }
+          if (rdgIndexExists) {
+            setError("rdgIndex", {
+              type: "manual",
+              message: "RDG index already exists",
+            });
+          }
+          return;
+        }
+      }
+
+      // Proceed with remapping
+      const remapResponse = await fetch(
         `${apiBaseUrl}/station/managePumps/${stationId}/${pump.rdgIndex}`,
         {
           method: "PUT",
@@ -74,8 +125,8 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to remap pump");
+      if (!remapResponse.ok) {
+        throw new Error(`Failed to remap pump: ${remapResponse.statusText}`);
       }
 
       onRemap(data);
@@ -90,7 +141,10 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
       console.error("Error remapping pump:", error);
       toast({
         title: "Error",
-        description: "Failed to remap pump. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to remap pump. Please try again.",
         variant: "destructive",
         className: "bg-red-500 text-white",
       });
@@ -207,6 +261,9 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
             </Button>
           </DialogFooter>
         </form>
+        <FormErrorSecond
+          message={errors.label?.message || errors.rdgIndex?.message}
+        />
       </DialogContent>
     </Dialog>
   );
