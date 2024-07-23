@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { RemapPumpSchema, RemapPumpData } from "@/schemas";
 import { FormErrorSecond } from "@/app/components/form-error-2";
+import { ScaleLoader } from "react-spinners";
 
 interface Nozzle {
   id: string;
@@ -42,6 +43,7 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
   onRemap,
 }) => {
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     control,
@@ -63,6 +65,7 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
   });
 
   const onSubmit = async (data: RemapPumpData) => {
+    setIsLoading(true);
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
       // First, check if the label or RDG index already exists
@@ -109,6 +112,7 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
               message: "RDG index already exists",
             });
           }
+          setIsLoading(false);
           return;
         }
       }
@@ -148,6 +152,8 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
         variant: "destructive",
         className: "bg-red-500 text-white",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -249,6 +255,7 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
               onClick={onClose}
               className="bg-gray-300 text-gray-800 hover:bg-gray-400"
               style={{ borderRadius: "10px" }}
+              disabled={isLoading}
             >
               Cancel
             </Button>
@@ -256,8 +263,19 @@ const RemapPumpModal: React.FC<RemapPumpModalProps> = ({
               type="submit"
               className="bg-green-500 text-white hover:bg-green-600"
               style={{ borderRadius: "10px" }}
+              disabled={isLoading}
             >
-              Remap
+              {isLoading ? (
+                <ScaleLoader
+                  height={15}
+                  width={2}
+                  radius={2}
+                  margin={2}
+                  color="white"
+                />
+              ) : (
+                "Remap"
+              )}
             </Button>
           </DialogFooter>
         </form>
