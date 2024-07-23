@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ScaleLoader } from "react-spinners";
 import { AiOutlineClose } from "react-icons/ai";
+import RemapPumpModal from "../../remap-pump-modal-client";
 
 interface Nozzle {
   id: string;
@@ -64,6 +65,10 @@ const PumpsPageClient = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedPump, setSelectedPump] = useState<number | null>(null);
   const [isAddPumpModalOpen, setIsAddPumpModalOpen] = useState(false);
+  const [isRemapModalOpen, setIsRemapModalOpen] = useState(false);
+  const [selectedPumpForRemap, setSelectedPumpForRemap] = useState<Pump | null>(
+    null
+  );
 
   const stationName = Array.isArray(params.stationName)
     ? params.stationName.join(" ")
@@ -118,6 +123,21 @@ const PumpsPageClient = () => {
         pumps: prevDetails.pumps.filter((pump) => pump.rdgIndex !== rdgIndex),
       };
     });
+  };
+
+  const handleRemapPump = (updatedPump: Pump) => {
+    setPumpDetails((prevDetails) => {
+      if (!prevDetails) return null;
+      const updatedPumps = prevDetails.pumps.map((pump) =>
+        pump.rdgIndex === updatedPump.rdgIndex ? updatedPump : pump
+      );
+      return {
+        ...prevDetails,
+        pumps: updatedPumps,
+      };
+    });
+    setIsRemapModalOpen(false);
+    setSelectedPumpForRemap(null);
   };
 
   if (isLoading) return <LoadingSpinner />;
@@ -222,7 +242,10 @@ const PumpsPageClient = () => {
                           Transactions
                         </Button>
                         <Button
-                          onClick={() => {}}
+                          onClick={() => {
+                            setSelectedPumpForRemap(pump);
+                            setIsRemapModalOpen(true);
+                          }}
                           className="bg-yellow-400 hover:bg-yellow-600 text-white flex-1"
                           style={{ borderRadius: "6px" }}
                         >
@@ -280,6 +303,19 @@ const PumpsPageClient = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {isRemapModalOpen && selectedPumpForRemap && pumpDetails && (
+        <RemapPumpModal
+          pump={selectedPumpForRemap}
+          stationId={pumpDetails.stationId}
+          isOpen={isRemapModalOpen}
+          onClose={() => {
+            setIsRemapModalOpen(false);
+            setSelectedPumpForRemap(null);
+          }}
+          onRemap={handleRemapPump}
+        />
+      )}
     </div>
   );
 };

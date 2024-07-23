@@ -65,3 +65,19 @@ export const AddPumpSchema = z.object({
 });
 
 export type AddPumpData = z.infer<typeof AddPumpSchema>;
+
+//RemapPumpSchema
+export const RemapPumpSchema = z.object({
+  label: z.string().min(1, { message: "Pump label is required" }),
+  rdgIndex: z.string().min(1, { message: "RDG index is required" }),
+  nozzles: z
+    .array(
+      z.object({
+        id: z.string().min(1, { message: "Nozzle ID is required" }),
+        label: z.string().min(1, { message: "Nozzle label is required" }),
+      })
+    )
+    .min(1, { message: "At least one nozzle is required" }),
+});
+
+export type RemapPumpData = z.infer<typeof RemapPumpSchema>;
