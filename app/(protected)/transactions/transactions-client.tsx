@@ -3,22 +3,28 @@
 import * as React from "react";
 import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { toast } from "react-toastify";
 import Spinner from "@/app/components/Spinner";
 import Heading from "@/app/components/Heading";
 import { Calendar } from "@/components/ui/calendar";
-import { IconButton, Modal, Box } from "@mui/material";
+import { IconButton, Modal, Box, Button } from "@mui/material";
 import { MdCalendarToday } from "react-icons/md";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 interface Transaction {
   id: number;
   fdcName: string;
-  // fdcNumber: string;
   fdcDateTime: string;
   productName: string;
   price: number;
-  // volume: number;
   amount: number;
 }
 
@@ -29,55 +35,80 @@ const TransactionClient: React.FC = () => {
     new Date()
   );
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // State to track the current page
+  const transactionsPerPage = 10; // Number of transactions per page
+  const { toast } = useToast();
 
   const fetchTransactions = useCallback(async () => {
     if (!selectedDate) return;
 
     setIsLoading(true);
+    const formattedDate = selectedDate.toISOString().split("T")[0];
+
+    toast({
+      title: "Fetching Transactions",
+      description: `Please wait, fetching transactions for ${formattedDate}...`,
+      className: "bg-slate-800 text-white",
+    });
+
     try {
-      const formattedDate = selectedDate.toISOString().split("T")[0];
       console.log("Fetching transactions for date:", formattedDate);
 
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/transactions?fromDate=${formattedDate}`
       );
-      // console.log("API response:", response.data);
 
-      // Extract and map transactions data
       const mappedTransactions = response.data.map((item: any) => ({
         id: item.id,
         fdcName: item.fdcName,
-        // fdcNumber: item.fdcNumber,
         fdcDateTime: item.fdcDateTime,
         productName: item.productName,
         price: item.price,
-        // volume: item.volume,
         amount: item.amount,
       }));
 
       setTransactions(mappedTransactions);
+      setCurrentPage(1); // Reset to first page when fetching new transactions
+
+      toast({
+        title: "Transactions Fetched",
+        description: `Successfully fetched transactions from ${formattedDate}`,
+        className: "bg-slate-800 text-white",
+      });
     } catch (error) {
       console.error("Error fetching transactions:", error);
-      toast.error("Failed to fetch transactions.");
+      toast({
+        title: "Error",
+        description: "Failed to fetch transactions.",
+        variant: "destructive",
+        className: "bg-slate-800 text-white",
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [selectedDate]);
+  }, [selectedDate, toast]);
 
   useEffect(() => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 100 },
-    { field: "fdcName", headerName: "FDC Name", width: 150 },
-    // { field: "fdcNumber", headerName: "FDC Number", width: 100 },
-    { field: "fdcDateTime", headerName: "FDC DateTime", width: 250 },
-    { field: "productName", headerName: "Product Name", width: 150 },
-    { field: "price", headerName: "Price", width: 150 },
-    // { field: "volume", headerName: "Volume", width: 150 },
-    { field: "amount", headerName: "Amount", width: 150 },
-  ];
+  // Calculate the transactions to display on the current page
+  const indexOfLastTransaction = currentPage * transactionsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
+  const currentTransactions = transactions.slice(
+    indexOfFirstTransaction,
+    indexOfLastTransaction
+  );
+
+  // Handle next page
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  // Handle previous page
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
 
   return (
     <div className="max-w-[1250px] m-auto text-xl">
@@ -90,20 +121,51 @@ const TransactionClient: React.FC = () => {
           <MdCalendarToday size={24} />
         </IconButton>
       </div>
-      <div style={{ height: 600, width: "100%" }}>
-        <DataGrid
-          rows={transactions}
-          columns={columns}
-          getRowId={(row) => row.id}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 9 },
-            },
-          }}
-          pageSizeOptions={[9, 20, 50, 100]}
-          checkboxSelection
-          disableRowSelectionOnClick
-        />
+      <div className="border rounded-md">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-bold">ID</TableHead>
+              <TableHead className="font-bold">FDC Name</TableHead>
+              <TableHead className="font-bold">FDC DateTime</TableHead>
+              <TableHead className="font-bold">Product Name</TableHead>
+              <TableHead className="font-bold">Price</TableHead>
+              <TableHead className="font-bold">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentTransactions.map((transaction) => (
+              <TableRow key={transaction.id}>
+                <TableCell>{transaction.id}</TableCell>
+                <TableCell>{transaction.fdcName}</TableCell>
+                <TableCell>{transaction.fdcDateTime}</TableCell>
+                <TableCell>{transaction.productName}</TableCell>
+                <TableCell>{transaction.price}</TableCell>
+                <TableCell>{transaction.amount}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination Buttons */}
+      <div className="flex justify-between mt-4">
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={currentPage === 1}
+          onClick={handlePrevPage}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={indexOfLastTransaction >= transactions.length}
+          onClick={handleNextPage}
+        >
+          Next
+        </Button>
       </div>
 
       <Modal
@@ -135,6 +197,7 @@ const TransactionClient: React.FC = () => {
           />
         </Box>
       </Modal>
+      <Toaster />
     </div>
   );
 };
