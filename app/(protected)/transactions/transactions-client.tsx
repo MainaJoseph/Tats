@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import { Skeleton } from "@/components/ui/skeleton"; // Import the Skeleton component
 
 interface Transaction {
   id: number;
@@ -112,92 +113,153 @@ const TransactionClient: React.FC = () => {
 
   return (
     <div className="max-w-[1250px] m-auto text-xl">
-      {isLoading && <Spinner />}
-      <div className="mb-4 mt-4">
-        <Heading title="Transactions" center />
-      </div>
-      <div className="mb-4 flex items-center">
-        <IconButton onClick={() => setIsCalendarOpen(true)}>
-          <MdCalendarToday size={24} />
-        </IconButton>
-      </div>
-      <div className="border rounded-md">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="font-bold">ID</TableHead>
-              <TableHead className="font-bold">FDC Name</TableHead>
-              <TableHead className="font-bold">FDC DateTime</TableHead>
-              <TableHead className="font-bold">Product Name</TableHead>
-              <TableHead className="font-bold">Price</TableHead>
-              <TableHead className="font-bold">Amount</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentTransactions.map((transaction) => (
-              <TableRow key={transaction.id}>
-                <TableCell>{transaction.id}</TableCell>
-                <TableCell>{transaction.fdcName}</TableCell>
-                <TableCell>{transaction.fdcDateTime}</TableCell>
-                <TableCell>{transaction.productName}</TableCell>
-                <TableCell>{transaction.price}</TableCell>
-                <TableCell>{transaction.amount}</TableCell>
+      {isLoading ? (
+        // Display skeleton while loading
+        <div className="border rounded-md">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-bold">ID</TableHead>
+                <TableHead className="font-bold">FDC Name</TableHead>
+                <TableHead className="font-bold">FDC DateTime</TableHead>
+                <TableHead className="font-bold">Product Name</TableHead>
+                <TableHead className="font-bold">Price</TableHead>
+                <TableHead className="font-bold">Amount</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: transactionsPerPage }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton
+                      className="h-6 bg-slate-400 border border-slate-500 rounded-md"
+                      style={{ borderRadius: "10px" }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      className="h-6 bg-slate-400 border border-slate-500 rounded-md"
+                      style={{ borderRadius: "10px" }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      className="h-6 bg-slate-400 border border-slate-500 rounded-md"
+                      style={{ borderRadius: "10px" }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      className="h-6 bg-slate-400 border border-slate-500 rounded-md"
+                      style={{ borderRadius: "10px" }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      className="h-6 bg-slate-400 border border-slate-500 rounded-md"
+                      style={{ borderRadius: "10px" }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton
+                      className="h-6 bg-slate-400 border border-slate-500 rounded-md"
+                      style={{ borderRadius: "10px" }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <>
+          <div className="mb-4 mt-4">
+            <Heading title="Transactions" center />
+          </div>
+          <div className="mb-4 flex items-center">
+            <IconButton onClick={() => setIsCalendarOpen(true)}>
+              <MdCalendarToday size={24} />
+            </IconButton>
+          </div>
+          <div className="border rounded-md">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-bold">ID</TableHead>
+                  <TableHead className="font-bold">FDC Name</TableHead>
+                  <TableHead className="font-bold">FDC DateTime</TableHead>
+                  <TableHead className="font-bold">Product Name</TableHead>
+                  <TableHead className="font-bold">Price</TableHead>
+                  <TableHead className="font-bold">Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentTransactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell>{transaction.id}</TableCell>
+                    <TableCell>{transaction.fdcName}</TableCell>
+                    <TableCell>{transaction.fdcDateTime}</TableCell>
+                    <TableCell>{transaction.productName}</TableCell>
+                    <TableCell>{transaction.price}</TableCell>
+                    <TableCell>{transaction.amount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
 
-      {/* Pagination Buttons */}
-      <div className="flex justify-between mt-4">
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={currentPage === 1}
-          onClick={handlePrevPage}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={indexOfLastTransaction >= transactions.length}
-          onClick={handleNextPage}
-        >
-          Next
-        </Button>
-      </div>
+          {/* Pagination Buttons */}
+          <div className="flex justify-between mt-4">
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={currentPage === 1}
+              onClick={handlePrevPage}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={indexOfLastTransaction >= transactions.length}
+              onClick={handleNextPage}
+            >
+              Next
+            </Button>
+          </div>
 
-      <Modal
-        open={isCalendarOpen}
-        onClose={() => setIsCalendarOpen(false)}
-        aria-labelledby="calendar-modal"
-        aria-describedby="calendar-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 1,
-          }}
-        >
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={(date) => {
-              setSelectedDate(date);
-              setIsCalendarOpen(false);
-            }}
-            className="rounded-md border shadow"
-          />
-        </Box>
-      </Modal>
-      <Toaster />
+          <Modal
+            open={isCalendarOpen}
+            onClose={() => setIsCalendarOpen(false)}
+            aria-labelledby="calendar-modal"
+            aria-describedby="calendar-modal-description"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "background.paper",
+                boxShadow: 24,
+                p: 4,
+                borderRadius: 1,
+              }}
+            >
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => {
+                  setSelectedDate(date);
+                  setIsCalendarOpen(false);
+                }}
+                className="rounded-md border shadow"
+              />
+            </Box>
+          </Modal>
+          <Toaster />
+        </>
+      )}
     </div>
   );
 };
