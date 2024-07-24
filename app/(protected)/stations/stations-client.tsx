@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   ColumnDef,
@@ -25,10 +25,31 @@ import {
 } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import AddStationModal from "./add-station-modal";
-
+import AddPumpModal from "./AddPumpModal";
 import { BsFillFuelPumpDieselFill } from "react-icons/bs";
 import { useToast } from "@/components/ui/use-toast";
-import AddPumpModal from "./AddPumpModal";
+import { Toaster } from "@/components/ui/toaster";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { saveAs } from "file-saver";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  Table as DocxTable,
+  TableCell as DocxTableCell,
+  TableRow as DocxTableRow,
+} from "docx";
 
 interface Station {
   id: number;
@@ -63,23 +84,33 @@ const StationsClient = () => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
   ]);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchStations = async () => {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL_STATION_ID;
-      try {
-        const response = await fetch(`${apiBaseUrl}/stations`);
-        const data: Station[] = await response.json();
-        setStations(data);
-      } catch (error) {
-        console.error("Failed to fetch stations", error);
-      }
-    };
+  const fetchStations = useCallback(async () => {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL_STATION_ID;
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${apiBaseUrl}/stations`);
+      const data: Station[] = await response.json();
+      setStations(data);
+    } catch (error) {
+      console.error("Failed to fetch stations", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch stations.",
+        variant: "destructive",
+        className: "bg-slate-800 text-white",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
 
+  useEffect(() => {
     fetchStations();
-  }, []);
+  }, [fetchStations]);
 
   const handleViewPumps = (station: Station) => {
     if (!station.pumps || Object.keys(station.pumps).length === 0) {
@@ -169,6 +200,120 @@ const StationsClient = () => {
     onSortingChange: setSorting,
   });
 
+  const handleExport = (format: string) => {
+    switch (format) {
+      case "excel":
+        exportToExcel();
+        break;
+      case "csv":
+        exportToCSV();
+        break;
+      case "pdf":
+        exportToPDF();
+        break;
+      case "word":
+        exportToWord();
+        break;
+      default:
+        console.log("Unsupported format");
+    }
+  };
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(stations);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Stations");
+    XLSX.writeFile(wb, "stations.xlsx");
+  };
+
+  const exportToCSV = () => {
+    const ws = XLSX.utils.json_to_sheet(stations);
+    const csv = XLSX.utils.sheet_to_csv(ws);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "stations.csv");
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.autoTable({
+      head: [
+        ["ID", "Name", "Location", "Number of Pumps", "Nozzle Identifier"],
+      ],
+      body: stations.map((s) => [
+        s.id,
+        s.name,
+        s.location,
+        s.pumps ? Object.keys(s.pumps).length : 0,
+        s.nozzleIdentifierName,
+      ]),
+    });
+    doc.save("stations.pdf");
+  };
+
+  const exportToWord = () => {
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph("Stations"),
+            new DocxTable({
+              rows: [
+                new DocxTableRow({
+                  children: [
+                    new DocxTableCell({ children: [new Paragraph("ID")] }),
+                    new DocxTableCell({ children: [new Paragraph("Name")] }),
+                    new DocxTableCell({
+                      children: [new Paragraph("Location")],
+                    }),
+                    new DocxTableCell({
+                      children: [new Paragraph("Number of Pumps")],
+                    }),
+                    new DocxTableCell({
+                      children: [new Paragraph("Nozzle Identifier")],
+                    }),
+                  ],
+                }),
+                ...stations.map(
+                  (s) =>
+                    new DocxTableRow({
+                      children: [
+                        new DocxTableCell({
+                          children: [new Paragraph(s.id.toString())],
+                        }),
+                        new DocxTableCell({
+                          children: [new Paragraph(s.name)],
+                        }),
+                        new DocxTableCell({
+                          children: [new Paragraph(s.location)],
+                        }),
+                        new DocxTableCell({
+                          children: [
+                            new Paragraph(
+                              s.pumps
+                                ? Object.keys(s.pumps).length.toString()
+                                : "0"
+                            ),
+                          ],
+                        }),
+                        new DocxTableCell({
+                          children: [new Paragraph(s.nozzleIdentifierName)],
+                        }),
+                      ],
+                    })
+                ),
+              ],
+            }),
+          ],
+        },
+      ],
+    });
+
+    Packer.toBlob(doc).then((blob) => {
+      saveAs(blob, "stations.docx");
+    });
+  };
+
   return (
     <div
       className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1"
@@ -203,6 +348,28 @@ const StationsClient = () => {
           className="w-full sm:max-w-sm focus:border-sky-500 sm:order-1"
           style={{ borderRadius: "10px" }}
         />
+        <Select onValueChange={handleExport}>
+          <SelectTrigger
+            className="w-[180px] rounded-md"
+            style={{ borderRadius: "6px" }}
+          >
+            <SelectValue placeholder="Export Data" />
+          </SelectTrigger>
+          <SelectContent className="bg-slate-800 text-white">
+            <SelectItem value="excel" className="cursor-pointer">
+              Export to Excel
+            </SelectItem>
+            <SelectItem value="csv" className="cursor-pointer">
+              Export to CSV
+            </SelectItem>
+            <SelectItem value="pdf" className="cursor-pointer">
+              Export to PDF
+            </SelectItem>
+            <SelectItem value="word" className="cursor-pointer">
+              Export to Word
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="rounded-md border">
@@ -237,7 +404,20 @@ const StationsClient = () => {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              Array.from({ length: 10 }).map((_, index) => (
+                <TableRow key={index}>
+                  {columns.map((column, colIndex) => (
+                    <TableCell key={colIndex}>
+                      <Skeleton
+                        className="h-6 bg-slate-400 border border-slate-500 rounded-md"
+                        style={{ borderRadius: "10px" }}
+                      />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -333,6 +513,7 @@ const StationsClient = () => {
           )}
         </DialogContent>
       </Dialog>
+      <Toaster />
     </div>
   );
 };
