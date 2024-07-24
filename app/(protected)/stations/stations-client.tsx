@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { MdLibraryAdd, MdDelete } from "react-icons/md";
 import {
   ColumnDef,
   flexRender,
@@ -37,6 +38,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
@@ -50,6 +61,7 @@ import {
   TableCell as DocxTableCell,
   TableRow as DocxTableRow,
 } from "docx";
+import { ScaleLoader } from "react-spinners";
 
 interface Station {
   id: number;
@@ -85,6 +97,8 @@ const StationsClient = () => {
     { id: "id", desc: false },
   ]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [stationToDelete, setStationToDelete] = useState<Station | null>(null);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -130,6 +144,50 @@ const StationsClient = () => {
     setIsAddPumpModalOpen(true);
   };
 
+  const handleDeleteStation = (station: Station) => {
+    setStationToDelete(station);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteStation = async () => {
+    if (!stationToDelete) return;
+
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${apiBaseUrl}/stations/${stationToDelete.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete station");
+      }
+
+      setStations(stations.filter((s) => s.id !== stationToDelete.id));
+      toast({
+        title: "Station Deleted",
+        description: `${stationToDelete.name} has been successfully deleted.`,
+        variant: "default",
+        className: "bg-green-500 text-white",
+      });
+    } catch (error) {
+      console.error("Failed to delete station", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete station.",
+        variant: "destructive",
+        className: "bg-slate-800 text-white",
+      });
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setStationToDelete(null);
+      setIsLoading(false);
+    }
+  };
+
   const columns: ColumnDef<Station>[] = [
     {
       accessorKey: "id",
@@ -162,25 +220,49 @@ const StationsClient = () => {
     {
       id: "actions",
       cell: ({ row }) => (
-        <Button
-          onClick={() => handleViewPumps(row.original)}
-          className="bg-green-500 hover:bg-green-600 text-white"
-          style={{ borderRadius: "5px" }}
-        >
-          <BsFillFuelPumpDieselFill />
-        </Button>
-      ),
-    },
-    {
-      id: "addPump",
-      cell: ({ row }) => (
-        <Button
-          onClick={() => handleAddPump(row.original)}
-          className="bg-blue-500 hover:bg-blue-600 text-white"
-          style={{ borderRadius: "5px" }}
-        >
-          Add Pump
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => handleViewPumps(row.original)}
+            className="bg-green-500 hover:bg-green-600 text-white"
+            style={{ borderRadius: "5px" }}
+          >
+            <BsFillFuelPumpDieselFill />
+          </Button>
+          <Button
+            onClick={() => handleAddPump(row.original)}
+            className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
+            style={{ borderRadius: "5px" }}
+          >
+            Add Pump
+            <MdLibraryAdd size={20} />
+          </Button>
+          <Button
+            onClick={() => handleDeleteStation(row.original)}
+            className="
+      bg-rose-500
+      text-white
+      hover:bg-red-600
+      hover:shadow-lg
+      focus:ring-4
+      focus:ring-red-300
+      border
+      border-transparent
+      hover:border-red-600
+      transition-all
+      duration-300
+      ease-in-out
+      p-2
+      rounded-lg
+      flex
+      items-center
+      justify-center
+      cursor-pointer
+    "
+            style={{ borderRadius: "10px", outline: "none" }}
+          >
+            <MdDelete size={18} />
+          </Button>
+        </div>
       ),
     },
   ];
@@ -513,6 +595,53 @@ const StationsClient = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent
+          className="bg-white text"
+          style={{ borderRadius: "10px" }}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-bold">
+              Are you absolutely sure?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete{" "}
+              <span className="font-bold">{stationToDelete?.name}</span> and
+              remove it from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className="border-slate-800"
+              style={{ borderRadius: "6px" }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteStation}
+              className="bg-rose-500 hover:bg-rose-600 text-white"
+              style={{ borderRadius: "6px" }}
+            >
+              {isLoading ? (
+                <ScaleLoader
+                  height={15}
+                  width={2}
+                  radius={2}
+                  margin={2}
+                  color="white"
+                />
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Toaster />
     </div>
   );
