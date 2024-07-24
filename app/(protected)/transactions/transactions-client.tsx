@@ -52,6 +52,7 @@ interface Transaction {
   productName: string;
   price: number;
   amount: number;
+  rdgIndex: string; // Add this line
 }
 
 const TransactionClient: React.FC = () => {
@@ -92,6 +93,7 @@ const TransactionClient: React.FC = () => {
         productName: item.productName,
         price: item.price,
         amount: item.amount,
+        rdgIndex: item.rdgIndex, // Add this line
       }));
 
       setTransactions(mappedTransactions);
@@ -177,11 +179,20 @@ const TransactionClient: React.FC = () => {
     const doc = new jsPDF();
     doc.autoTable({
       head: [
-        ["ID", "FDC Name", "FDC DateTime", "Product Name", "Price", "Amount"],
+        [
+          "ID",
+          "FDC Name",
+          "RDG Index",
+          "FDC DateTime",
+          "Product Name",
+          "Price",
+          "Amount",
+        ],
       ],
       body: transactions.map((t) => [
         t.id,
         t.fdcName,
+        t.rdgIndex,
         t.fdcDateTime,
         t.productName,
         t.price,
@@ -208,6 +219,9 @@ const TransactionClient: React.FC = () => {
                       children: [new Paragraph("FDC Name")],
                     }),
                     new DocxTableCell({
+                      children: [new Paragraph("RDG Index")],
+                    }),
+                    new DocxTableCell({
                       children: [new Paragraph("FDC DateTime")],
                     }),
                     new DocxTableCell({
@@ -226,6 +240,9 @@ const TransactionClient: React.FC = () => {
                         }),
                         new DocxTableCell({
                           children: [new Paragraph(t.fdcName)],
+                        }),
+                        new DocxTableCell({
+                          children: [new Paragraph(t.rdgIndex)],
                         }),
                         new DocxTableCell({
                           children: [new Paragraph(t.fdcDateTime)],
@@ -263,6 +280,7 @@ const TransactionClient: React.FC = () => {
               <TableRow>
                 <TableHead className="font-bold">ID</TableHead>
                 <TableHead className="font-bold">FDC Name</TableHead>
+                <TableHead className="font-bold">RDG Index</TableHead>
                 <TableHead className="font-bold">FDC DateTime</TableHead>
                 <TableHead className="font-bold">Product Name</TableHead>
                 <TableHead className="font-bold">Price</TableHead>
@@ -272,6 +290,12 @@ const TransactionClient: React.FC = () => {
             <TableBody>
               {Array.from({ length: transactionsPerPage }).map((_, index) => (
                 <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton
+                      className="h-6 bg-slate-400 border border-slate-500 rounded-md"
+                      style={{ borderRadius: "10px" }}
+                    />
+                  </TableCell>
                   <TableCell>
                     <Skeleton
                       className="h-6 bg-slate-400 border border-slate-500 rounded-md"
@@ -358,6 +382,7 @@ const TransactionClient: React.FC = () => {
                 <TableRow>
                   <TableHead className="font-bold">ID</TableHead>
                   <TableHead className="font-bold">FDC Name</TableHead>
+                  <TableHead className="font-bold">RDG Index</TableHead>
                   <TableHead className="font-bold">FDC DateTime</TableHead>
                   <TableHead className="font-bold">Product Name</TableHead>
                   <TableHead className="font-bold">Price</TableHead>
@@ -369,6 +394,7 @@ const TransactionClient: React.FC = () => {
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.id}</TableCell>
                     <TableCell>{transaction.fdcName}</TableCell>
+                    <TableCell>{transaction.rdgIndex}</TableCell>
                     <TableCell>{transaction.fdcDateTime}</TableCell>
                     <TableCell>{transaction.productName}</TableCell>
                     <TableCell>{transaction.price}</TableCell>
