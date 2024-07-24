@@ -19,6 +19,31 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import * as XLSX from "xlsx";
+import "jspdf-autotable";
+import jsPDF from "jspdf";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  Table as DocxTable,
+  TableCell as DocxTableCell,
+  TableRow as DocxTableRow,
+} from "docx";
+import { saveAs } from "file-saver";
+
+declare module "jspdf" {
+  interface jsPDF {
+    autoTable: (options: any) => jsPDF;
+  }
+}
 
 interface Transaction {
   id: number;
@@ -40,6 +65,7 @@ const TransactionClient: React.FC = () => {
   const transactionsPerPage = 10;
   const { toast } = useToast();
 
+  //Function to fetch transactions
   const fetchTransactions = useCallback(async () => {
     if (!selectedDate) return;
 
@@ -100,12 +126,132 @@ const TransactionClient: React.FC = () => {
     indexOfLastTransaction
   );
 
+  //Funtion to handle next page
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
 
+  //Funtion to handle previous page
   const handlePrevPage = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  //Function for handling export
+  const handleExport = (format: string) => {
+    switch (format) {
+      case "excel":
+        exportToExcel();
+        break;
+      case "csv":
+        exportToCSV();
+        break;
+      case "pdf":
+        exportToPDF();
+        break;
+      case "word":
+        exportToWord();
+        break;
+      default:
+        console.log("Unsupported format");
+    }
+  };
+
+  //Function to export transaction data to excel
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(transactions);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+    XLSX.writeFile(wb, "transactions.xlsx");
+  };
+
+  //Function to export transaction data to csv
+  const exportToCSV = () => {
+    const ws = XLSX.utils.json_to_sheet(transactions);
+    const csv = XLSX.utils.sheet_to_csv(ws);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "transactions.csv");
+  };
+
+  //Function to export transaction data to pdf
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.autoTable({
+      head: [
+        ["ID", "FDC Name", "FDC DateTime", "Product Name", "Price", "Amount"],
+      ],
+      body: transactions.map((t) => [
+        t.id,
+        t.fdcName,
+        t.fdcDateTime,
+        t.productName,
+        t.price,
+        t.amount,
+      ]),
+    });
+    doc.save("transactions.pdf");
+  };
+
+  //Function to export transaction data to word
+  const exportToWord = () => {
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph("Transactions"),
+            new DocxTable({
+              rows: [
+                new DocxTableRow({
+                  children: [
+                    new DocxTableCell({ children: [new Paragraph("ID")] }),
+                    new DocxTableCell({
+                      children: [new Paragraph("FDC Name")],
+                    }),
+                    new DocxTableCell({
+                      children: [new Paragraph("FDC DateTime")],
+                    }),
+                    new DocxTableCell({
+                      children: [new Paragraph("Product Name")],
+                    }),
+                    new DocxTableCell({ children: [new Paragraph("Price")] }),
+                    new DocxTableCell({ children: [new Paragraph("Amount")] }),
+                  ],
+                }),
+                ...transactions.map(
+                  (t) =>
+                    new DocxTableRow({
+                      children: [
+                        new DocxTableCell({
+                          children: [new Paragraph(t.id.toString())],
+                        }),
+                        new DocxTableCell({
+                          children: [new Paragraph(t.fdcName)],
+                        }),
+                        new DocxTableCell({
+                          children: [new Paragraph(t.fdcDateTime)],
+                        }),
+                        new DocxTableCell({
+                          children: [new Paragraph(t.productName)],
+                        }),
+                        new DocxTableCell({
+                          children: [new Paragraph(t.price.toString())],
+                        }),
+                        new DocxTableCell({
+                          children: [new Paragraph(t.amount.toString())],
+                        }),
+                      ],
+                    })
+                ),
+              ],
+            }),
+          ],
+        },
+      ],
+    });
+
+    Packer.toBlob(doc).then((blob) => {
+      saveAs(blob, "transactions.docx");
+    });
   };
 
   return (
@@ -172,15 +318,39 @@ const TransactionClient: React.FC = () => {
           <div className="mb-4 mt-4">
             <Heading title="Transactions" center />
           </div>
-          <div className="mb-4 flex items-center">
-            <IconButton onClick={() => setIsCalendarOpen(true)}>
-              <MdCalendarToday size={24} />
-            </IconButton>
-            {selectedDate && (
-              <span className="ml-2 text-sm text-gray-600">
-                Showing data for: {selectedDate.toLocaleDateString()}
-              </span>
-            )}
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center">
+              <IconButton onClick={() => setIsCalendarOpen(true)}>
+                <MdCalendarToday size={24} />
+              </IconButton>
+              {selectedDate && (
+                <span className="ml-2 text-sm text-gray-600">
+                  Showing data for: {selectedDate.toLocaleDateString()}
+                </span>
+              )}
+            </div>
+            <Select onValueChange={handleExport}>
+              <SelectTrigger
+                className="w-[180px] rounded-md"
+                style={{ borderRadius: "6px" }}
+              >
+                <SelectValue placeholder="Export Data" />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 text-white">
+                <SelectItem value="excel" className="cursor-pointer">
+                  Export to Excel
+                </SelectItem>
+                <SelectItem value="csv" className="cursor-pointer">
+                  Export to CSV
+                </SelectItem>
+                <SelectItem value="pdf" className="cursor-pointer">
+                  Export to PDF
+                </SelectItem>
+                <SelectItem value="word" className="cursor-pointer">
+                  Export to Word
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="border rounded-md">
             <Table>
@@ -257,7 +427,7 @@ const TransactionClient: React.FC = () => {
                 className="rounded-md border shadow"
                 classNames={{
                   day_selected:
-                    "bg-blue-600 text-white hover:bg-blue-600 hover:text-white rounded-full",
+                    "bg-blue-600 text-white hover:bg-blue-600 hover:text-white",
                 }}
               />
             </Box>
