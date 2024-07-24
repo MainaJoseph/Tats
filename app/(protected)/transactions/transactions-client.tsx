@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { Skeleton } from "@/components/ui/skeleton"; // Import the Skeleton component
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Transaction {
   id: number;
@@ -36,8 +36,8 @@ const TransactionClient: React.FC = () => {
     new Date()
   );
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1); // State to track the current page
-  const transactionsPerPage = 10; // Number of transactions per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const transactionsPerPage = 10;
   const { toast } = useToast();
 
   const fetchTransactions = useCallback(async () => {
@@ -69,7 +69,7 @@ const TransactionClient: React.FC = () => {
       }));
 
       setTransactions(mappedTransactions);
-      setCurrentPage(1); // Reset to first page when fetching new transactions
+      setCurrentPage(1);
 
       toast({
         title: "Transactions Fetched",
@@ -93,7 +93,6 @@ const TransactionClient: React.FC = () => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  // Calculate the transactions to display on the current page
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
   const currentTransactions = transactions.slice(
@@ -101,12 +100,10 @@ const TransactionClient: React.FC = () => {
     indexOfLastTransaction
   );
 
-  // Handle next page
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
 
-  // Handle previous page
   const handlePrevPage = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
   };
@@ -114,7 +111,6 @@ const TransactionClient: React.FC = () => {
   return (
     <div className="max-w-[1250px] m-auto text-xl">
       {isLoading ? (
-        // Display skeleton while loading
         <div className="border rounded-md">
           <Table>
             <TableHeader>
@@ -180,6 +176,11 @@ const TransactionClient: React.FC = () => {
             <IconButton onClick={() => setIsCalendarOpen(true)}>
               <MdCalendarToday size={24} />
             </IconButton>
+            {selectedDate && (
+              <span className="ml-2 text-sm text-gray-600">
+                Showing data for: {selectedDate.toLocaleDateString()}
+              </span>
+            )}
           </div>
           <div className="border rounded-md">
             <Table>
@@ -208,7 +209,6 @@ const TransactionClient: React.FC = () => {
             </Table>
           </div>
 
-          {/* Pagination Buttons */}
           <div className="flex justify-between mt-4">
             <Button
               variant="contained"
@@ -253,7 +253,12 @@ const TransactionClient: React.FC = () => {
                   setSelectedDate(date);
                   setIsCalendarOpen(false);
                 }}
+                initialFocus
                 className="rounded-md border shadow"
+                classNames={{
+                  day_selected:
+                    "bg-blue-600 text-white hover:bg-blue-600 hover:text-white rounded-full",
+                }}
               />
             </Box>
           </Modal>
