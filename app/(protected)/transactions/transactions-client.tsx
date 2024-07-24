@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import * as XLSX from "xlsx";
 import "jspdf-autotable";
 import jsPDF from "jspdf";
@@ -52,21 +53,24 @@ interface Transaction {
   productName: string;
   price: number;
   amount: number;
-  rdgIndex: string; // Add this line
+  rdgIndex: string;
 }
 
 const TransactionClient: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<
+    Transaction[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     new Date()
   );
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const transactionsPerPage = 10;
   const { toast } = useToast();
 
-  //Function to fetch transactions
   const fetchTransactions = useCallback(async () => {
     if (!selectedDate) return;
 
@@ -93,10 +97,11 @@ const TransactionClient: React.FC = () => {
         productName: item.productName,
         price: item.price,
         amount: item.amount,
-        rdgIndex: item.rdgIndex, // Add this line
+        rdgIndex: item.rdgIndex,
       }));
 
       setTransactions(mappedTransactions);
+      setFilteredTransactions(mappedTransactions);
       setCurrentPage(1);
 
       toast({
@@ -121,24 +126,31 @@ const TransactionClient: React.FC = () => {
     fetchTransactions();
   }, [fetchTransactions]);
 
+  useEffect(() => {
+    const results = transactions.filter((transaction) =>
+      Object.values(transaction).some((value) =>
+        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+    setFilteredTransactions(results);
+    setCurrentPage(1);
+  }, [searchTerm, transactions]);
+
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-  const currentTransactions = transactions.slice(
+  const currentTransactions = filteredTransactions.slice(
     indexOfFirstTransaction,
     indexOfLastTransaction
   );
 
-  //Funtion to handle next page
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
 
-  //Funtion to handle previous page
   const handlePrevPage = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
   };
 
-  //Function for handling export
   const handleExport = (format: string) => {
     switch (format) {
       case "excel":
@@ -158,7 +170,6 @@ const TransactionClient: React.FC = () => {
     }
   };
 
-  //Function to export transaction data to excel
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(transactions);
     const wb = XLSX.utils.book_new();
@@ -166,7 +177,6 @@ const TransactionClient: React.FC = () => {
     XLSX.writeFile(wb, "transactions.xlsx");
   };
 
-  //Function to export transaction data to csv
   const exportToCSV = () => {
     const ws = XLSX.utils.json_to_sheet(transactions);
     const csv = XLSX.utils.sheet_to_csv(ws);
@@ -174,7 +184,6 @@ const TransactionClient: React.FC = () => {
     saveAs(blob, "transactions.csv");
   };
 
-  //Function to export transaction data to pdf
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.autoTable({
@@ -202,7 +211,6 @@ const TransactionClient: React.FC = () => {
     doc.save("transactions.pdf");
   };
 
-  //Function to export transaction data to word
   const exportToWord = () => {
     const doc = new Document({
       sections: [
@@ -273,6 +281,52 @@ const TransactionClient: React.FC = () => {
 
   return (
     <div className="max-w-[1250px] m-auto text-xl">
+      <div className="mb-4 mt-4">
+        <Heading title="Transactions" center />
+      </div>
+      <div className="mb-4 flex items-center justify-between ">
+        <div className="flex items-center">
+          <IconButton onClick={() => setIsCalendarOpen(true)}>
+            <MdCalendarToday size={24} />
+          </IconButton>
+          {selectedDate && (
+            <span className="ml-2 text-sm text-gray-600">
+              Showing data for: {selectedDate.toLocaleDateString()}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center space-x-3">
+          <Input
+            placeholder="Search transactions..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-64 focus:border-sky-500"
+            style={{ borderRadius: "10px" }}
+          />
+          <Select onValueChange={handleExport}>
+            <SelectTrigger
+              className="w-[180px] rounded-md"
+              style={{ borderRadius: "6px" }}
+            >
+              <SelectValue placeholder="Export Data" />
+            </SelectTrigger>
+            <SelectContent className="bg-slate-800 text-white">
+              <SelectItem value="excel" className="cursor-pointer">
+                Export to Excel
+              </SelectItem>
+              <SelectItem value="csv" className="cursor-pointer">
+                Export to CSV
+              </SelectItem>
+              <SelectItem value="pdf" className="cursor-pointer">
+                Export to PDF
+              </SelectItem>
+              <SelectItem value="word" className="cursor-pointer">
+                Export to Word
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       {isLoading ? (
         <div className="border rounded-md">
           <Table>
@@ -339,43 +393,6 @@ const TransactionClient: React.FC = () => {
         </div>
       ) : (
         <>
-          <div className="mb-4 mt-4">
-            <Heading title="Transactions" center />
-          </div>
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center">
-              <IconButton onClick={() => setIsCalendarOpen(true)}>
-                <MdCalendarToday size={24} />
-              </IconButton>
-              {selectedDate && (
-                <span className="ml-2 text-sm text-gray-600">
-                  Showing data for: {selectedDate.toLocaleDateString()}
-                </span>
-              )}
-            </div>
-            <Select onValueChange={handleExport}>
-              <SelectTrigger
-                className="w-[180px] rounded-md"
-                style={{ borderRadius: "6px" }}
-              >
-                <SelectValue placeholder="Export Data" />
-              </SelectTrigger>
-              <SelectContent className="bg-slate-800 text-white">
-                <SelectItem value="excel" className="cursor-pointer">
-                  Export to Excel
-                </SelectItem>
-                <SelectItem value="csv" className="cursor-pointer">
-                  Export to CSV
-                </SelectItem>
-                <SelectItem value="pdf" className="cursor-pointer">
-                  Export to PDF
-                </SelectItem>
-                <SelectItem value="word" className="cursor-pointer">
-                  Export to Word
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
           <div className="border rounded-md">
             <Table>
               <TableHeader>
@@ -417,50 +434,50 @@ const TransactionClient: React.FC = () => {
             <Button
               variant="contained"
               color="primary"
-              disabled={indexOfLastTransaction >= transactions.length}
+              disabled={indexOfLastTransaction >= filteredTransactions.length}
               onClick={handleNextPage}
             >
               Next
             </Button>
           </div>
-
-          <Modal
-            open={isCalendarOpen}
-            onClose={() => setIsCalendarOpen(false)}
-            aria-labelledby="calendar-modal"
-            aria-describedby="calendar-modal-description"
-          >
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "background.paper",
-                boxShadow: 24,
-                p: 4,
-                borderRadius: 1,
-              }}
-            >
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => {
-                  setSelectedDate(date);
-                  setIsCalendarOpen(false);
-                }}
-                initialFocus
-                className="rounded-md border shadow"
-                classNames={{
-                  day_selected:
-                    "bg-blue-600 text-white hover:bg-blue-600 hover:text-white",
-                }}
-              />
-            </Box>
-          </Modal>
-          <Toaster />
         </>
       )}
+
+      <Modal
+        open={isCalendarOpen}
+        onClose={() => setIsCalendarOpen(false)}
+        aria-labelledby="calendar-modal"
+        aria-describedby="calendar-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 1,
+          }}
+        >
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={(date) => {
+              setSelectedDate(date);
+              setIsCalendarOpen(false);
+            }}
+            initialFocus
+            className="rounded-md border shadow"
+            classNames={{
+              day_selected:
+                "bg-blue-600 text-white hover:bg-blue-600 hover:text-white",
+            }}
+          />
+        </Box>
+      </Modal>
+      <Toaster />
     </div>
   );
 };
