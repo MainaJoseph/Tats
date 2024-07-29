@@ -60,6 +60,7 @@ import {
 } from "docx";
 import { ScaleLoader } from "react-spinners";
 import axios from "axios";
+import AddPumpModal from "@/app/(protected)/stations/AddPumpModal";
 
 interface Station {
   id: number;
@@ -67,15 +68,23 @@ interface Station {
   location: string;
   nozzleIdentifierName: string;
   pumps: {
-    [key: string]: {
-      nozzles: { id: string; label: string }[];
-      rdgIndex: string;
-    };
-  };
+    label: string;
+    rdgIndex: string;
+    nozzles: {
+      id: string;
+      label: string;
+    }[];
+  }[];
   client: {
     id: number;
   };
 }
+
+interface ApiError {
+  message: string;
+}
+
+type ErrorType = ApiError | Error;
 
 const ClientStations = () => {
   const params = useParams();
@@ -84,6 +93,7 @@ const ClientStations = () => {
   const [globalFilter, setGlobalFilter] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAddPumpModalOpen, setIsAddPumpModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedStation, setSelectedStation] = useState<Station | null>(null);
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
@@ -521,6 +531,98 @@ const ClientStations = () => {
           </Button>
         </div>
       </div>
+
+      <Dialog open={isAddPumpModalOpen} onOpenChange={setIsAddPumpModalOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-white text-slate-900 rounded-md">
+          {selectedStation && (
+            <AddPumpModal
+              stationId={selectedStation.id}
+              onClose={() => setIsAddPumpModalOpen(false)}
+              onAddPump={(pumpData) => {
+                setStations((prevStations) =>
+                  prevStations.map((station) =>
+                    station.id === selectedStation.id
+                      ? {
+                          ...station,
+                          pumps: [
+                            ...(station.pumps || []),
+                            {
+                              label: pumpData.label,
+                              rdgIndex: pumpData.rdgIndex,
+                              nozzles: pumpData.nozzles,
+                            },
+                          ],
+                        }
+                      : station
+                  )
+                );
+                setIsAddPumpModalOpen(false);
+                toast({
+                  title: "Pump Added",
+                  description:
+                    "The pump has been successfully added to the station.",
+                  variant: "default",
+                  className: "bg-green-500 text-white",
+                });
+              }}
+              onError={(error: ErrorType) => {
+                toast({
+                  title: "Error",
+                  description: `Failed to add pump: ${error.message}`,
+                  variant: "destructive",
+                  className: "bg-red-500 text-white",
+                });
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent
+          className="bg-white text"
+          style={{ borderRadius: "10px" }}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-bold">
+              Are you absolutely sure?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete{" "}
+              <span className="font-bold">{stationToDelete?.name}</span> and
+              remove it from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className="border-slate-800"
+              style={{ borderRadius: "6px" }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteStation}
+              className="bg-rose-500 hover:bg-rose-600 text-white"
+              style={{ borderRadius: "6px" }}
+            >
+              {isLoading ? (
+                <ScaleLoader
+                  height={15}
+                  width={2}
+                  radius={2}
+                  margin={2}
+                  color="white"
+                />
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Toaster />
     </div>
