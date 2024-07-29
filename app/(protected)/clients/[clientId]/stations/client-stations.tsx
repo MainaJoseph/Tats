@@ -99,7 +99,6 @@ const ClientStations = () => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "id", desc: false },
   ]);
-  const [loading, setLoading] = useState(true);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [stationToDelete, setStationToDelete] = useState<Station | null>(null);
   const router = useRouter();
@@ -108,7 +107,7 @@ const ClientStations = () => {
   const fetchClientStations = useCallback(async () => {
     if (!clientId) return;
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    setLoading(true);
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `${apiBaseUrl}/clients/${clientId}/stations`
@@ -123,7 +122,7 @@ const ClientStations = () => {
         className: "bg-slate-800 text-white",
       });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, [clientId, toast]);
 
@@ -158,7 +157,7 @@ const ClientStations = () => {
     if (!stationToDelete) return;
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-    setLoading(true);
+    setIsLoading(true);
     try {
       const response = await axios.delete(
         `${apiBaseUrl}/stations/${stationToDelete.id}`
@@ -186,7 +185,7 @@ const ClientStations = () => {
     } finally {
       setIsDeleteDialogOpen(false);
       setStationToDelete(null);
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -462,43 +461,52 @@ const ClientStations = () => {
       </div>
 
       <div className="rounded-md border">
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <ScaleLoader color="#3b82f6" />
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : (
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? "cursor-pointer select-none"
-                              : "",
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {{
-                            asc: " 🔼",
-                            desc: " 🔽",
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                      )}
-                    </TableHead>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder ? null : (
+                      <div
+                        {...{
+                          className: header.column.getCanSort()
+                            ? "cursor-pointer select-none"
+                            : "",
+                          onClick: header.column.getToggleSortingHandler(),
+                        }}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {{
+                          asc: " 🔼",
+                          desc: " 🔽",
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              Array.from({ length: 10 }).map((_, index) => (
+                <TableRow key={index}>
+                  {columns.map((column, colIndex) => (
+                    <TableCell key={colIndex}>
+                      <Skeleton
+                        className="h-6 bg-slate-400 border border-slate-500 rounded-md"
+                        style={{ borderRadius: "10px" }}
+                      />
+                    </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.map((row) => (
+              ))
+            ) : table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
@@ -512,10 +520,19 @@ const ClientStations = () => {
                     </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
 
       <div className="flex items-center justify-between py-4">
