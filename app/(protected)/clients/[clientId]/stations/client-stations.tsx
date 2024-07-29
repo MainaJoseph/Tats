@@ -61,6 +61,7 @@ import {
 import { ScaleLoader } from "react-spinners";
 import axios from "axios";
 import AddPumpModal from "@/app/(protected)/stations/AddPumpModal";
+import AddStationModal from "@/app/(protected)/stations/add-station-modal";
 
 interface Station {
   id: number;
@@ -418,13 +419,23 @@ const ClientStations = () => {
 
         <div className="flex-grow"></div>
 
-        <Button
-          onClick={() => setIsAddModalOpen(true)}
-          className="bg-blue-500 hover:bg-blue-600 text-white"
-          style={{ borderRadius: "10px" }}
-        >
-          Add Station
-        </Button>
+        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+          <DialogTrigger asChild>
+            <Button
+              className="bg-blue-500 hover:bg-blue-600 text-white sm:order-2"
+              style={{ borderRadius: "5px" }}
+              onClick={() => setIsAddModalOpen(true)}
+            >
+              Add Station
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className="sm:max-w-[425px] bg-white text-slate-900 rounded-md"
+            style={{ borderRadius: "5px" }}
+          >
+            <AddStationModal onClose={() => setIsAddModalOpen(false)} />
+          </DialogContent>
+        </Dialog>
 
         <Select onValueChange={handleExport}>
           <SelectTrigger
