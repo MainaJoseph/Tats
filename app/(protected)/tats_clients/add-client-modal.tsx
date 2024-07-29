@@ -23,9 +23,19 @@ import {
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import { ClientSchema, ClientData } from "@/schemas";
+import { FormErrorSecond } from "@/app/components/form-error-2";
+
+interface Client {
+  id: number;
+  name: string;
+  allowedscope: string | null;
+  country: string;
+  dateCreated: string;
+}
 
 const AddClientModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
   const { toast } = useToast();
   const form = useForm<ClientData>({
@@ -33,15 +43,32 @@ const AddClientModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     defaultValues: {
       name: "",
       country: "",
-      allowedscope: "", // Change this from null to an empty string
+      allowedscope: "",
     },
   });
 
   const onSubmit = async (data: ClientData) => {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     setIsLoading(true);
+    setFormError(null);
+
     try {
-      await axios.post(`${apiBaseUrl}/clients`, {
+      // Check if client already exists
+      const checkResponse = await axios.get<Client[]>(`${apiBaseUrl}/clients`);
+      const existingClients = checkResponse.data;
+      const clientExists = existingClients.some(
+        (client: Client) =>
+          client.name.toLowerCase() === data.name.toLowerCase()
+      );
+
+      if (clientExists) {
+        setFormError("A client with this name already exists.");
+        setIsLoading(false);
+        return;
+      }
+
+      // If client doesn't exist, proceed with adding
+      await axios.post<Client>(`${apiBaseUrl}/clients`, {
         ...data,
         id: 0,
         dateCreated: new Date().toISOString(),
@@ -133,6 +160,8 @@ const AddClientModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </FormItem>
           )}
         />
+
+        {formError && <FormErrorSecond message={formError} />}
 
         <DialogFooter>
           <Button
