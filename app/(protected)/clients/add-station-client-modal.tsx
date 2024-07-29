@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -32,12 +31,14 @@ import {
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 
-// Add a custom CSS class for error messages
 const errorMessageStyle = {
   color: "red",
 };
 
-const AddStationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+const AddStationModal: React.FC<{ onClose: () => void; clientId: number }> = ({
+  onClose,
+  clientId,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -54,7 +55,7 @@ const AddStationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const checkStationExists = async (name: string): Promise<boolean> => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL_STATION_ID}/stations`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/clients/${clientId}/stations`
       );
       const stations = response.data;
       return stations.some(
@@ -80,19 +81,18 @@ const AddStationModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         });
       } else {
         await axios.post(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL_STATION_ID}/stations`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/clients/${clientId}/stations`,
           {
             ...data,
             id: 0,
             pumps: {},
-            client: { id: 1 },
           }
         );
         form.reset();
         toast({
           title: "Station Added Successfully",
           description: `${data.name} has been added to the Tats.`,
-          className: "bg-slate-800 text-white",
+          className: "bg-green-500 text-white",
         });
         onClose();
 

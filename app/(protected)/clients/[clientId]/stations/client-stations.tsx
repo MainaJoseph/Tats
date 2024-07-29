@@ -61,7 +61,7 @@ import {
 import { ScaleLoader } from "react-spinners";
 import axios from "axios";
 import AddPumpModal from "@/app/(protected)/stations/AddPumpModal";
-import AddStationModal from "@/app/(protected)/stations/add-station-modal";
+import AddStationModal from "@/app/(protected)/clients/add-station-client-modal";
 
 interface Station {
   id: number;
@@ -101,6 +101,7 @@ const ClientStations = () => {
   ]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [stationToDelete, setStationToDelete] = useState<Station | null>(null);
+  const [clientName, setClientName] = useState("");
   const router = useRouter();
   const { toast } = useToast();
 
@@ -405,7 +406,7 @@ const ClientStations = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Stations</h1>
+      <h1 className="text-2xl font-bold mb-4">Stations for </h1>
 
       <div className="flex items-center mb-4 gap-4">
         <Input
@@ -432,7 +433,10 @@ const ClientStations = () => {
             className="sm:max-w-[425px] bg-white text-slate-900 rounded-md"
             style={{ borderRadius: "5px" }}
           >
-            <AddStationModal onClose={() => setIsAddModalOpen(false)} />
+            <AddStationModal
+              onClose={() => setIsAddModalOpen(false)}
+              clientId={Number(clientId)}
+            />
           </DialogContent>
         </Dialog>
 
@@ -527,7 +531,7 @@ const ClientStations = () => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No Stations Found
                 </TableCell>
               </TableRow>
             )}
