@@ -90,7 +90,7 @@ const ClientsClient = () => {
   const { toast } = useToast();
 
   const fetchClients = useCallback(async () => {
-    const apiBaseUrl = "https://tats.phan-tec.com";
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     setIsLoading(true);
     try {
       const response = await fetch(`${apiBaseUrl}/clients`);
