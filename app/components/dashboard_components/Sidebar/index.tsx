@@ -45,7 +45,7 @@ const menuGroups = [
       {
         icon: <FaPeopleRoof className="text-white" size={22} />,
         label: "Clients",
-        route: "/tats_clients",
+        route: "/clients",
       },
 
       {

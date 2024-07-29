@@ -116,6 +116,10 @@ const ClientsClient = () => {
     fetchClients();
   }, [fetchClients]);
 
+  const handleViewClientStations = (client: Client) => {
+    router.push(`/clients/${client.id}/stations`);
+  };
+
   const handleDeleteClient = (client: Client) => {
     setClientToDelete(client);
     setIsDeleteDialogOpen(true);
@@ -191,7 +195,7 @@ const ClientsClient = () => {
       cell: ({ row }) => (
         <div className="flex gap-2">
           <Button
-            onClick={() => {}}
+            onClick={() => handleViewClientStations(row.original)}
             className="bg-green-500 hover:bg-green-600 text-white"
             style={{ borderRadius: "5px" }}
           >
