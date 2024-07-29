@@ -47,6 +47,15 @@ export const StationSchema = z.object({
 
 export type StationData = z.infer<typeof StationSchema>;
 
+//New ClientSchema
+export const ClientSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  country: z.string().min(1, { message: "Country is required" }),
+  allowedscope: z.string().optional(),
+});
+
+export type ClientData = z.infer<typeof ClientSchema>;
+
 // New AddPumpSchema
 export const AddPumpSchema = z.object({
   label: z.string().min(1, { message: "Pump label is required" }),

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdLibraryAdd } from "react-icons/md";
 import {
   ColumnDef,
   flexRender,
@@ -59,6 +59,9 @@ import {
   TableRow as DocxTableRow,
 } from "docx";
 import { ScaleLoader } from "react-spinners";
+import { BsFillFuelPumpDieselFill } from "react-icons/bs";
+import { AiFillBank } from "react-icons/ai";
+import AddClientModal from "./add-client-modal";
 
 interface Client {
   id: number;
@@ -121,7 +124,7 @@ const ClientsClient = () => {
   const confirmDeleteClient = async () => {
     if (!clientToDelete) return;
 
-    const apiBaseUrl = "https://tats.phan-tec.com";
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     setIsLoading(true);
     try {
       const response = await fetch(
@@ -187,6 +190,21 @@ const ClientsClient = () => {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex gap-2">
+          <Button
+            onClick={() => {}}
+            className="bg-green-500 hover:bg-green-600 text-white"
+            style={{ borderRadius: "5px" }}
+          >
+            <AiFillBank size={20} />
+          </Button>
+          <Button
+            onClick={() => {}}
+            className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
+            style={{ borderRadius: "5px" }}
+          >
+            Add Station
+            <MdLibraryAdd size={20} />
+          </Button>
           <Button
             onClick={() => handleDeleteClient(row.original)}
             className="
@@ -351,6 +369,22 @@ const ClientsClient = () => {
       </h4>
 
       <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              className="bg-blue-500 hover:bg-blue-600 text-white sm:order-2"
+              style={{ borderRadius: "5px" }}
+            >
+              Add Client
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className="sm:max-w-[425px] bg-white text-slate-900 rounded-md"
+            style={{ borderRadius: "5px" }}
+          >
+            <AddClientModal onClose={() => {}} />
+          </DialogContent>
+        </Dialog>
         <Input
           placeholder="Search clients..."
           value={globalFilter ?? ""}
