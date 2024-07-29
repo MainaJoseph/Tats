@@ -41,7 +41,7 @@ const AddClientModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     setIsLoading(true);
     try {
-      await axios.post(`${apiBaseUrl}/stations/`, {
+      await axios.post(`${apiBaseUrl}/clients`, {
         ...data,
         id: 0,
         dateCreated: new Date().toISOString(),
