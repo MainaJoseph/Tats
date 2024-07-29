@@ -550,6 +550,7 @@ const ClientStations = () => {
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            style={{ borderRadius: "10px" }}
           >
             Previous
           </Button>
@@ -558,6 +559,7 @@ const ClientStations = () => {
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            style={{ borderRadius: "10px" }}
           >
             Next
           </Button>
