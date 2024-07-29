@@ -406,7 +406,7 @@ const ClientStations = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Stations for </h1>
+      <h1 className="text-2xl font-bold mb-4">Stations </h1>
 
       <div className="flex items-center mb-4 gap-4">
         <Input
