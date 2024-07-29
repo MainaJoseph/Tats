@@ -24,6 +24,7 @@ import {
   MdFormatListBulletedAdd,
 } from "react-icons/md";
 import { IoMdPersonAdd } from "react-icons/io";
+import { FaPeopleRoof } from "react-icons/fa6";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -42,14 +43,11 @@ const menuGroups = [
         route: "/dashboard",
       },
       {
-        icon: <CiViewTable className="text-white" size={24} />,
-        label: "Transactions",
-        route: "#",
-        children: [
-          { label: "Transactions", route: "/transactions" },
-          { label: "Detailed Transactions", route: "/transaction_report_v2" },
-        ],
+        icon: <FaPeopleRoof className="text-white" size={22} />,
+        label: "Clients",
+        route: "/tats_clients",
       },
+
       {
         icon: <MdFormatListBulletedAdd className="text-white" size={22} />,
         label: "Manage Stations",
@@ -60,9 +58,13 @@ const menuGroups = [
         ],
       },
       {
-        icon: <MdOutlineCalendarMonth className="text-white" size={22} />,
-        label: "Calendar",
-        route: "/calendar",
+        icon: <CiViewTable className="text-white" size={24} />,
+        label: "Transactions",
+        route: "#",
+        children: [
+          { label: "Transactions", route: "/transactions" },
+          { label: "Detailed Transactions", route: "/transaction_report_v2" },
+        ],
       },
       {
         icon: <IoMdPersonAdd className="text-white" size={22} />,
