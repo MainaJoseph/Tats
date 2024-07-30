@@ -140,7 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       <aside
         className={`absolute left-0 top-0 z-10 flex h-screen ${
           compactView ? "w-20" : "w-76"
-        } flex-col overflow-y-hidden bg-slate-800 text-white duration-300 ease-linear lg:static lg:translate-x-0 ${
+        } flex-col overflow-hidden bg-slate-800 text-white duration-300 ease-linear lg:static lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -176,7 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
         </div>
 
-        <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+        <div className="flex-grow overflow-y-auto">
           <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
             {menuGroups.map((group, groupIndex) => (
               <div key={groupIndex}>
@@ -201,6 +201,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
             ))}
           </nav>
         </div>
+
         <a
           href="/account"
           className="absolute bottom-0 left-0 w-full p-4 cursor-pointer"
