@@ -23,6 +23,9 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en">
+        <head>
+          <link rel="icon" href="/tatswhite.png" sizes="128x128" />
+        </head>
         <body className={`${poppins.className} text-slate-700`}>
           <main>{children}</main>
           <Toaster />
