@@ -13,7 +13,7 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { IoMenuSharp } from "react-icons/io5";
 import { AiOutlineDash } from "react-icons/ai";
-import { ImShrink } from "react-icons/im";
+import { HiMenuAlt3 } from "react-icons/hi";
 import { CgArrowsShrinkH } from "react-icons/cg";
 import { RxAvatar } from "react-icons/rx";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
@@ -163,7 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               {compactView ? (
                 <CgArrowsShrinkH size={25} />
               ) : (
-                <ImShrink size={17} />
+                <HiMenuAlt3 size={25} />
               )}
             </button>
             <button
