@@ -418,7 +418,7 @@ const ClientStations = () => {
           placeholder="Search stations..."
           value={globalFilter ?? ""}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="max-w-xs"
+          className="max-w-xs focus:border-sky-500"
           style={{ borderRadius: "6px" }}
         />
 
@@ -451,7 +451,7 @@ const ClientStations = () => {
 
         <Select onValueChange={handleExport}>
           <SelectTrigger
-            className="w-[180px] rounded-md"
+            className="w-[180px] rounded-md "
             style={{ borderRadius: "6px" }}
           >
             <SelectValue placeholder="Export Data" />
