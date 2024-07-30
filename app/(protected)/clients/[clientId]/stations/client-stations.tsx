@@ -67,7 +67,7 @@ interface Station {
   id: number;
   name: string;
   location: string;
-  nozzleIdentifierName: string;
+  nozzleIdentifierName: "pumpAddress" | "nozzle";
   pumps: {
     label: string;
     rdgIndex: string;
@@ -132,7 +132,7 @@ const ClientStations = () => {
   }, [fetchClientStations]);
 
   const handleViewPumps = (station: Station) => {
-    if (!station.pumps || Object.keys(station.pumps).length === 0) {
+    if (!station.pumps || station.pumps.length === 0) {
       toast({
         title: "No Pumps Available",
         description: `Station ${station.name} has no pumps.`,
@@ -142,6 +142,11 @@ const ClientStations = () => {
     } else {
       router.push(`/stations/${encodeURIComponent(station.name)}/pumps`);
     }
+  };
+
+  //store add atation state
+  const addStation = (newStation: Station) => {
+    setStations((prevStations) => [...prevStations, newStation]);
   };
 
   const handleAddPump = (station: Station) => {
@@ -436,6 +441,10 @@ const ClientStations = () => {
             <AddStationModal
               onClose={() => setIsAddModalOpen(false)}
               clientId={Number(clientId)}
+              onAddStation={(newStation) => {
+                setStations((prevStations) => [...prevStations, newStation]);
+                setIsAddModalOpen(false);
+              }}
             />
           </DialogContent>
         </Dialog>

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { StationSchema, StationData } from "../../../schemas/index";
+import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import {
   DialogTitle,
@@ -29,21 +29,52 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { ScaleLoader } from "react-spinners";
-import { useRouter } from "next/navigation";
+
+interface Station {
+  id: number;
+  name: string;
+  location: string;
+  nozzleIdentifierName: "pumpAddress" | "nozzle";
+  pumps: {
+    label: string;
+    rdgIndex: string;
+    nozzles: {
+      id: string;
+      label: string;
+    }[];
+  }[];
+  client: {
+    id: number;
+  };
+}
+
+interface AddStationModalProps {
+  onClose: () => void;
+  clientId: number;
+  onAddStation: (newStation: Station) => void;
+}
+
+const StationSchema = z.object({
+  name: z.string().min(1, "Station name is required"),
+  location: z.string().min(1, "Location is required"),
+  nozzleIdentifierName: z.enum(["pumpAddress", "nozzle"]),
+});
+
+type StationFormData = z.infer<typeof StationSchema>;
 
 const errorMessageStyle = {
   color: "red",
 };
 
-const AddStationModal: React.FC<{ onClose: () => void; clientId: number }> = ({
+const AddStationModal: React.FC<AddStationModalProps> = ({
   onClose,
   clientId,
+  onAddStation,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter();
   const { toast } = useToast();
-  const form = useForm<StationData>({
+
+  const form = useForm<StationFormData>({
     resolver: zodResolver(StationSchema),
     defaultValues: {
       name: "",
@@ -67,7 +98,7 @@ const AddStationModal: React.FC<{ onClose: () => void; clientId: number }> = ({
     }
   };
 
-  const onSubmit = async (data: StationData) => {
+  const onSubmit = async (data: StationFormData) => {
     setIsLoading(true);
     try {
       const stationExists = await checkStationExists(data.name);
@@ -80,14 +111,17 @@ const AddStationModal: React.FC<{ onClose: () => void; clientId: number }> = ({
           className: "bg-rose-500 text-white rounded-md",
         });
       } else {
-        await axios.post(
+        const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/clients/${clientId}/stations`,
           {
             ...data,
             id: 0,
-            pumps: {},
+            pumps: [],
           }
         );
+
+        const newStation: Station = response.data;
+        onAddStation(newStation);
         form.reset();
         toast({
           title: "Station Added Successfully",
@@ -95,9 +129,6 @@ const AddStationModal: React.FC<{ onClose: () => void; clientId: number }> = ({
           className: "bg-green-500 text-white",
         });
         onClose();
-
-        // Refresh the page
-        router.refresh();
       }
     } catch (error) {
       console.error("Error adding station:", error);

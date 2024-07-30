@@ -192,6 +192,7 @@ const ClientsClient = () => {
     },
     {
       id: "actions",
+      header: "ACTIONS",
       cell: ({ row }) => (
         <div className="flex gap-2">
           <Button
