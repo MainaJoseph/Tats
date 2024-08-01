@@ -1,22 +1,52 @@
 import React from "react";
 import Link from "next/link";
-
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import SidebarDropdown from "./SidebarDropdown";
 
-const SidebarItem = ({ item, pageName, setPageName }: any) => {
+interface MenuItem {
+  icon: React.ReactNode;
+  label: string;
+  route: string;
+  children?: ChildMenuItem[];
+}
+
+interface ChildMenuItem {
+  label: string;
+  route: string;
+}
+
+interface SidebarItemProps {
+  item: MenuItem;
+  pageName: string;
+  setPageName: (name: string) => void;
+  onClick: () => void;
+  compactView: boolean;
+}
+
+const SidebarItem: React.FC<SidebarItemProps> = ({
+  item,
+  pageName,
+  setPageName,
+  onClick,
+  compactView,
+}) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const handleClick = () => {
     const updatedPageName =
       pageName !== item.label.toLowerCase() ? item.label.toLowerCase() : "";
-    return setPageName(updatedPageName);
+    setPageName(updatedPageName);
+    onClick();
+    if (item.route && item.route !== "#") {
+      router.push(item.route);
+    }
   };
 
-  const pathname = usePathname();
-
-  const isActive = (item: any) => {
+  const isActive = (item: MenuItem): boolean => {
     if (item.route === pathname) return true;
     if (item.children) {
-      return item.children.some((child: any) => isActive(child));
+      return item.children.some((child) => child.route === pathname);
     }
     return false;
   };
@@ -24,20 +54,54 @@ const SidebarItem = ({ item, pageName, setPageName }: any) => {
   const isItemActive = isActive(item);
 
   return (
-    <>
-      <li>
-        <Link
-          href={item.route}
+    <li className="relative">
+      {item.route && item.route !== "#" ? (
+        <Link href={item.route} passHref>
+          <div
+            onClick={handleClick}
+            className={`${
+              isItemActive ? "bg-slate-500 rounded-[11px] dark:bg-meta-4" : ""
+            } group flex items-center ${
+              compactView ? "justify-center" : "gap-2.5"
+            } rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 cursor-pointer`}
+          >
+            <span className="flex items-center">{item.icon}</span>
+            {!compactView && <span>{item.label}</span>}
+            {item.children && !compactView && (
+              <svg
+                className={`ml-auto fill-current ${
+                  pageName === item.label.toLowerCase() && "rotate-180"
+                }`}
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+                  fill=""
+                />
+              </svg>
+            )}
+          </div>
+        </Link>
+      ) : (
+        <div
           onClick={handleClick}
           className={`${
-            isItemActive ? "bg-graydark dark:bg-meta-4" : ""
-          } group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4`}
+            isItemActive ? "bg-slate-500 rounded-[11px] dark:bg-meta-4" : ""
+          } group flex items-center ${
+            compactView ? "justify-center" : "gap-2.5"
+          } rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 cursor-pointer`}
         >
-          {item.icon}
-          {item.label}
-          {item.children && (
+          <span className="flex items-center">{item.icon}</span>
+          {!compactView && <span>{item.label}</span>}
+          {item.children && !compactView && (
             <svg
-              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+              className={`ml-auto fill-current ${
                 pageName === item.label.toLowerCase() && "rotate-180"
               }`}
               width="20"
@@ -54,19 +118,19 @@ const SidebarItem = ({ item, pageName, setPageName }: any) => {
               />
             </svg>
           )}
-        </Link>
+        </div>
+      )}
 
-        {item.children && (
-          <div
-            className={`translate transform overflow-hidden ${
-              pageName !== item.label.toLowerCase() && "hidden"
-            }`}
-          >
-            <SidebarDropdown item={item.children} />
-          </div>
-        )}
-      </li>
-    </>
+      {item.children && !compactView && (
+        <div
+          className={`translate transform overflow-hidden ${
+            pageName !== item.label.toLowerCase() && "hidden"
+          }`}
+        >
+          <SidebarDropdown item={item.children} compactView={compactView} />
+        </div>
+      )}
+    </li>
   );
 };
 

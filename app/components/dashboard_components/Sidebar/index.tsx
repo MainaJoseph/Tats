@@ -25,6 +25,7 @@ import {
 } from "react-icons/md";
 import { IoMdPersonAdd } from "react-icons/io";
 import { FaPeopleRoof } from "react-icons/fa6";
+import { useSidebarColor } from "@/context/SidebarColorContext";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -106,6 +107,7 @@ const menuGroups = [
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const [compactView, setCompactView] = useLocalStorage("compactView", false);
+  const { sidebarColor } = useSidebarColor(); // Use the context here
   const pathname = usePathname(); // Hook to get the current path
 
   useEffect(() => {
@@ -141,9 +143,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       <aside
         className={`absolute left-0 top-0 z-10 flex h-screen ${
           compactView ? "w-20" : "w-76"
-        } flex-col overflow-hidden bg-slate-800 text-white duration-300 ease-linear lg:static lg:translate-x-0 ${
+        } flex-col overflow-hidden text-white duration-300 ease-linear lg:static lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        style={{ backgroundColor: sidebarColor }}
       >
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 mt-2 md:mt-4">
           <div className="flex items-center gap-2">
