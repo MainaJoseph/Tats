@@ -1,10 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import ChartOne from "../Charts/ChartOne";
-import { BsFuelPumpDieselFill } from "react-icons/bs";
 import { MdAttachMoney } from "react-icons/md";
 import { FaUserFriends } from "react-icons/fa";
 import CardDataStats from "../CardDataStatsDashy";
+import { MdOutlineWaterDrop } from "react-icons/md";
 import {
   Card,
   CardContent,
@@ -92,7 +92,7 @@ const Dashy: React.FC = () => {
             isExpanded={expandedCard === "volume"}
             onExpand={() => handleCardExpand("volume")}
           >
-            <BsFuelPumpDieselFill size={20} className="text-slate-800" />
+            <MdOutlineWaterDrop size={20} className="text-slate-800" />
           </CardDataStats>
 
           <CardDataStats
