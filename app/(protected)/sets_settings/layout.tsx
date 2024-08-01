@@ -1,13 +1,13 @@
 "use client";
 
 import Loader from "@/app/components/Loader";
-import { SidebarColorProvider } from "@/context/SidebarColorContext";
 // import "jsvectormap/dist/jsvectormap.css";
 // import "flatpickr/dist/flatpickr.min.css";
 // import "@/css/satoshi.css";
 // import "@/css/style.css";
 import React, { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
+import { SidebarColorProvider } from "@/context/SidebarColorContext";
 
 export default function RootLayout({
   children,
