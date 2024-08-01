@@ -42,7 +42,7 @@ export const LogoutAccount = () => {
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-black text-white hover:bg-slate-800"
+              className="bg-slate-800 text-white hover:bg-slate-800"
               style={{ borderRadius: "5px" }}
               onClick={() => signOut()}
             >
