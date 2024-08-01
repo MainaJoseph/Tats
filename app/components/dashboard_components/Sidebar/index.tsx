@@ -42,11 +42,7 @@ const menuGroups = [
         label: "Dashboard",
         route: "/dashboard",
       },
-      {
-        icon: <MdOutlineDashboardCustomize size={24} className="text-white" />,
-        label: "Dashy",
-        route: "/dashy",
-      },
+
       {
         icon: <FaPeopleRoof className="text-white" size={22} />,
         label: "Clients",
