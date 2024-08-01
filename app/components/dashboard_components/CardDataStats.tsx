@@ -7,6 +7,7 @@ interface CardDataStatsProps {
   levelUp?: boolean;
   levelDown?: boolean;
   children?: ReactNode;
+  style?: string;
 }
 
 const CardDataStats: React.FC<CardDataStatsProps> = ({

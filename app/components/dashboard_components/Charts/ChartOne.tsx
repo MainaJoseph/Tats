@@ -18,6 +18,14 @@ interface ChartOneState {
   data: number[];
 }
 
+// Define a color mapping for the products
+const productColors: Record<string, string> = {
+  DIESEL: "#7C3AED", // bg-purple-600
+  SUPER: "#3B82F6", // bg-blue-500
+  "DIESEL BULK": "#F97316", // bg-orange-500
+  "SUPER BULK": "#10B981", // bg-green-500
+};
+
 const getCurrentDateTime = () => {
   const date = new Date();
   return date.toISOString().slice(0, 19).replace("T", " "); // returns YYYY-MM-DD HH:mm:ss format
@@ -155,7 +163,7 @@ const ChartOne: React.FC<{
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#80CAEE", "#3C50E0"], // Inverted colors
+    colors: series.map((s) => productColors[s.name] || "#000000"), // Apply custom colors based on product names
     chart: {
       fontFamily: "Satoshi, sans-serif",
       height: 335,
@@ -212,7 +220,7 @@ const ChartOne: React.FC<{
     markers: {
       size: 4,
       colors: "#fff",
-      strokeColors: ["#80CAEE", "#3C50E0"], // Inverted colors
+      strokeColors: series.map((s) => productColors[s.name] || "#000000"), // Apply custom colors for stroke
       strokeWidth: 3,
       strokeOpacity: 0.9,
       strokeDashArray: 0,
