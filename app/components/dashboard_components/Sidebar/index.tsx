@@ -215,18 +215,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                     <div className="text-white font-semibold text-md">
                       {user?.name}
                     </div>
-                    <div className="text-white font-normal text-sm">
-                      {user?.email}
-                    </div>
                   </div>
                   <div className="text-white ml-1">
                     <AiOutlineDash className="font-bold text-white mr-2" />
                   </div>
-                </div>
-                <div className="flex flex-row gap-1 text-white font-normal text-xs mt-4">
-                  <FaRegCalendarAlt />
-                  <span> Joined on :</span>
-                  <span className="font-semibold">{formattedDate}</span>
                 </div>
               </div>
             </div>
