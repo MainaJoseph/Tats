@@ -139,7 +139,7 @@ export const RegisterForm = () => {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full hover:opacity-90 bg-black text-white py-3 rounded-md font-semibold text-sm"
+            className="w-full hover:opacity-90 bg-slate-800 text-white py-3 rounded-md font-semibold text-sm"
             style={{ borderRadius: "10px" }}
           >
             {isPending ? (

@@ -11,7 +11,7 @@ const HomeButton = () => {
   return (
     <div>
       <button
-        className="md:absolute md:top-30 md:left-4 bg-black text-white py-2 md:py-3 px-4 md:px-20 rounded-tl-xl rounded-br-xl hover:opacity-80 transition  shadow-xl"
+        className="md:absolute md:top-30 md:left-4 bg-slate-800 text-white py-2 md:py-3 px-4 md:px-20 rounded-tl-xl rounded-br-xl hover:opacity-80 transition  shadow-xl"
         onClick={handleGoHome}
       >
         Back Home

@@ -105,9 +105,12 @@ export function NavMenu() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/docs" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Documentation
+          <Link href="/dashboard" legacyBehavior passHref>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              style={{ fontWeight: "bold" }}
+            >
+              Dashboard
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

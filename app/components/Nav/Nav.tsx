@@ -100,13 +100,13 @@ const NavBar = () => {
                 <>
                   <Link
                     href="/auth/login"
-                    className="px-4 py-2 border rounded-full"
+                    className="px-4 py-2 border rounded-full hover:border-sky-500"
                   >
                     Log in
                   </Link>
                   <Link
                     href="/auth/sign-up"
-                    className="px-4 py-2 bg-black text-white rounded-full hover:opacity-50"
+                    className="px-4 py-2 bg-slate-800 text-white rounded-full hover:opacity-50"
                   >
                     Sign up
                   </Link>
