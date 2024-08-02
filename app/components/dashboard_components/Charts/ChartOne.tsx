@@ -16,6 +16,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { X } from "lucide-react";
 
 interface ReportItem {
   datetime: string;
@@ -92,6 +93,7 @@ const ChartOne: React.FC<{
   const [timeFrame, setTimeFrame] = useState<string>("day");
   const [xAxisLabels, setXAxisLabels] = useState<string[]>([]);
   const [chartType, setChartType] = useState<"line" | "bar" | "area">("line");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchData = async (timeFrame: string) => {
     const currentDateTime = getCurrentDateTime();
@@ -169,9 +171,9 @@ const ChartOne: React.FC<{
     fetchData(timeFrame);
   }, [timeFrame]);
 
-  const renderChart = () => {
+  const renderChart = (height: number | string = 350) => {
     return (
-      <ResponsiveContainer width="100%" height={350}>
+      <ResponsiveContainer width="100%" height={height}>
         {chartType === "line" ? (
           <LineChart data={data}>
             <XAxis dataKey="label" />
@@ -223,103 +225,133 @@ const ChartOne: React.FC<{
     );
   };
 
+  const renderChartControls = () => (
+    <>
+      <div className="flex justify-center mb-6">
+        <div className="inline-flex rounded-md shadow-sm">
+          {["day", "week", "month"].map((frame) => (
+            <button
+              key={frame}
+              onClick={() => setTimeFrame(frame)}
+              className={`px-4 py-2 text-sm font-medium ${
+                timeFrame === frame
+                  ? "text-blue-700 bg-blue-100 border-blue-300"
+                  : "text-gray-700 bg-white hover:bg-gray-50 border-gray-300"
+              } ${
+                frame === "day"
+                  ? "rounded-l-lg"
+                  : frame === "month"
+                  ? "rounded-r-lg"
+                  : ""
+              } border ${
+                frame === "week" ? "border-l-0 border-r-0" : ""
+              } focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-blue-700`}
+            >
+              {frame.charAt(0).toUpperCase() + frame.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex bg-gray-100 rounded-lg p-1 mb-4">
+        {["line", "bar", "area"].map((type) => (
+          <button
+            key={type}
+            onClick={() => setChartType(type as "line" | "bar" | "area")}
+            className={`p-2 rounded-md transition-all duration-200 ${
+              chartType === type
+                ? "bg-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            {type === "line" && (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            )}
+            {type === "bar" && (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+            )}
+            {type === "area" && (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z"></path>
+              </svg>
+            )}
+          </button>
+        ))}
+      </div>
+    </>
+  );
+
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl font-bold">Sales Overview</CardTitle>
-        <div className="flex items-center space-x-2">
-          <div className="flex bg-gray-100 rounded-lg p-1">
-            {["line", "bar", "area"].map((type) => (
+    <>
+      <Card className="w-full">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-xl font-bold">Sales Overview</CardTitle>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
+          >
+            Full Screen
+          </button>
+        </CardHeader>
+        <CardContent>
+          {renderChartControls()}
+          {renderChart()}
+        </CardContent>
+      </Card>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white w-11/12 h-5/6 rounded-lg p-6 flex flex-col">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">Full Screen Chart</h2>
               <button
-                key={type}
-                onClick={() => setChartType(type as "line" | "bar" | "area")}
-                className={`p-2 rounded-md transition-all duration-200 ${
-                  chartType === type
-                    ? "bg-white shadow-sm"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 rounded-full hover:bg-gray-200 transition-colors duration-200"
               >
-                {type === "line" && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                  </svg>
-                )}
-                {type === "bar" && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                  </svg>
-                )}
-                {type === "area" && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z"></path>
-                  </svg>
-                )}
+                <X size={24} />
               </button>
-            ))}
+            </div>
+            {renderChartControls()}
+            {renderChart("100%")}
           </div>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex rounded-md shadow-sm">
-            {["day", "week", "month"].map((frame) => (
-              <button
-                key={frame}
-                onClick={() => setTimeFrame(frame)}
-                className={`px-4 py-2 text-sm font-medium ${
-                  timeFrame === frame
-                    ? "text-blue-700 bg-blue-100 border-blue-300"
-                    : "text-gray-700 bg-white hover:bg-gray-50 border-gray-300"
-                } ${
-                  frame === "day"
-                    ? "rounded-l-lg"
-                    : frame === "month"
-                    ? "rounded-r-lg"
-                    : ""
-                } border ${
-                  frame === "week" ? "border-l-0 border-r-0" : ""
-                } focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-blue-700`}
-              >
-                {frame.charAt(0).toUpperCase() + frame.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
-        {renderChart()}
-      </CardContent>
-    </Card>
+      )}
+    </>
   );
 };
 
