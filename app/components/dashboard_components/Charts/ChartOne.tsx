@@ -59,6 +59,14 @@ const getStartOfYearDate = () => {
   return date.toISOString().split("T")[0];
 };
 
+const generateHourlyLabels = () => {
+  const currentHour = new Date().getHours();
+  return Array.from(
+    { length: currentHour + 1 },
+    (_, i) => `${i.toString().padStart(2, "0")}:00`
+  );
+};
+
 const ChartOne: React.FC<{
   onSumCountChange: (sumCount: number) => void;
   onSumVolumeChange: (sumVolume: number) => void;
@@ -110,19 +118,39 @@ const ChartOne: React.FC<{
       const { products, report, xAxisColumns, xAxisColumnsLabels } =
         responseData;
 
-      const formattedData = xAxisColumns.map((datetime, index) => {
-        const dataItem: any = { datetime, label: xAxisColumnsLabels[index] };
-        products.forEach((product) => {
-          const reportItem = report.find(
-            (item) => item.datetime === datetime && item.productname === product
-          );
-          dataItem[product] = reportItem ? reportItem.amount : 0;
+      let formattedData;
+      let labels;
+
+      if (timeFrame === "day") {
+        labels = generateHourlyLabels();
+        formattedData = labels.map((label) => {
+          const dataItem: any = { datetime: label, label };
+          products.forEach((product) => {
+            const reportItem = report.find(
+              (item) =>
+                item.datetime.includes(label) && item.productname === product
+            );
+            dataItem[product] = reportItem ? reportItem.amount : 0;
+          });
+          return dataItem;
         });
-        return dataItem;
-      });
+      } else {
+        formattedData = xAxisColumns.map((datetime, index) => {
+          const dataItem: any = { datetime, label: xAxisColumnsLabels[index] };
+          products.forEach((product) => {
+            const reportItem = report.find(
+              (item) =>
+                item.datetime === datetime && item.productname === product
+            );
+            dataItem[product] = reportItem ? reportItem.amount : 0;
+          });
+          return dataItem;
+        });
+        labels = xAxisColumnsLabels;
+      }
 
       setData(formattedData);
-      setXAxisLabels(xAxisColumnsLabels);
+      setXAxisLabels(labels);
       onSumCountChange(responseData.sumCount);
       onSumVolumeChange(responseData.sumVolume);
       onProductSumVolumesChange(responseData.productSumVolumes);
