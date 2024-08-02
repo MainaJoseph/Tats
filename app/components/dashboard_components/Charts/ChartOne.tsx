@@ -7,6 +7,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   LineChart,
   Line,
+  BarChart,
+  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
@@ -35,7 +39,6 @@ interface ApiResponse {
   productSumCount: Record<string, number>;
 }
 
-// Define a color mapping for the products
 const productColors: Record<string, string> = {
   DIESEL: "#7C3AED",
   SUPER: "#3B82F6",
@@ -89,6 +92,7 @@ const ChartOne: React.FC<{
   const [data, setData] = useState<any[]>([]);
   const [timeFrame, setTimeFrame] = useState<string>("day");
   const [xAxisLabels, setXAxisLabels] = useState<string[]>([]);
+  const [chartType, setChartType] = useState<"line" | "bar" | "area">("line");
 
   const fetchData = async (timeFrame: string) => {
     const currentDateTime = getCurrentDateTime();
@@ -166,20 +170,10 @@ const ChartOne: React.FC<{
     fetchData(timeFrame);
   }, [timeFrame]);
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Sales Overview</CardTitle>
-        <Tabs value={timeFrame} onValueChange={setTimeFrame}>
-          <TabsList>
-            <TabsTrigger value="day">Day</TabsTrigger>
-            <TabsTrigger value="week">Week</TabsTrigger>
-            <TabsTrigger value="month">Month</TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
+  const renderChart = () => {
+    return (
+      <ResponsiveContainer width="100%" height={350}>
+        {chartType === "line" ? (
           <LineChart data={data}>
             <XAxis dataKey="label" />
             <YAxis />
@@ -195,7 +189,113 @@ const ChartOne: React.FC<{
               />
             ))}
           </LineChart>
-        </ResponsiveContainer>
+        ) : chartType === "bar" ? (
+          <BarChart data={data}>
+            <XAxis dataKey="label" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            {Object.keys(productColors).map((product) => (
+              <Bar
+                key={product}
+                dataKey={product}
+                fill={productColors[product]}
+              />
+            ))}
+          </BarChart>
+        ) : (
+          <AreaChart data={data}>
+            <XAxis dataKey="label" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            {Object.keys(productColors).map((product) => (
+              <Area
+                key={product}
+                type="monotone"
+                dataKey={product}
+                stroke={productColors[product]}
+                fill={productColors[product]}
+              />
+            ))}
+          </AreaChart>
+        )}
+      </ResponsiveContainer>
+    );
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>Sales Overview</CardTitle>
+        <div className="flex items-center space-x-2 bg-gray-100 rounded-md p-1">
+          <button
+            onClick={() => setChartType("line")}
+            className={`p-1 rounded ${chartType === "line" ? "bg-white" : ""}`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </button>
+          <button
+            onClick={() => setChartType("bar")}
+            className={`p-1 rounded ${chartType === "bar" ? "bg-white" : ""}`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </button>
+          <button
+            onClick={() => setChartType("area")}
+            className={`p-1 rounded ${chartType === "area" ? "bg-white" : ""}`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z"></path>
+            </svg>
+          </button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Tabs value={timeFrame} onValueChange={setTimeFrame} className="mb-4">
+          <TabsList>
+            <TabsTrigger value="day">Day</TabsTrigger>
+            <TabsTrigger value="week">Week</TabsTrigger>
+            <TabsTrigger value="month">Month</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        {renderChart()}
       </CardContent>
     </Card>
   );
