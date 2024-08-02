@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   LineChart,
   Line,
@@ -225,76 +224,99 @@ const ChartOne: React.FC<{
   };
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Sales Overview</CardTitle>
-        <div className="flex items-center space-x-2 bg-gray-100 rounded-md p-1">
-          <button
-            onClick={() => setChartType("line")}
-            className={`p-1 rounded ${chartType === "line" ? "bg-white" : ""}`}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-            </svg>
-          </button>
-          <button
-            onClick={() => setChartType("bar")}
-            className={`p-1 rounded ${chartType === "bar" ? "bg-white" : ""}`}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="20" x2="18" y2="10"></line>
-              <line x1="12" y1="20" x2="12" y2="4"></line>
-              <line x1="6" y1="20" x2="6" y2="14"></line>
-            </svg>
-          </button>
-          <button
-            onClick={() => setChartType("area")}
-            className={`p-1 rounded ${chartType === "area" ? "bg-white" : ""}`}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z"></path>
-            </svg>
-          </button>
+        <CardTitle className="text-xl font-bold">Sales Overview</CardTitle>
+        <div className="flex items-center space-x-2">
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            {["line", "bar", "area"].map((type) => (
+              <button
+                key={type}
+                onClick={() => setChartType(type as "line" | "bar" | "area")}
+                className={`p-2 rounded-md transition-all duration-200 ${
+                  chartType === type
+                    ? "bg-white shadow-sm"
+                    : "text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {type === "line" && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                  </svg>
+                )}
+                {type === "bar" && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                )}
+                {type === "area" && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z"></path>
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs value={timeFrame} onValueChange={setTimeFrame} className="mb-4">
-          <TabsList>
-            <TabsTrigger value="day">Day</TabsTrigger>
-            <TabsTrigger value="week">Week</TabsTrigger>
-            <TabsTrigger value="month">Month</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex justify-center mb-6">
+          <div className="inline-flex rounded-md shadow-sm">
+            {["day", "week", "month"].map((frame) => (
+              <button
+                key={frame}
+                onClick={() => setTimeFrame(frame)}
+                className={`px-4 py-2 text-sm font-medium ${
+                  timeFrame === frame
+                    ? "text-blue-700 bg-blue-100 border-blue-300"
+                    : "text-gray-700 bg-white hover:bg-gray-50 border-gray-300"
+                } ${
+                  frame === "day"
+                    ? "rounded-l-lg"
+                    : frame === "month"
+                    ? "rounded-r-lg"
+                    : ""
+                } border ${
+                  frame === "week" ? "border-l-0 border-r-0" : ""
+                } focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-blue-700`}
+              >
+                {frame.charAt(0).toUpperCase() + frame.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
         {renderChart()}
       </CardContent>
     </Card>
