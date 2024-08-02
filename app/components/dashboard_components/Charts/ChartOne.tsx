@@ -17,6 +17,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { X } from "lucide-react";
+import { AiOutlineFullscreen } from "react-icons/ai";
 
 interface ReportItem {
   datetime: string;
@@ -323,9 +324,9 @@ const ChartOne: React.FC<{
           <CardTitle className="text-xl font-bold">Sales Overview</CardTitle>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
+            className="px-4 py-2 bg-none  text-white bg-sky-500 rounded-full hover:bg-blue-600 transition-colors duration-200"
           >
-            Full Screen
+            <AiOutlineFullscreen size={23} />
           </button>
         </CardHeader>
         <CardContent>
@@ -338,7 +339,9 @@ const ChartOne: React.FC<{
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white w-11/12 h-5/6 rounded-lg p-6 flex flex-col">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Full Screen Chart</h2>
+              <h2 className="text-2xl font-bold">
+                <AiOutlineFullscreen />
+              </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="p-2 rounded-full hover:bg-gray-200 transition-colors duration-200"
