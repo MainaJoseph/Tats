@@ -95,6 +95,8 @@ const ChartOne: React.FC<{
   const [xAxisLabels, setXAxisLabels] = useState<string[]>([]);
   const [chartType, setChartType] = useState<"line" | "bar" | "area">("line");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
 
   const fetchData = async (timeFrame: string) => {
     const currentDateTime = getCurrentDateTime();
@@ -168,8 +170,39 @@ const ChartOne: React.FC<{
     }
   };
 
+  const updateDateRange = (timeFrame: string) => {
+    const currentDate = new Date();
+    let start: Date;
+    let end: Date = currentDate;
+
+    switch (timeFrame) {
+      case "day":
+        start = new Date(currentDate.setHours(0, 0, 0, 0));
+        break;
+      case "week":
+        start = new Date(currentDate);
+        start.setDate(currentDate.getDate() - 7);
+        break;
+      case "month":
+        start = new Date(currentDate.getFullYear(), 0, 1);
+        break;
+      default:
+        start = currentDate;
+    }
+
+    const formatDate = (date: Date) =>
+      date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    setStartDate(formatDate(start));
+    setEndDate(formatDate(end));
+  };
+
   useEffect(() => {
     fetchData(timeFrame);
+    updateDateRange(timeFrame);
   }, [timeFrame]);
 
   const renderChart = (height: number | string = 350) => {
@@ -228,7 +261,7 @@ const ChartOne: React.FC<{
 
   const renderChartControls = () => (
     <>
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-between items-center mb-6">
         <div className="inline-flex rounded-md shadow-sm">
           {["day", "week", "month"].map((frame) => (
             <button
@@ -251,6 +284,11 @@ const ChartOne: React.FC<{
               {frame.charAt(0).toUpperCase() + frame.slice(1)}
             </button>
           ))}
+        </div>
+        <div className="text-sm font-medium text-gray-600">
+          <span className="font-bold mr-2">Date Range</span>
+          <span>From: {startDate}</span>
+          <span className="mx-2">To: {endDate}</span>
         </div>
       </div>
       <div className="flex bg-gray-100 rounded-lg p-1 mb-4">
@@ -324,7 +362,7 @@ const ChartOne: React.FC<{
           <CardTitle className="text-xl font-bold">Sales Overview</CardTitle>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-none  text-white bg-sky-500 rounded-full hover:bg-blue-600 transition-colors duration-200"
+            className="px-4 py-2 bg-none text-white bg-sky-500 rounded-full hover:bg-blue-600 transition-colors duration-200"
           >
             <AiOutlineFullscreen size={23} />
           </button>
