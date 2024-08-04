@@ -40,6 +40,12 @@ interface ApiResponse {
   productSumCount: Record<string, number>;
 }
 
+interface ChartData {
+  datetime: string;
+  label: string;
+  [key: string]: string | number;
+}
+
 const productColors: Record<string, string> = {
   DIESEL: "#7C3AED",
   SUPER: "#3B82F6",
@@ -47,23 +53,23 @@ const productColors: Record<string, string> = {
   "SUPER BULK": "#10B981",
 };
 
-const getCurrentDateTime = () => {
+const getCurrentDateTime = (): string => {
   const date = new Date();
   return date.toISOString().slice(0, 19).replace("T", " ");
 };
 
-const getPastDate = (daysAgo: number) => {
+const getPastDate = (daysAgo: number): string => {
   const date = new Date();
   date.setDate(date.getDate() - daysAgo);
   return date.toISOString().split("T")[0];
 };
 
-const getStartOfYearDate = () => {
+const getStartOfYearDate = (): string => {
   const date = new Date(new Date().getFullYear(), 0, 1);
   return date.toISOString().split("T")[0];
 };
 
-const generateHourlyLabels = () => {
+const generateHourlyLabels = (): string[] => {
   const currentHour = new Date().getHours();
   return Array.from(
     { length: currentHour + 1 },
@@ -71,7 +77,7 @@ const generateHourlyLabels = () => {
   );
 };
 
-const ChartOne: React.FC<{
+interface ChartOneProps {
   onSumCountChange: (sumCount: number) => void;
   onSumVolumeChange: (sumVolume: number) => void;
   onProductSumVolumesChange: (
@@ -82,7 +88,9 @@ const ChartOne: React.FC<{
     productSumAmounts: Record<string, number>
   ) => void;
   onProductSumCountChange: (productSumCount: Record<string, number>) => void;
-}> = ({
+}
+
+const ChartOne: React.FC<ChartOneProps> = ({
   onSumCountChange,
   onSumVolumeChange,
   onProductSumVolumesChange,
@@ -90,13 +98,16 @@ const ChartOne: React.FC<{
   onProductSumAmountsChange,
   onProductSumCountChange,
 }) => {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<ChartData[]>([]);
   const [timeFrame, setTimeFrame] = useState<string>("day");
   const [xAxisLabels, setXAxisLabels] = useState<string[]>([]);
   const [chartType, setChartType] = useState<"line" | "bar" | "area">("line");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+  const [productTotals, setProductTotals] = useState<Record<string, number>>(
+    {}
+  );
 
   const fetchData = async (timeFrame: string) => {
     const currentDateTime = getCurrentDateTime();
@@ -126,13 +137,13 @@ const ChartOne: React.FC<{
       const { products, report, xAxisColumns, xAxisColumnsLabels } =
         responseData;
 
-      let formattedData;
-      let labels;
+      let formattedData: ChartData[];
+      let labels: string[];
 
       if (timeFrame === "day") {
         labels = generateHourlyLabels();
         formattedData = labels.map((label) => {
-          const dataItem: any = { datetime: label, label };
+          const dataItem: ChartData = { datetime: label, label };
           products.forEach((product) => {
             const reportItem = report.find(
               (item) =>
@@ -144,7 +155,10 @@ const ChartOne: React.FC<{
         });
       } else {
         formattedData = xAxisColumns.map((datetime, index) => {
-          const dataItem: any = { datetime, label: xAxisColumnsLabels[index] };
+          const dataItem: ChartData = {
+            datetime,
+            label: xAxisColumnsLabels[index],
+          };
           products.forEach((product) => {
             const reportItem = report.find(
               (item) =>
@@ -156,6 +170,15 @@ const ChartOne: React.FC<{
         });
         labels = xAxisColumnsLabels;
       }
+
+      // Calculate total amounts for each product
+      const totals: Record<string, number> = {};
+      products.forEach((product) => {
+        totals[product] = report
+          .filter((item) => item.productname === product)
+          .reduce((sum, item) => sum + item.amount, 0);
+      });
+      setProductTotals(totals);
 
       setData(formattedData);
       setXAxisLabels(labels);
@@ -355,6 +378,30 @@ const ChartOne: React.FC<{
     </>
   );
 
+  const renderAxisKey = () => (
+    <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+      <h3 className="text-lg font-semibold mb-2">Axis Key</h3>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <h4 className="font-medium">X-Axis (Time Range):</h4>
+          <p>
+            {startDate} - {endDate}
+          </p>
+        </div>
+        <div>
+          <h4 className="font-medium">Y-Axis (Total Amount):</h4>
+          <ul className="list-disc list-inside">
+            {Object.entries(productColors).map(([product, color]) => (
+              <li key={product} style={{ color }}>
+                {product}: {productTotals[product]?.toFixed(2) || "0.00"}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <Card className="w-full">
@@ -370,15 +417,16 @@ const ChartOne: React.FC<{
         <CardContent>
           {renderChartControls()}
           {renderChart()}
+          {renderAxisKey()}
         </CardContent>
       </Card>
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white w-11/12 h-5/6 rounded-lg p-6 flex flex-col">
+          <div className="bg-white w-11/12 h-5/6 rounded-lg p-6 flex flex-col overflow-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold">
-                <AiOutlineFullscreen />
+                Sales Overview (Full Screen)
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -387,8 +435,11 @@ const ChartOne: React.FC<{
                 <X size={24} />
               </button>
             </div>
-            {renderChartControls()}
-            {renderChart("100%")}
+            <div className="flex-grow flex flex-col">
+              {renderChartControls()}
+              <div className="flex-grow">{renderChart("100%")}</div>
+              {renderAxisKey()}
+            </div>
           </div>
         </div>
       )}
