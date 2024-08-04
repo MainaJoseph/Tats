@@ -229,12 +229,21 @@ const ChartOne: React.FC<ChartOneProps> = ({
   }, [timeFrame]);
 
   const renderChart = (height: number | string = 350) => {
+    const formatYAxis = (value: number) => {
+      if (value >= 1000000) {
+        return `${(value / 1000000).toFixed(1)}M`;
+      } else if (value >= 1000) {
+        return `${(value / 1000).toFixed(1)}K`;
+      }
+      return value.toString();
+    };
+
     return (
       <ResponsiveContainer width="100%" height={height}>
         {chartType === "line" ? (
           <LineChart data={data}>
             <XAxis dataKey="label" />
-            <YAxis />
+            <YAxis tickFormatter={formatYAxis} width={80} />
             <Tooltip />
             <Legend />
             {Object.keys(productColors).map((product) => (
@@ -250,7 +259,7 @@ const ChartOne: React.FC<ChartOneProps> = ({
         ) : chartType === "bar" ? (
           <BarChart data={data}>
             <XAxis dataKey="label" />
-            <YAxis />
+            <YAxis tickFormatter={formatYAxis} width={80} />
             <Tooltip />
             <Legend />
             {Object.keys(productColors).map((product) => (
@@ -264,7 +273,7 @@ const ChartOne: React.FC<ChartOneProps> = ({
         ) : (
           <AreaChart data={data}>
             <XAxis dataKey="label" />
-            <YAxis />
+            <YAxis tickFormatter={formatYAxis} width={80} />
             <Tooltip />
             <Legend />
             {Object.keys(productColors).map((product) => (
