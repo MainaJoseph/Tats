@@ -340,6 +340,7 @@ const ChartOne: React.FC<ChartOneProps> = ({
               } border ${
                 frame === "week" ? "border-l-0 border-r-0" : ""
               } focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-blue-700`}
+              style={{ borderRadius: "6px" }}
             >
               {frame.charAt(0).toUpperCase() + frame.slice(1)}
             </button>
