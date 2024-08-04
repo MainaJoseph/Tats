@@ -10,6 +10,9 @@ import {
   Bar,
   AreaChart,
   Area,
+  PieChart,
+  Pie,
+  Cell,
   XAxis,
   YAxis,
   Tooltip,
@@ -101,7 +104,9 @@ const ChartOne: React.FC<ChartOneProps> = ({
   const [data, setData] = useState<ChartData[]>([]);
   const [timeFrame, setTimeFrame] = useState<string>("day");
   const [xAxisLabels, setXAxisLabels] = useState<string[]>([]);
-  const [chartType, setChartType] = useState<"line" | "bar" | "area">("line");
+  const [chartType, setChartType] = useState<"line" | "bar" | "area" | "pie">(
+    "line"
+  );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
@@ -238,6 +243,11 @@ const ChartOne: React.FC<ChartOneProps> = ({
       return value.toString();
     };
 
+    const pieChartData = Object.entries(productTotals).map(([name, value]) => ({
+      name,
+      value,
+    }));
+
     return (
       <ResponsiveContainer width="100%" height={height}>
         {chartType === "line" ? (
@@ -270,7 +280,7 @@ const ChartOne: React.FC<ChartOneProps> = ({
               />
             ))}
           </BarChart>
-        ) : (
+        ) : chartType === "area" ? (
           <AreaChart data={data}>
             <XAxis dataKey="label" />
             <YAxis tickFormatter={formatYAxis} width={80} />
@@ -286,6 +296,24 @@ const ChartOne: React.FC<ChartOneProps> = ({
               />
             ))}
           </AreaChart>
+        ) : (
+          <PieChart>
+            <Pie
+              data={pieChartData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={80}
+              label
+            >
+              {pieChartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={productColors[entry.name]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
         )}
       </ResponsiveContainer>
     );
@@ -324,10 +352,12 @@ const ChartOne: React.FC<ChartOneProps> = ({
         </div>
       </div>
       <div className="flex bg-gray-100 rounded-lg p-1 mb-4">
-        {["line", "bar", "area"].map((type) => (
+        {["line", "bar", "area", "pie"].map((type) => (
           <button
             key={type}
-            onClick={() => setChartType(type as "line" | "bar" | "area")}
+            onClick={() =>
+              setChartType(type as "line" | "bar" | "area" | "pie")
+            }
             className={`p-2 rounded-md transition-all duration-200 ${
               chartType === type
                 ? "bg-white shadow-sm"
@@ -379,6 +409,22 @@ const ChartOne: React.FC<ChartOneProps> = ({
                 strokeLinejoin="round"
               >
                 <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z"></path>
+              </svg>
+            )}
+            {type === "pie" && (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
               </svg>
             )}
           </button>
