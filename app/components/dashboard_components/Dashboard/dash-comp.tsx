@@ -80,22 +80,6 @@ const Dashy: React.FC = () => {
           </Card>
 
           <CardDataStats
-            id="volume"
-            title="Volume Stats"
-            total={`Total: ${truncateToTwoDecimals(sumVolume)}`}
-            details={Object.fromEntries(
-              Object.entries(productSumVolumes).map(([key, value]) => [
-                key,
-                { volume: value },
-              ])
-            )}
-            isExpanded={expandedCard === "volume"}
-            onExpand={() => handleCardExpand("volume")}
-          >
-            <MdOutlineWaterDrop size={20} className="text-slate-800" />
-          </CardDataStats>
-
-          <CardDataStats
             id="amount"
             title="Amount Stats"
             total={`Total: ${formatNumberWithCommas(sumAmount)}`}
@@ -109,6 +93,22 @@ const Dashy: React.FC = () => {
             onExpand={() => handleCardExpand("amount")}
           >
             <MdAttachMoney size={26} className="text-slate-800" />
+          </CardDataStats>
+
+          <CardDataStats
+            id="volume"
+            title="Volume Stats"
+            total={`Total: ${truncateToTwoDecimals(sumVolume)}`}
+            details={Object.fromEntries(
+              Object.entries(productSumVolumes).map(([key, value]) => [
+                key,
+                { volume: value },
+              ])
+            )}
+            isExpanded={expandedCard === "volume"}
+            onExpand={() => handleCardExpand("volume")}
+          >
+            <MdOutlineWaterDrop size={20} className="text-slate-800" />
           </CardDataStats>
 
           <CardDataStats
