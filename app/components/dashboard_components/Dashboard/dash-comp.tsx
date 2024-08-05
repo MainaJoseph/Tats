@@ -12,7 +12,6 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import TableOne from "../Tables/TableOne";
-import { Skeleton } from "@/components/ui/skeleton";
 
 // Utility functions
 const truncateToTwoDecimals = (num: number): string => {
@@ -41,7 +40,6 @@ const Dashy: React.FC = () => {
   const handleCardExpand = (cardId: string) => {
     setExpandedCard((prevCard) => (prevCard === cardId ? null : cardId));
   };
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Map of product names to colors
   const productColors: Record<string, string> = {

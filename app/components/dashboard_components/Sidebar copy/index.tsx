@@ -185,7 +185,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
             {menuGroups.map((group, groupIndex) => (
               <div key={groupIndex}>
                 {!compactView && (
-                  <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
+                  <h3 className="mb-4 ml-4 text-xs font-semibold text-bodydark2">
                     {group.name}
                   </h3>
                 )}

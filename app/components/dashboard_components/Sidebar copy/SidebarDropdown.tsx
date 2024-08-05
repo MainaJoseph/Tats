@@ -30,7 +30,7 @@ const SidebarDropdown: React.FC<SidebarDropdownProps> = ({
             <Link
               href={subItem.route}
               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                pathname === subItem.route ? "text-white" : ""
+                pathname === subItem.route ? "text-white text-sm" : ""
               }`}
             >
               {subItem.label}

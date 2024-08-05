@@ -351,7 +351,7 @@ const ChartOne: React.FC<ChartOneProps> = ({
 
   const renderChartControls = () => (
     <>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 text-sm lg:text-md">
         <div
           className="inline-flex rounded-md shadow-sm"
           style={{ borderRadius: "6px" }}
