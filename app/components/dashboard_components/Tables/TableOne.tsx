@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Station {
   id: number;
@@ -14,7 +15,7 @@ interface Station {
       }[];
       rdgIndex: string;
     };
-  } | null; // Change this to allow null
+  } | null;
   client: {
     id: number;
   };
@@ -23,6 +24,7 @@ interface Station {
 const TableOne = () => {
   const [stations, setStations] = useState<Station[]>([]);
   const [showAll, setShowAll] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
 
@@ -33,8 +35,10 @@ const TableOne = () => {
         const response = await fetch(`${apiBaseUrl}/stations`);
         const data: Station[] = await response.json();
         setStations(data);
+        setLoading(false);
       } catch (error) {
         console.error("Failed to fetch stations", error);
+        setLoading(false);
       }
     };
 
@@ -42,6 +46,19 @@ const TableOne = () => {
   }, []);
 
   const displayedStations = showAll ? stations : stations.slice(0, 5);
+
+  const TableRowSkeleton = () => (
+    <div className="grid grid-cols-5 border-b border-stroke dark:border-strokedark">
+      {[...Array(5)].map((_, index) => (
+        <div
+          key={index}
+          className="flex items-center justify-center p-2.5 xl:p-5"
+        >
+          <Skeleton className="h-4 w-3/4 bg-slate-300" />
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div
@@ -81,37 +98,47 @@ const TableOne = () => {
           </div>
         </div>
 
-        {displayedStations.map((station) => (
-          <div
-            className="grid grid-cols-5 border-b border-stroke dark:border-strokedark"
-            key={station.id}
-          >
-            <div className="flex items-center gap-3 p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{station.id}</p>
-            </div>
+        {loading ? (
+          <>
+            <TableRowSkeleton />
+            <TableRowSkeleton />
+            <TableRowSkeleton />
+            <TableRowSkeleton />
+            <TableRowSkeleton />
+          </>
+        ) : (
+          displayedStations.map((station) => (
+            <div
+              className="grid grid-cols-5 border-b border-stroke dark:border-strokedark"
+              key={station.id}
+            >
+              <div className="flex items-center gap-3 p-2.5 xl:p-5">
+                <p className="text-black dark:text-white">{station.id}</p>
+              </div>
 
-            <div className="flex items-start justify-start p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{station.name}</p>
-            </div>
+              <div className="flex items-start justify-start p-2.5 xl:p-5">
+                <p className="text-black dark:text-white">{station.name}</p>
+              </div>
 
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{station.location}</p>
-            </div>
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">
-                {station.pumps && Object.keys(station.pumps).length > 0
-                  ? Object.keys(station.pumps).length
-                  : "No pumps available"}
-              </p>
-            </div>
+              <div className="flex items-center justify-center p-2.5 xl:p-5">
+                <p className="text-black dark:text-white">{station.location}</p>
+              </div>
+              <div className="flex items-center justify-center p-2.5 xl:p-5">
+                <p className="text-black dark:text-white">
+                  {station.pumps && Object.keys(station.pumps).length > 0
+                    ? Object.keys(station.pumps).length
+                    : "No pumps available"}
+                </p>
+              </div>
 
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">
-                {station.nozzleIdentifierName}
-              </p>
+              <div className="flex items-center justify-center p-2.5 xl:p-5">
+                <p className="text-black dark:text-white">
+                  {station.nozzleIdentifierName}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       <div className="mt-4 flex justify-center">
