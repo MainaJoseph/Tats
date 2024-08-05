@@ -434,29 +434,35 @@ const ChartOne: React.FC<ChartOneProps> = ({
     </>
   );
 
-  const renderAxisKey = () => (
-    <div className="mt-4 p-4 bg-gray-100 rounded-lg">
-      <h3 className="text-lg font-semibold mb-2">Axis Key</h3>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <h4 className="font-medium">X-Axis (Time Range):</h4>
-          <p>
-            {startDate} - {endDate}
-          </p>
-        </div>
-        <div>
-          <h4 className="font-medium">Y-Axis (Total Amount):</h4>
-          <ul className="list-disc list-inside">
-            {Object.entries(productColors).map(([product, color]) => (
-              <li key={product} style={{ color }}>
-                {product}: {productTotals[product]?.toFixed(2) || "0.00"}
-              </li>
-            ))}
-          </ul>
+  const renderAxisKey = () => {
+    const formatNumber = (num: number) => {
+      return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
+    return (
+      <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+        <h3 className="text-lg font-semibold mb-2">Axis Key</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h4 className="font-medium">X-Axis (Time Range):</h4>
+            <p>
+              {startDate} - {endDate}
+            </p>
+          </div>
+          <div>
+            <h4 className="font-medium">Y-Axis (Total Amount):</h4>
+            <ul className="list-disc list-inside">
+              {Object.entries(productColors).map(([product, color]) => (
+                <li key={product} style={{ color }}>
+                  {product}: {formatNumber(productTotals[product] || 0)}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <>
