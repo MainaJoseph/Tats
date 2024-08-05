@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   LineChart,
   Line,
@@ -116,8 +117,10 @@ const ChartOne: React.FC<ChartOneProps> = ({
   const [yAxisMetric, setYAxisMetric] = useState<
     "amount" | "volume" | "customers"
   >("amount");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchData = async (timeFrame: string) => {
+    setIsLoading(true);
     const currentDateTime = getCurrentDateTime();
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     let url = "";
@@ -208,8 +211,11 @@ const ChartOne: React.FC<ChartOneProps> = ({
       onSumAmountChange(responseData.sumAmount);
       onProductSumAmountsChange(responseData.productSumAmounts);
       onProductSumCountChange(responseData.productSumCount);
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
+      setIsLoading(false);
     }
   };
 
@@ -517,6 +523,51 @@ const ChartOne: React.FC<ChartOneProps> = ({
     );
   };
 
+  const renderSkeleton = () => (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <Skeleton
+          className="h-10 w-64 bg-slate-300"
+          style={{ borderRadius: "10px" }}
+        />
+        <Skeleton
+          className="h-6 w-48 bg-slate-300"
+          style={{ borderRadius: "10px" }}
+        />
+      </div>
+      <div className="flex justify-between items-center mb-4">
+        <Skeleton
+          className="h-10 w-40 bg-slate-300"
+          style={{ borderRadius: "10px" }}
+        />
+        <Skeleton
+          className="h-10 w-48 bg-slate-300"
+          style={{ borderRadius: "10px" }}
+        />
+      </div>
+      <Skeleton
+        className="w-full h-[350px] bg-slate-300"
+        style={{ borderRadius: "10px" }}
+      />
+      <div className="mt-4">
+        <Skeleton
+          className="h-8 w-48 mb-2 bg-slate-300"
+          style={{ borderRadius: "10px" }}
+        />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton
+            className="h-24 w-full bg-slate-300"
+            style={{ borderRadius: "10px" }}
+          />
+          <Skeleton
+            className="h-24 w-full bg-slate-300"
+            style={{ borderRadius: "10px" }}
+          />
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <>
       <Card className="w-full">
@@ -530,9 +581,15 @@ const ChartOne: React.FC<ChartOneProps> = ({
           </button>
         </CardHeader>
         <CardContent>
-          {renderChartControls()}
-          {renderChart()}
-          {renderAxisKey()}
+          {isLoading ? (
+            renderSkeleton()
+          ) : (
+            <>
+              {renderChartControls()}
+              {renderChart()}
+              {renderAxisKey()}
+            </>
+          )}
         </CardContent>
       </Card>
 
@@ -551,9 +608,15 @@ const ChartOne: React.FC<ChartOneProps> = ({
               </button>
             </div>
             <div className="flex-grow flex flex-col">
-              {renderChartControls()}
-              <div className="flex-grow">{renderChart("100%")}</div>
-              {renderAxisKey()}
+              {isLoading ? (
+                renderSkeleton()
+              ) : (
+                <>
+                  {renderChartControls()}
+                  <div className="flex-grow">{renderChart("100%")}</div>
+                  {renderAxisKey()}
+                </>
+              )}
             </div>
           </div>
         </div>
