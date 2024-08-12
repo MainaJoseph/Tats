@@ -36,7 +36,7 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
   return (
     <motion.div
       className={`relative rounded-lg bg-slate-50 border-[1px] p-4 shadow-sm dark:bg-boxdark transition-all duration-300 ease-in-out overflow-hidden
-        ${isExpanded || isHovered ? "z-10 scale-105 shadow-lg" : ""}
+        ${isExpanded || isHovered ? "z-10 scale-105 shadow-xl" : ""}
       `}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -48,7 +48,7 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
     >
       {(isExpanded || isHovered) && (
         <div className="absolute inset-0 z-0">
-          <MovingBorder duration={2500} rx="1px" ry="1px">
+          <MovingBorder duration={4500} rx="1px" ry="1px">
             <div className="h-2 w-5 opacity-[0.8] bg-[radial-gradient(var(--sky-500)_40%,transparent_60%)]" />
           </MovingBorder>
         </div>
@@ -100,7 +100,7 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
       </div>
       <button
         onClick={onExpand}
-        className="absolute bottom-2 right-2 p-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 z-20"
+        className="sm:hidden absolute bottom-2 right-2 p-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 z-20"
       >
         {isExpanded || isHovered ? (
           <FaChevronUp size={14} />
