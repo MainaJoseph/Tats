@@ -163,7 +163,7 @@ const ClientPumpsPage: React.FC = () => {
               className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 transform hover:scale-105"
               style={{ borderRadius: "6px" }}
             >
-              Back to Stations
+              Back to stations
             </Button>
             <Button
               onClick={handleAddPump}
