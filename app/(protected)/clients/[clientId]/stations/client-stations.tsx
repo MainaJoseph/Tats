@@ -128,8 +128,29 @@ const ClientStations = () => {
   }, [clientId, toast]);
 
   useEffect(() => {
+    // New function to fetch client data
+    const fetchClientData = async () => {
+      if (!clientId) return;
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      try {
+        // Fetch the client data to get the name
+        const response = await axios.get(`${apiBaseUrl}/clients/${clientId}`);
+        setClientName(response.data.name);
+      } catch (error) {
+        console.error("Error fetching client data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch client data.",
+          variant: "destructive",
+          className: "bg-slate-800 text-white",
+        });
+      }
+    };
+
+    // Call both functions to fetch client data and stations
+    fetchClientData();
     fetchClientStations();
-  }, [fetchClientStations]);
+  }, [clientId, fetchClientStations]);
 
   const handleViewPumps = (station: Station) => {
     if (!station.pumps || station.pumps.length === 0) {
@@ -415,7 +436,9 @@ const ClientStations = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Stations </h1>
+      <h1 className="text-2xl font-bold mb-4">
+        Stations for {clientName || ""}
+      </h1>
 
       <div className="flex items-center mb-4 gap-4">
         <Input
