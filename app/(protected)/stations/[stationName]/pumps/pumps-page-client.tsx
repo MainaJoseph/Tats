@@ -39,11 +39,13 @@ interface PumpDetails {
   nozzleIdentifierName: string;
   pumps: Pump[];
 }
+
 interface PumpModalProps {
   pump: Pump;
   stationId: number;
   onClose: () => void;
   onDeletePump: (rdgIndex: string) => void;
+  onRemapPump: (pump: Pump) => void;
 }
 
 interface ApiError {
@@ -56,16 +58,16 @@ interface NewPumpData {
   nozzles: Nozzle[];
 }
 
-const PumpsPageClient = () => {
+const PumpsPageClient: React.FC = () => {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
   const [pumpDetails, setPumpDetails] = useState<PumpDetails | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPump, setSelectedPump] = useState<number | null>(null);
-  const [isAddPumpModalOpen, setIsAddPumpModalOpen] = useState(false);
-  const [isRemapModalOpen, setIsRemapModalOpen] = useState(false);
+  const [isAddPumpModalOpen, setIsAddPumpModalOpen] = useState<boolean>(false);
+  const [isRemapModalOpen, setIsRemapModalOpen] = useState<boolean>(false);
   const [selectedPumpForRemap, setSelectedPumpForRemap] = useState<Pump | null>(
     null
   );
@@ -74,7 +76,7 @@ const PumpsPageClient = () => {
     ? params.stationName.join(" ")
     : params.stationName;
 
-  const decodedStationName = decodeURIComponent(stationName);
+  const decodedStationName = decodeURIComponent(stationName as string);
 
   useEffect(() => {
     const fetchPumpDetails = async () => {
@@ -241,16 +243,6 @@ const PumpsPageClient = () => {
                         >
                           Transactions
                         </Button>
-                        <Button
-                          onClick={() => {
-                            setSelectedPumpForRemap(pump);
-                            setIsRemapModalOpen(true);
-                          }}
-                          className="bg-yellow-400 hover:bg-yellow-600 text-white flex-1"
-                          style={{ borderRadius: "6px" }}
-                        >
-                          Remap
-                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -267,6 +259,11 @@ const PumpsPageClient = () => {
             stationId={pumpDetails.stationId}
             onClose={() => setSelectedPump(null)}
             onDeletePump={handleDeletePump}
+            onRemapPump={(pump) => {
+              setSelectedPumpForRemap(pump);
+              setIsRemapModalOpen(true);
+              setSelectedPump(null);
+            }}
           />
         )}
       </AnimatePresence>
@@ -325,9 +322,10 @@ const PumpModal: React.FC<PumpModalProps> = ({
   stationId,
   onClose,
   onDeletePump,
+  onRemapPump,
 }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false);
   const { toast } = useToast();
 
   const params = useParams();
@@ -336,7 +334,7 @@ const PumpModal: React.FC<PumpModalProps> = ({
     ? params.stationName.join(" ")
     : params.stationName;
 
-  const decodedStationName = decodeURIComponent(stationName);
+  const decodedStationName = decodeURIComponent(stationName as string);
 
   const handleDeletePump = async () => {
     setIsDeleting(true);
@@ -353,7 +351,6 @@ const PumpModal: React.FC<PumpModalProps> = ({
         throw new Error("Failed to delete pump");
       }
 
-      // Call the onDeletePump function passed as a prop
       onDeletePump(pump.rdgIndex);
       onClose();
       toast({
@@ -428,7 +425,14 @@ const PumpModal: React.FC<PumpModalProps> = ({
               ))}
             </ul>
           </div>
-          <div className="mt-6 flex justify-end space-x-2">
+          <div className="mt-6 flex justify-between">
+            <Button
+              onClick={() => onRemapPump(pump)}
+              className="bg-yellow-400 hover:bg-yellow-600 text-white"
+              style={{ borderRadius: "6px" }}
+            >
+              Remap
+            </Button>
             <Button
               onClick={() => setShowDeleteAlert(true)}
               className="bg-red-500 hover:bg-red-600 text-white"
@@ -490,7 +494,7 @@ const PumpModal: React.FC<PumpModalProps> = ({
   );
 };
 
-const LoadingSpinner = () => (
+const LoadingSpinner: React.FC = () => (
   <div className="flex justify-center items-center h-screen">
     <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-blue-500"></div>
   </div>
