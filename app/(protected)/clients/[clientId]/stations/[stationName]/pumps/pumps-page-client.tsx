@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BsFillFuelPumpDieselFill, BsDropletFill } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import AddPumpModalClient from "../../add-pump-modal-client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +21,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ScaleLoader } from "react-spinners";
 import { AiOutlineClose } from "react-icons/ai";
-import RemapPumpModal from "../../remap-pump-modal-client";
+import AddPumpModalClient from "@/app/(protected)/stations/add-pump-modal-client";
+import RemapPumpModal from "@/app/(protected)/stations/remap-pump-modal-client";
 
 interface Nozzle {
   id: string;
@@ -58,7 +59,7 @@ interface NewPumpData {
   nozzles: Nozzle[];
 }
 
-const PumpsPageClient: React.FC = () => {
+const ClientPumpsPage: React.FC = () => {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
@@ -516,4 +517,4 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => (
   </div>
 );
 
-export default PumpsPageClient;
+export default ClientPumpsPage;

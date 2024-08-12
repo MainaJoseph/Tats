@@ -140,7 +140,11 @@ const ClientStations = () => {
         className: "bg-slate-800 text-white",
       });
     } else {
-      router.push(`/stations/${encodeURIComponent(station.name)}/pumps`);
+      router.push(
+        `/clients/${clientId}/stations/${encodeURIComponent(
+          station.name
+        )}/pumps`
+      );
     }
   };
 
