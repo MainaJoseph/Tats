@@ -37,6 +37,7 @@ const Dashy: React.FC = () => {
     Record<string, number>
   >({});
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -67,6 +68,10 @@ const Dashy: React.FC = () => {
 
   const handleCardExpand = (cardId: string) => {
     setExpandedCard((prevCard) => (prevCard === cardId ? null : cardId));
+  };
+
+  const handleCardHover = (cardId: string | null) => {
+    setHoveredCard(cardId);
   };
 
   // Map of product names to colors
@@ -146,7 +151,9 @@ const Dashy: React.FC = () => {
                     { amount: value },
                   ])
                 )}
-                isExpanded={expandedCard === "amount"}
+                isExpanded={
+                  expandedCard === "amount" || hoveredCard === "amount"
+                }
                 onExpand={() => handleCardExpand("amount")}
               >
                 <MdAttachMoney size={26} className="text-slate-800" />
@@ -162,7 +169,9 @@ const Dashy: React.FC = () => {
                     { volume: value },
                   ])
                 )}
-                isExpanded={expandedCard === "volume"}
+                isExpanded={
+                  expandedCard === "volume" || hoveredCard === "volume"
+                }
                 onExpand={() => handleCardExpand("volume")}
               >
                 <MdOutlineWaterDrop size={20} className="text-slate-800" />
@@ -178,7 +187,9 @@ const Dashy: React.FC = () => {
                     { count: value },
                   ])
                 )}
-                isExpanded={expandedCard === "customers"}
+                isExpanded={
+                  expandedCard === "customers" || hoveredCard === "customers"
+                }
                 onExpand={() => handleCardExpand("customers")}
               >
                 <FaUserFriends size={23} className="text-slate-800" />
