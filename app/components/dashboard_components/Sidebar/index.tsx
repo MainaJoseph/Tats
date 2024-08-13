@@ -105,25 +105,15 @@ const menuGroups = [
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
-  const [compactView, setCompactView] = useLocalStorage("compactView", false);
-  const pathname = usePathname(); // Hook to get the current path
+  const [compactView, setCompactView] = useLocalStorage("compactView", true);
+  const pathname = usePathname();
+  const user = useCurrentUser();
+  const formattedDate = user?.createdAt
+    ? format(new Date(user.createdAt), "MMM yyyy")
+    : "";
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === "h") {
-        event.preventDefault();
-        setCompactView(!compactView);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [compactView, setCompactView]);
-
-  useEffect(() => {
-    setSidebarOpen(false); // Close sidebar on route change
+    setSidebarOpen(false);
   }, [pathname, setSidebarOpen]);
 
   const handleItemClick = () => {
@@ -131,19 +121,17 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
-  const user = useCurrentUser();
-  const formattedDate = user?.createdAt
-    ? format(new Date(user.createdAt), "MMM yyyy")
-    : "";
 
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
         className={`absolute left-0 top-0 z-10 flex h-screen ${
-          compactView ? "w-20" : "w-76"
-        } flex-col overflow-hidden bg-slate-800 text-white duration-300 ease-linear lg:static lg:translate-x-0 ${
+          compactView ? "md:w-20" : "w-76"
+        } flex-col overflow-hidden overflow-x-hidden bg-slate-800 text-white duration-300 ease-linear lg:static lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        onMouseEnter={() => setCompactView(false)}
+        onMouseLeave={() => setCompactView(true)}
       >
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 mt-2 md:mt-4">
           <div className="flex items-center gap-2">
@@ -162,7 +150,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               className="hidden lg:block"
             >
               {compactView ? (
-                <CgArrowsShrinkH size={25} />
+                <p
+                  className={`${redressed.className} font-bold text-xl flex items-center`}
+                >
+                  Tats
+                </p>
               ) : (
                 <HiMenuAlt3 size={25} />
               )}
