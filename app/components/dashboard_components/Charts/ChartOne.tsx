@@ -22,6 +22,7 @@ import {
 } from "recharts";
 import { X } from "lucide-react";
 import { AiOutlineFullscreen } from "react-icons/ai";
+import { IoExpand } from "react-icons/io5";
 
 interface ReportItem {
   datetime: string;
@@ -573,12 +574,11 @@ const ChartOne: React.FC<ChartOneProps> = ({
       <Card className="w-full">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-xl font-bold">Sales Overview</CardTitle>
-          <button
+          <IoExpand
+            size={23}
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-none text-white bg-sky-500 rounded-full hover:bg-blue-600 transition-colors duration-200"
-          >
-            <AiOutlineFullscreen size={23} />
-          </button>
+            className="cursor-pointer text-sky-500 hover:transition "
+          />
         </CardHeader>
         <CardContent>
           {isLoading ? (

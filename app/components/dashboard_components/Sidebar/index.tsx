@@ -9,20 +9,15 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import SidebarItem from "./SidebarItem";
 import ClickOutside from "../ClickOutside";
 import { Redressed } from "next/font/google";
-import { FaRegCalendarAlt } from "react-icons/fa";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { IoMenuSharp } from "react-icons/io5";
 import { AiOutlineDash } from "react-icons/ai";
 import { HiMenuAlt3 } from "react-icons/hi";
-import { CgArrowsShrinkH } from "react-icons/cg";
 import { RxAvatar } from "react-icons/rx";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { CiViewTable, CiLogin, CiSettings } from "react-icons/ci";
 import { FaChartPie } from "react-icons/fa6";
-import {
-  MdOutlineCalendarMonth,
-  MdFormatListBulletedAdd,
-} from "react-icons/md";
+import { MdFormatListBulletedAdd } from "react-icons/md";
 import { IoMdPersonAdd } from "react-icons/io";
 import { FaPeopleRoof } from "react-icons/fa6";
 
