@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { UpdateClientDetailsSchema } from "@/schemas";
+import { FormErrorSecond } from "@/app/components/form-error-2";
 
 interface Client {
   id: number;
@@ -42,6 +43,8 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
   const [name, setName] = useState(client.name);
   const [country, setCountry] = useState(client.country);
   const [allowedScope, setAllowedScope] = useState(client.allowedscope || "");
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,19 +57,16 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
       allowedscope: allowedScope,
     };
 
+    // Clear previous validation errors
+    setValidationErrors([]);
+
     // Validate form data
     const validation = UpdateClientDetailsSchema.safeParse(formData);
 
     if (!validation.success) {
-      // Handle validation errors
-      validation.error.errors.forEach((err) => {
-        toast({
-          title: "Validation Error",
-          description: err.message,
-          variant: "destructive",
-          className: "bg-red-500 text-white",
-        });
-      });
+      // Collect validation error messages
+      const errors = validation.error.errors.map((err) => err.message);
+      setValidationErrors(errors); // Set the validation errors state
       return;
     }
 
@@ -97,12 +97,7 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
       onClose();
     } catch (error) {
       console.error("Failed to update client", error);
-      toast({
-        title: "Error",
-        description: "Failed to update client.",
-        variant: "destructive",
-        className: "bg-slate-800 text-white",
-      });
+      setValidationErrors(["Failed to update client."]); // Show an error message if the API request fails
     }
   };
 
@@ -400,6 +395,10 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
             style={{ borderRadius: "6px" }}
           />
         </div>
+        {/* Display validation errors using FormErrorSecond */}
+        {validationErrors.map((error, index) => (
+          <FormErrorSecond key={index} message={error} />
+        ))}
       </div>
       <DialogFooter className="space-x-2">
         <Button
