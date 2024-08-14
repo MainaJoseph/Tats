@@ -59,7 +59,7 @@ import {
   TableRow as DocxTableRow,
 } from "docx";
 import { ScaleLoader } from "react-spinners";
-import { BsFillFuelPumpDieselFill } from "react-icons/bs";
+import { BsEvStation, BsFillFuelPumpDieselFill } from "react-icons/bs";
 import { AiFillBank } from "react-icons/ai";
 import AddClientModal from "./add-client-modal";
 
@@ -197,11 +197,18 @@ const ClientsClient = () => {
         <div className="flex gap-2">
           <Button
             onClick={() => handleViewClientStations(row.original)}
-            className="bg-green-500 hover:bg-green-600 text-white"
-            style={{ borderRadius: "5px" }}
+            className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+            style={{
+              borderRadius: "10px",
+              padding: "8px 16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
           >
-            <AiFillBank size={20} />
+            <BsEvStation size={20} />
           </Button>
+
           <Button
             onClick={() => {}}
             className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
@@ -213,14 +220,14 @@ const ClientsClient = () => {
           <Button
             onClick={() => handleDeleteClient(row.original)}
             className="
-      bg-rose-500
-      text-white
-      hover:bg-red-600
+      bg-none
+      text-rose-500
+      hover:bg-none
       hover:shadow-lg
       focus:ring-4
       focus:ring-red-300
       border
-      border-transparent
+       border-red-300
       hover:border-red-600
       transition-all
       duration-300
@@ -232,9 +239,9 @@ const ClientsClient = () => {
       justify-center
       cursor-pointer
     "
-            style={{ borderRadius: "10px", outline: "none" }}
+            style={{ borderRadius: "40%", outline: "none" }}
           >
-            <MdDelete size={18} />
+            <MdDelete className="w-6 h-6" />
           </Button>
         </div>
       ),
