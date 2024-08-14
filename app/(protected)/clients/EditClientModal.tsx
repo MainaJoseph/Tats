@@ -85,7 +85,11 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6"
+      style={{ borderRadius: "6px" }}
+    >
       <DialogHeader>
         <DialogTitle className="text-2xl font-bold">Edit Client</DialogTitle>
       </DialogHeader>
@@ -103,6 +107,7 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter client name"
             className="mt-1"
+            style={{ borderRadius: "6px" }}
           />
         </div>
         <div>
@@ -128,7 +133,7 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
               </SelectTrigger>
               <SelectContent
                 className="bg-slate-800 text-white top-4 h-1/2"
-                style={{ marginTop: "20px" }}
+                style={{ marginTop: "20px", borderRadius: "6px" }}
               >
                 <SelectItem value="Afghanistan">Afghanistan</SelectItem>
                 <SelectItem value="Albania">Albania</SelectItem>
@@ -370,6 +375,7 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
             onChange={(e) => setAllowedScope(e.target.value)}
             placeholder="Enter allowed scope"
             className="mt-1"
+            style={{ borderRadius: "6px" }}
           />
         </div>
       </div>
@@ -378,13 +384,15 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
           type="button"
           variant="outline"
           onClick={onClose}
-          className="bg-gray-100 text-gray-700 hover:bg-gray-200"
+          className="bg-gray-100 text-gray-700 hover:bg-gray-200 hover:border hover:border-red-500"
+          style={{ borderRadius: "6px" }}
         >
           Cancel
         </Button>
         <Button
           type="submit"
           className="bg-blue-500 text-white hover:bg-blue-600"
+          style={{ borderRadius: "6px" }}
         >
           Save Changes
         </Button>
