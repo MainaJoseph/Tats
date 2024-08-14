@@ -114,9 +114,9 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
         <div>
           <label
             htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
+            className="flex flex-row items-center text-sm font-medium text-gray-700"
           >
-            Client Name
+            Client Name <span className="text-rose-500 ">*</span>
           </label>
           <Input
             id="name"
@@ -130,9 +130,9 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
         <div>
           <label
             htmlFor="country"
-            className="block text-sm font-medium text-gray-700"
+            className="flex flex-row text-sm font-medium text-gray-700"
           >
-            Country
+            Country<span className="text-rose-500 ">*</span>
           </label>
           <div className="mt-1 flex items-center">
             <ReactCountryFlag
