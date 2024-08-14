@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { MdLibraryAdd, MdDelete } from "react-icons/md";
+import { MdLibraryAdd, MdDelete, MdEdit } from "react-icons/md";
 import {
   ColumnDef,
   flexRender,
@@ -62,6 +62,7 @@ import { ScaleLoader } from "react-spinners";
 import axios from "axios";
 import AddPumpModal from "@/app/(protected)/stations/AddPumpModal";
 import AddStationModal from "@/app/(protected)/clients/add-station-client-modal";
+import EditStationModal from "./EditStationModal";
 
 interface Station {
   id: number;
@@ -101,6 +102,9 @@ const ClientStations = () => {
   ]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [stationToDelete, setStationToDelete] = useState<Station | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [stationToEdit, setStationToEdit] = useState<Station | null>(null);
+
   const [clientName, setClientName] = useState("");
   const router = useRouter();
   const { toast } = useToast();
@@ -220,6 +224,54 @@ const ClientStations = () => {
     }
   };
 
+  const handleEditStation = (station: Station) => {
+    setStationToEdit(station);
+    setIsEditModalOpen(true);
+  };
+
+  const updateStation = async (updatedStation: Station) => {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${apiBaseUrl}/stations/${updatedStation.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedStation),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update station");
+      }
+
+      const updatedData = await response.json();
+      setStations(
+        stations.map((s) => (s.id === updatedData.id ? updatedData : s))
+      );
+      toast({
+        title: "Station Updated",
+        description: `${updatedData.name} has been successfully updated.`,
+        variant: "default",
+        className: "bg-green-500 text-white",
+      });
+    } catch (error) {
+      console.error("Failed to update station", error);
+      toast({
+        title: "Error",
+        description: "Failed to update station.",
+        variant: "destructive",
+        className: "bg-slate-800 text-white",
+      });
+    } finally {
+      setIsEditModalOpen(false);
+      setStationToEdit(null);
+      setIsLoading(false);
+    }
+  };
+
   const columns: ColumnDef<Station>[] = [
     {
       accessorKey: "id",
@@ -270,6 +322,14 @@ const ClientStations = () => {
           >
             <MdLibraryAdd size={20} />
             <BsFillFuelPumpDieselFill size={20} />
+          </Button>
+
+          <Button
+            onClick={() => handleEditStation(row.original)}
+            className="bg-none border border-slate-300 hover:border-slate-500 text-slate-800 transition-colors duration-300 flex items-center justify-center p-2"
+            style={{ borderRadius: "40%" }}
+          >
+            <MdEdit className="w-5 h-5" />
           </Button>
           <Button
             onClick={() => handleDeleteStation(row.original)}
@@ -646,6 +706,18 @@ const ClientStations = () => {
                   className: "bg-red-500 text-white",
                 });
               }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-white text-slate-900 rounded-md">
+          {stationToEdit && (
+            <EditStationModal
+              station={stationToEdit}
+              onClose={() => setIsEditModalOpen(false)}
+              onUpdate={updateStation}
             />
           )}
         </DialogContent>
