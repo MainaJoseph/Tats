@@ -114,7 +114,7 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
           </label>
           <div className="mt-1 flex items-center">
             <ReactCountryFlag
-              countryCode={getCountryCode(country)}
+              countryCode={getCountryCode(country)} //
               svg
               style={{
                 width: "1.5em",
