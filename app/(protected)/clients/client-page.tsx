@@ -62,6 +62,8 @@ import { ScaleLoader } from "react-spinners";
 import { BsEvStation, BsFillFuelPumpDieselFill } from "react-icons/bs";
 import { AiFillBank } from "react-icons/ai";
 import AddClientModal from "./add-client-modal";
+import ReactCountryFlag from "react-country-flag";
+import { getCountryCode } from "@/lib/countryHelpers";
 
 interface Client {
   id: number;
@@ -178,6 +180,20 @@ const ClientsClient = () => {
     {
       accessorKey: "country",
       header: "COUNTRY",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <ReactCountryFlag
+            countryCode={getCountryCode(row.getValue("country"))}
+            svg
+            style={{
+              width: "1.5em",
+              height: "1.5em",
+            }}
+            title={row.getValue("country")}
+          />
+          {row.getValue("country")}
+        </div>
+      ),
     },
     {
       accessorKey: "allowedscope",
