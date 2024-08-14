@@ -90,3 +90,12 @@ export const RemapPumpSchema = z.object({
 });
 
 export type RemapPumpData = z.infer<typeof RemapPumpSchema>;
+
+// Update Client Details Schema
+export const UpdateClientDetailsSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  country: z.string().min(1, { message: "Country is required" }),
+  allowedscope: z.string().optional(),
+});
+
+export type UpdateClientDetailsData = z.infer<typeof UpdateClientDetailsSchema>;

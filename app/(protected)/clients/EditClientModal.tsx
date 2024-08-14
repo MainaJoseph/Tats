@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { UpdateClientDetailsSchema } from "@/schemas";
 
 interface Client {
   id: number;
@@ -45,6 +46,31 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Form data
+    const formData = {
+      name,
+      country,
+      allowedscope: allowedScope,
+    };
+
+    // Validate form data
+    const validation = UpdateClientDetailsSchema.safeParse(formData);
+
+    if (!validation.success) {
+      // Handle validation errors
+      validation.error.errors.forEach((err) => {
+        toast({
+          title: "Validation Error",
+          description: err.message,
+          variant: "destructive",
+          className: "bg-red-500 text-white",
+        });
+      });
+      return;
+    }
+
+    // Proceed with API request
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     try {
@@ -53,11 +79,7 @@ const EditClientModal: React.FC<EditClientModalProps> = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name,
-          country,
-          allowedscope: allowedScope,
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
