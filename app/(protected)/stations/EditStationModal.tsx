@@ -8,6 +8,9 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { EditStationSchema, EditStationData } from "@/schemas";
+import { z } from "zod";
+import { FormErrorSecond } from "@/app/components/form-error-2";
 
 // Define the Station interface
 interface Station {
@@ -44,16 +47,26 @@ const EditStationModal: React.FC<EditStationModalProps> = ({
   const [nozzleIdentifierName, setNozzleIdentifierName] = useState(
     station.nozzleIdentifierName
   );
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedStation: Station = {
-      ...station,
-      name,
-      location,
-      nozzleIdentifierName,
-    };
-    onUpdate(updatedStation);
+
+    try {
+      EditStationSchema.parse({ name, location, nozzleIdentifierName });
+      const updatedStation: Station = {
+        ...station,
+        name,
+        location,
+        nozzleIdentifierName,
+      };
+      onUpdate(updatedStation);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessages = error.errors.map((err) => err.message);
+        setError(errorMessages.join(". "));
+      }
+    }
   };
 
   return (
@@ -114,6 +127,7 @@ const EditStationModal: React.FC<EditStationModalProps> = ({
           </select>
         </div>
       </div>
+      <FormErrorSecond message={error} />
       <DialogFooter>
         <Button
           type="button"

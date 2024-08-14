@@ -99,3 +99,14 @@ export const UpdateClientDetailsSchema = z.object({
 });
 
 export type UpdateClientDetailsData = z.infer<typeof UpdateClientDetailsSchema>;
+
+// Update Station Details Schema
+export const EditStationSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  location: z.string().min(1, { message: "Location is required" }),
+  nozzleIdentifierName: z.enum(["pumpAddress", "nozzle"], {
+    required_error: "Nozzle Identifier Name is required",
+  }),
+});
+
+export type EditStationData = z.infer<typeof EditStationSchema>;
