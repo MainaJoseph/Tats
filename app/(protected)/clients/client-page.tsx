@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { MdDelete, MdLibraryAdd } from "react-icons/md";
+import EditClientModal from "./EditClientModal";
+import { MdDelete, MdEdit, MdLibraryAdd } from "react-icons/md";
 import {
   ColumnDef,
   flexRender,
@@ -88,6 +89,9 @@ const ClientsClient = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [clientToEdit, setClientToEdit] = useState<Client | null>(null);
+
   const router = useRouter();
   const { toast } = useToast();
 
@@ -166,6 +170,18 @@ const ClientsClient = () => {
     }
   };
 
+  const handleEditClient = (client: Client) => {
+    setClientToEdit(client);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateClient = (updatedClient: Client) => {
+    setClients(
+      clients.map((c) => (c.id === updatedClient.id ? updatedClient : c))
+    );
+    setIsEditModalOpen(false);
+  };
+
   const columns: ColumnDef<Client>[] = [
     {
       accessorKey: "id",
@@ -233,6 +249,15 @@ const ClientsClient = () => {
             Add Station
             <MdLibraryAdd size={20} />
           </Button>
+
+          <Button
+            onClick={() => handleEditClient(row.original)}
+            className="bg-none border border-slate-300 hover:border-slate-500 text-slate-800 transition-colors duration-300 flex items-center justify-center p-2"
+            style={{ borderRadius: "40%" }}
+          >
+            <MdEdit className="w-5 h-5" />
+          </Button>
+
           <Button
             onClick={() => handleDeleteClient(row.original)}
             className="
@@ -539,6 +564,18 @@ const ClientsClient = () => {
           Next
         </Button>
       </div>
+
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-white text-slate-900 rounded-md">
+          {clientToEdit && (
+            <EditClientModal
+              client={clientToEdit}
+              onClose={() => setIsEditModalOpen(false)}
+              onUpdate={handleUpdateClient}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog
         open={isDeleteDialogOpen}
