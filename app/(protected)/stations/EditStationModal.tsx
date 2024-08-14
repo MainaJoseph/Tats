@@ -128,7 +128,7 @@ const EditStationModal: React.FC<EditStationModalProps> = ({
         </div>
       </div>
       <FormErrorSecond message={error} />
-      <DialogFooter>
+      <DialogFooter className="mt-4">
         <Button
           type="button"
           variant="secondary"
