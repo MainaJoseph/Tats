@@ -255,44 +255,47 @@ const ClientStations = () => {
         <div className="flex gap-2">
           <Button
             onClick={() => handleViewPumps(row.original)}
-            className="bg-green-500 hover:bg-green-600 text-white"
-            style={{ borderRadius: "10px" }}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white transition-colors duration-300 flex items-center justify-center p-2  shadow-md"
+            style={{ borderRadius: "40%" }}
           >
-            <BsFillFuelPumpDieselFill />
+            <BsFillFuelPumpDieselFill className="w-5 h-5" />
           </Button>
           <Button
             onClick={() => handleAddPump(row.original)}
             className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
-            style={{ borderRadius: "10px" }}
+            style={{
+              borderTopLeftRadius: "5px",
+              borderBottomRightRadius: "5px",
+            }}
           >
-            Add Pump
             <MdLibraryAdd size={20} />
+            <BsFillFuelPumpDieselFill size={20} />
           </Button>
           <Button
             onClick={() => handleDeleteStation(row.original)}
             className="
-              bg-rose-500
-              text-white
-              hover:bg-red-600
-              hover:shadow-lg
-              focus:ring-4
-              focus:ring-red-300
-              border
-              border-transparent
-              hover:border-red-600
-              transition-all
-              duration-300
-              ease-in-out
-              p-2
-              rounded-lg
-              flex
-              items-center
-              justify-center
-              cursor-pointer
-            "
-            style={{ borderRadius: "10px", outline: "none" }}
+      bg-none
+      text-rose-500
+      hover:bg-none
+      hover:shadow-lg
+      focus:ring-4
+      focus:ring-red-300
+      border
+       border-red-300
+      hover:border-red-600
+      transition-all
+      duration-300
+      ease-in-out
+      p-2
+      rounded-lg
+      flex
+      items-center
+      justify-center
+      cursor-pointer
+    "
+            style={{ borderRadius: "40%", outline: "none" }}
           >
-            <MdDelete size={18} />
+            <MdDelete className="w-6 h-6" />
           </Button>
         </div>
       ),
