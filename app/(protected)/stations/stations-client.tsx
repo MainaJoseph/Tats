@@ -63,6 +63,7 @@ import {
 } from "docx";
 import { ScaleLoader } from "react-spinners";
 import EditStationModal from "./EditStationModal";
+import { RiMenuUnfoldFill } from "react-icons/ri";
 
 interface Station {
   id: number;
@@ -240,6 +241,12 @@ const StationsClient = () => {
     }
   };
 
+  const handleViewProducts = (station: Station) => {
+    router.push(
+      `/stations/${encodeURIComponent(station.name)}/products?id=${station.id}`
+    );
+  };
+
   const columns: ColumnDef<Station>[] = [
     {
       accessorKey: "id",
@@ -293,11 +300,18 @@ const StationsClient = () => {
               <MdLibraryAdd size={20} />
               <BsFillFuelPumpDieselFill size={20} />
             </Button>
+            <Button
+              onClick={() => handleViewProducts(row.original)}
+              className="bg-none border border-slate-300 text-slate-800 hover:border-slate-500 transition-colors duration-300 flex items-center justify-center p-2 "
+              style={{ borderRadius: "40%" }}
+            >
+              <RiMenuUnfoldFill className="w-5 h-5" />
+            </Button>
           </div>
           <div className="flex flex-row gap-1">
             <Button
               onClick={() => handleEditStation(row.original)}
-              className="bg-none border border-slate-300 hover:border-slate-500 text-slate-800 transition-colors duration-300 flex items-center justify-center p-2"
+              className="bg-none border border-slate-300 hover:border-slate-500 text-slate-600 transition-colors duration-300 flex items-center justify-center p-2"
               style={{ borderRadius: "40%" }}
             >
               <MdEdit className="w-5 h-5" />
