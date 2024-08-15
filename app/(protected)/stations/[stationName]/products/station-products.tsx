@@ -20,9 +20,10 @@ const StationProducts = () => {
   }, [stationId]);
 
   const fetchProducts = async () => {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
       const response = await fetch(
-        `https://tats.phan-tec.com/stations/${stationId}/products`
+        `${apiBaseUrl}/stations/${stationId}/products`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch products");
