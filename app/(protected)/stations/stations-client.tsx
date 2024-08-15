@@ -72,6 +72,7 @@ import {
 import { ScaleLoader } from "react-spinners";
 import EditStationModal from "./EditStationModal";
 import { RiMenuUnfoldFill } from "react-icons/ri";
+import { FaPlus } from "react-icons/fa";
 
 interface Station {
   id: number;
@@ -566,11 +567,11 @@ const StationsClient = () => {
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
           <DialogTrigger asChild>
             <Button
-              className="bg-blue-500 hover:bg-blue-600 text-white sm:order-2"
+              className="flex flex-row bg-blue-500 hover:bg-blue-600 text-white sm:order-2"
               style={{ borderRadius: "5px" }}
               onClick={() => setIsAddModalOpen(true)}
             >
-              Add Station
+              <FaPlus className="mr-2" /> Add Station
             </Button>
           </DialogTrigger>
           <DialogContent
