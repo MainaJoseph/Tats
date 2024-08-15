@@ -134,7 +134,7 @@ const StationsClient = () => {
     if (!station.pumps || Object.keys(station.pumps).length === 0) {
       toast({
         title: "No Pumps Available",
-        description: `Station ${station.name} has no pumps.`,
+        description: `Station ${station.name} has no pumps. Please add a pump first`,
         variant: "destructive",
         className: "bg-slate-800 text-white",
       });
@@ -271,61 +271,64 @@ const StationsClient = () => {
     },
     {
       id: "actions",
+      header: "ACTIONS",
       cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button
-            onClick={() => handleViewPumps(row.original)}
-            className="bg-emerald-500 hover:bg-emerald-600 text-white transition-colors duration-300 flex items-center justify-center p-2  shadow-md"
-            style={{ borderRadius: "40%" }}
-          >
-            <BsFillFuelPumpDieselFill className="w-5 h-5" />
-          </Button>
-          <Button
-            onClick={() => handleAddPump(row.original)}
-            className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
-            style={{
-              borderTopLeftRadius: "5px",
-              borderBottomRightRadius: "5px",
-            }}
-          >
-            <MdLibraryAdd size={20} />
-            <BsFillFuelPumpDieselFill size={20} />
-          </Button>
-
-          <Button
-            onClick={() => handleEditStation(row.original)}
-            className="bg-none border border-slate-300 hover:border-slate-500 text-slate-800 transition-colors duration-300 flex items-center justify-center p-2"
-            style={{ borderRadius: "40%" }}
-          >
-            <MdEdit className="w-5 h-5" />
-          </Button>
-
-          <Button
-            onClick={() => handleDeleteStation(row.original)}
-            className="
-      bg-none
-      text-rose-500
-      hover:bg-none
-      hover:shadow-lg
-      focus:ring-4
-      focus:ring-red-300
-      border
-       border-red-300
-      hover:border-red-600
-      transition-all
-      duration-300
-      ease-in-out
-      p-2
-      rounded-lg
-      flex
-      items-center
-      justify-center
-      cursor-pointer
-    "
-            style={{ borderRadius: "40%", outline: "none" }}
-          >
-            <MdDelete className="w-6 h-6" />
-          </Button>
+        <div className="flex justify-between items-center">
+          <div className="flex gap-2">
+            <Button
+              onClick={() => handleViewPumps(row.original)}
+              className="bg-emerald-500 hover:bg-emerald-600 text-white transition-colors duration-300 flex items-center justify-center p-2 shadow-md"
+              style={{ borderRadius: "40%" }}
+            >
+              <BsFillFuelPumpDieselFill className="w-5 h-5" />
+            </Button>
+            <Button
+              onClick={() => handleAddPump(row.original)}
+              className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
+              style={{
+                borderTopLeftRadius: "5px",
+                borderBottomRightRadius: "5px",
+              }}
+            >
+              <MdLibraryAdd size={20} />
+              <BsFillFuelPumpDieselFill size={20} />
+            </Button>
+          </div>
+          <div className="flex flex-row gap-1">
+            <Button
+              onClick={() => handleEditStation(row.original)}
+              className="bg-none border border-slate-300 hover:border-slate-500 text-slate-800 transition-colors duration-300 flex items-center justify-center p-2"
+              style={{ borderRadius: "40%" }}
+            >
+              <MdEdit className="w-5 h-5" />
+            </Button>
+            <Button
+              onClick={() => handleDeleteStation(row.original)}
+              className="
+            bg-none
+            text-rose-500
+            hover:bg-none
+            hover:shadow-lg
+            focus:ring-4
+            focus:ring-red-300
+            border
+            border-red-300
+            hover:border-red-600
+            transition-all
+            duration-300
+            ease-in-out
+            p-2
+            rounded-lg
+            flex
+            items-center
+            justify-center
+            cursor-pointer
+          "
+              style={{ borderRadius: "40%", outline: "none" }}
+            >
+              <MdDelete className="w-6 h-6" />
+            </Button>
+          </div>
         </div>
       ),
     },
