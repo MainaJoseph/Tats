@@ -49,6 +49,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -61,6 +68,7 @@ import {
   TableCell as DocxTableCell,
   TableRow as DocxTableRow,
 } from "docx";
+
 import { ScaleLoader } from "react-spinners";
 import EditStationModal from "./EditStationModal";
 import { RiMenuUnfoldFill } from "react-icons/ri";
@@ -282,43 +290,102 @@ const StationsClient = () => {
       cell: ({ row }) => (
         <div className="flex justify-between items-center">
           <div className="flex gap-2">
-            <Button
-              onClick={() => handleViewPumps(row.original)}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white transition-colors duration-300 flex items-center justify-center p-2 shadow-md"
-              style={{ borderRadius: "40%" }}
-            >
-              <BsFillFuelPumpDieselFill className="w-5 h-5" />
-            </Button>
-            <Button
-              onClick={() => handleAddPump(row.original)}
-              className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
-              style={{
-                borderTopLeftRadius: "5px",
-                borderBottomRightRadius: "5px",
-              }}
-            >
-              <MdLibraryAdd size={20} />
-              <BsFillFuelPumpDieselFill size={20} />
-            </Button>
-            <Button
-              onClick={() => handleViewProducts(row.original)}
-              className="bg-none border border-slate-300 text-slate-800 hover:border-slate-500 transition-colors duration-300 flex items-center justify-center p-2 "
-              style={{ borderRadius: "40%" }}
-            >
-              <RiMenuUnfoldFill className="w-5 h-5" />
-            </Button>
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleViewPumps(row.original)}
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white transition-colors duration-300 flex items-center justify-center p-2 shadow-md"
+                    style={{ borderRadius: "40%" }}
+                  >
+                    <BsFillFuelPumpDieselFill className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-slate-800 text-white"
+                  style={{ borderRadius: "6px" }}
+                >
+                  <p>View Stion Pumps</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleAddPump(row.original)}
+                    className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
+                    style={{
+                      borderTopLeftRadius: "5px",
+                      borderBottomRightRadius: "5px",
+                    }}
+                  >
+                    <MdLibraryAdd size={20} />
+                    <BsFillFuelPumpDieselFill size={20} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-slate-800 text-white"
+                  style={{ borderRadius: "6px" }}
+                >
+                  <p>Add Stion Pumps</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleViewProducts(row.original)}
+                    className="bg-none border border-slate-300 text-slate-800 hover:border-slate-500 transition-colors duration-300 flex items-center justify-center p-2 "
+                    style={{ borderRadius: "40%" }}
+                  >
+                    <RiMenuUnfoldFill className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-slate-800 text-white"
+                  style={{ borderRadius: "6px" }}
+                >
+                  <p>View station products</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
           </div>
           <div className="flex flex-row gap-1">
-            <Button
-              onClick={() => handleEditStation(row.original)}
-              className="bg-none border border-slate-300 hover:border-slate-500 text-slate-600 transition-colors duration-300 flex items-center justify-center p-2"
-              style={{ borderRadius: "40%" }}
-            >
-              <MdEdit className="w-5 h-5" />
-            </Button>
-            <Button
-              onClick={() => handleDeleteStation(row.original)}
-              className="
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleEditStation(row.original)}
+                    className="bg-none border border-slate-300 hover:border-slate-500 text-slate-600 transition-colors duration-300 flex items-center justify-center p-2"
+                    style={{ borderRadius: "40%" }}
+                  >
+                    <MdEdit className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-slate-800 text-white"
+                  style={{ borderRadius: "6px" }}
+                >
+                  <p>Edit station Details</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleDeleteStation(row.original)}
+                    className="
             bg-none
             text-rose-500
             hover:bg-none
@@ -338,10 +405,19 @@ const StationsClient = () => {
             justify-center
             cursor-pointer
           "
-              style={{ borderRadius: "40%", outline: "none" }}
-            >
-              <MdDelete className="w-6 h-6" />
-            </Button>
+                    style={{ borderRadius: "40%", outline: "none" }}
+                  >
+                    <MdDelete className="w-6 h-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-rose-400 text-white"
+                  style={{ borderRadius: "6px" }}
+                >
+                  <p>Delete station</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       ),
