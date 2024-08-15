@@ -9,6 +9,7 @@ import {
   FaThList,
   FaThLarge,
   FaPlus,
+  FaSearch,
 } from "react-icons/fa";
 import {
   Table,
@@ -19,6 +20,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+interface Product {
+  [key: string]: string;
+}
 
 const StationProducts = () => {
   const params = useParams();
@@ -26,16 +32,22 @@ const StationProducts = () => {
   const stationName = params?.stationName as string;
   const stationId = searchParams.get("id");
 
-  const [products, setProducts] = useState<Record<string, string>>({});
+  const [products, setProducts] = useState<Product>({});
+  const [filteredProducts, setFilteredProducts] = useState<Product>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (stationId) {
       fetchProducts();
     }
   }, [stationId]);
+
+  useEffect(() => {
+    filterProducts();
+  }, [searchTerm, products]);
 
   const fetchProducts = async () => {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -48,10 +60,28 @@ const StationProducts = () => {
       }
       const data = await response.json();
       setProducts(data);
+      setFilteredProducts(data);
     } catch (err) {
       setError("Failed to load products");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const filterProducts = () => {
+    if (searchTerm === "") {
+      setFilteredProducts(products);
+    } else {
+      const filtered = Object.entries(products).reduce((acc, [key, value]) => {
+        if (
+          key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          value.toLowerCase().includes(searchTerm.toLowerCase())
+        ) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {} as Product);
+      setFilteredProducts(filtered);
     }
   };
 
@@ -80,7 +110,7 @@ const StationProducts = () => {
       transition={{ delay: 0.2 }}
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
     >
-      {Object.entries(products).map(([key, value], index) => (
+      {Object.entries(filteredProducts).map(([key, value], index) => (
         <motion.div
           key={key}
           initial={{ opacity: 0, y: 20 }}
@@ -107,7 +137,7 @@ const StationProducts = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {Object.entries(products).map(([key, value]) => (
+        {Object.entries(filteredProducts).map(([key, value]) => (
           <TableRow key={key}>
             <TableCell className="font-medium">{key}</TableCell>
             <TableCell>{value}</TableCell>
@@ -126,8 +156,8 @@ const StationProducts = () => {
       >
         Products for {decodeURIComponent(stationName)}
       </motion.h1>
-      <div className="flex justify-between mb-4">
-        <div>
+      <div className="flex flex-col md:flex-row justify-between mb-4 items-center space-y-4 md:space-y-0">
+        <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="icon"
@@ -165,9 +195,30 @@ const StationProducts = () => {
             <FaThList className="relative z-10" />
           </Button>
         </div>
+        <div className="flex-grow mx-4 max-w-3xl w-full">
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder={`Search products for ${decodeURIComponent(
+                stationName
+              )}`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full h-12 pl-4 pr-12 text-lg rounded-full border-2 border-gray-300 focus:border-blue-500 focus:outline-none"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={filterProducts}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-500"
+            >
+              <FaSearch className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
         <Button
           variant="default"
-          className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white sm:order-2"
+          className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
           style={{ borderRadius: "6px" }}
         >
           <FaPlus className="mr-2" /> Add Product
