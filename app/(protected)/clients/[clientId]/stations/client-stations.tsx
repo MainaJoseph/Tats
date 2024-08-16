@@ -46,6 +46,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -63,6 +70,7 @@ import axios from "axios";
 import AddPumpModal from "@/app/(protected)/stations/AddPumpModal";
 import AddStationModal from "@/app/(protected)/clients/add-station-client-modal";
 import EditStationModal from "./EditStationModal";
+import { RiMenuUnfoldFill } from "react-icons/ri";
 
 interface Station {
   id: number;
@@ -272,6 +280,14 @@ const ClientStations = () => {
     }
   };
 
+  const handleViewProducts = (station: Station) => {
+    router.push(
+      `clients/${clientId}/stations/${encodeURIComponent(
+        station.name
+      )}/products?id=${station.id}`
+    );
+  };
+
   const columns: ColumnDef<Station>[] = [
     {
       accessorKey: "id",
@@ -325,6 +341,29 @@ const ClientStations = () => {
               <MdLibraryAdd size={20} />
               <BsFillFuelPumpDieselFill size={20} />
             </Button>
+
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleViewProducts(row.original)}
+                    className="bg-none border border-slate-300 text-slate-800 hover:border-slate-500 transition-colors duration-300 flex items-center justify-center p-2 "
+                    style={{ borderRadius: "40%" }}
+                  >
+                    <RiMenuUnfoldFill className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-slate-800 text-white"
+                  style={{ borderRadius: "6px" }}
+                >
+                  <p>View station products</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
           </div>
           <div className="flex flex-row gap-1">
             <Button
