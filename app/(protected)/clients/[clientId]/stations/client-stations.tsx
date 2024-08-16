@@ -814,6 +814,7 @@ const ClientStations = () => {
               station={stationToEdit}
               onClose={() => setIsEditModalOpen(false)}
               onUpdate={updateStation}
+              clientId={Number(clientId)}
             />
           )}
         </DialogContent>

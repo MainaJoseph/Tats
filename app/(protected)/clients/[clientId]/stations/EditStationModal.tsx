@@ -1,4 +1,3 @@
-// EditStationModal.tsx
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +10,7 @@ import {
 import { EditStationSchema, EditStationData } from "@/schemas";
 import { z } from "zod";
 import { FormErrorSecond } from "@/app/components/form-error-2";
+import axios from "axios";
 
 // Define the Station interface
 interface Station {
@@ -35,12 +35,14 @@ interface EditStationModalProps {
   station: Station;
   onClose: () => void;
   onUpdate: (updatedStation: Station) => void;
+  clientId: number;
 }
 
 const EditStationModal: React.FC<EditStationModalProps> = ({
   station,
   onClose,
   onUpdate,
+  clientId,
 }) => {
   const [name, setName] = useState(station.name);
   const [location, setLocation] = useState(station.location);
@@ -48,12 +50,39 @@ const EditStationModal: React.FC<EditStationModalProps> = ({
     "pumpAddress" | "nozzle"
   >(station.nozzleIdentifierName);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const checkExistingStationName = async (name: string): Promise<boolean> => {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    try {
+      const response = await axios.get(
+        `${apiBaseUrl}/clients/${clientId}/stations`
+      );
+      const stations = response.data;
+      return stations.some(
+        (s: Station) => s.name === name && s.id !== station.id
+      );
+    } catch (error) {
+      console.error("Error checking existing station names:", error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
     try {
       EditStationSchema.parse({ name, location, nozzleIdentifierName });
+
+      const nameExists = await checkExistingStationName(name);
+      if (nameExists) {
+        setError("A station with this name already exists.");
+        setIsLoading(false);
+        return;
+      }
+
       const updatedStation: Station = {
         ...station,
         name,
@@ -65,7 +94,11 @@ const EditStationModal: React.FC<EditStationModalProps> = ({
       if (error instanceof z.ZodError) {
         const errorMessages = error.errors.map((err) => err.message);
         setError(errorMessages.join(". "));
+      } else {
+        setError("An unexpected error occurred. Please try again.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -135,6 +168,7 @@ const EditStationModal: React.FC<EditStationModalProps> = ({
           onClick={onClose}
           className="border border-slate-500 hover:border-rose-600"
           style={{ borderRadius: "6px" }}
+          disabled={isLoading}
         >
           Cancel
         </Button>
@@ -142,8 +176,9 @@ const EditStationModal: React.FC<EditStationModalProps> = ({
           type="submit"
           className="bg-sky-500 text-white hover:bg-sky-500/70"
           style={{ borderRadius: "6px" }}
+          disabled={isLoading}
         >
-          Save Changes
+          {isLoading ? "Saving..." : "Save Changes"}
         </Button>
       </DialogFooter>
     </form>
