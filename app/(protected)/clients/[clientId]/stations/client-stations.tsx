@@ -282,7 +282,7 @@ const ClientStations = () => {
 
   const handleViewProducts = (station: Station) => {
     router.push(
-      `clients/${clientId}/stations/${encodeURIComponent(
+      `/clients/${clientId}/stations/${encodeURIComponent(
         station.name
       )}/products?id=${station.id}`
     );
