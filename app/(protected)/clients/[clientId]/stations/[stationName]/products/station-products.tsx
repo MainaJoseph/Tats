@@ -152,7 +152,7 @@ const StationProducts = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col  items-center justify-center h-64 bg-gray-100 rounded-lg"
+      className="flex flex-col items-center justify-center h-64 bg-gray-100 rounded-lg"
     >
       <FaSadTear className="text-6xl text-gray-400 mb-4" />
       <h2 className="text-2xl font-semibold text-gray-700 mb-2">
