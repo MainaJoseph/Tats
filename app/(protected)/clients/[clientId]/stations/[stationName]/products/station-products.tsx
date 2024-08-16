@@ -10,6 +10,7 @@ import {
   FaThLarge,
   FaPlus,
   FaSearch,
+  FaSadTear,
 } from "react-icons/fa";
 import {
   Table,
@@ -147,6 +148,34 @@ const StationProducts = () => {
     </Table>
   );
 
+  const EmptyState = () => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col  items-center justify-center h-64 bg-gray-100 rounded-lg"
+    >
+      <FaSadTear className="text-6xl text-gray-400 mb-4" />
+      <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+        Oops! No products found
+      </h2>
+      <p className="text-gray-500 text-center max-w-md">
+        It looks like {decodeURIComponent(stationName)} is taking a break from
+        selling products. Maybe they are out chasing rainbows or hunting for
+        unicorns?
+      </p>
+      <Button
+        variant="default"
+        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white"
+        onClick={() => {
+          /* Implement add product functionality */
+        }}
+        style={{ borderRadius: "6px" }}
+      >
+        <FaPlus className="mr-2" /> Add the first product
+      </Button>
+    </motion.div>
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
       <motion.h1
@@ -224,7 +253,13 @@ const StationProducts = () => {
           <FaPlus className="mr-2" /> Add Product
         </Button>
       </div>
-      {viewMode === "grid" ? <GridView /> : <ListView />}
+      {Object.keys(filteredProducts).length === 0 ? (
+        <EmptyState />
+      ) : viewMode === "grid" ? (
+        <GridView />
+      ) : (
+        <ListView />
+      )}
     </div>
   );
 };
