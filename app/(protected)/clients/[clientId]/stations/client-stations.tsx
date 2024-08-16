@@ -71,6 +71,7 @@ import AddPumpModal from "@/app/(protected)/stations/AddPumpModal";
 import AddStationModal from "@/app/(protected)/clients/add-station-client-modal";
 import EditStationModal from "./EditStationModal";
 import { RiMenuUnfoldFill } from "react-icons/ri";
+import { FaPlus } from "react-icons/fa";
 
 interface Station {
   id: number;
@@ -323,24 +324,51 @@ const ClientStations = () => {
       cell: ({ row }) => (
         <div className="flex justify-between items-center">
           <div className="flex gap-2">
-            <Button
-              onClick={() => handleViewPumps(row.original)}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white transition-colors duration-300 flex items-center justify-center p-2 shadow-md"
-              style={{ borderRadius: "40%" }}
-            >
-              <BsFillFuelPumpDieselFill className="w-5 h-5" />
-            </Button>
-            <Button
-              onClick={() => handleAddPump(row.original)}
-              className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
-              style={{
-                borderTopLeftRadius: "5px",
-                borderBottomRightRadius: "5px",
-              }}
-            >
-              <MdLibraryAdd size={20} />
-              <BsFillFuelPumpDieselFill size={20} />
-            </Button>
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleViewPumps(row.original)}
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white transition-colors duration-300 flex items-center justify-center p-2 shadow-md"
+                    style={{ borderRadius: "40%" }}
+                  >
+                    <BsFillFuelPumpDieselFill className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-slate-800 text-white"
+                  style={{ borderRadius: "6px" }}
+                >
+                  <p>View Stion Pumps</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleAddPump(row.original)}
+                    className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
+                    style={{
+                      borderTopLeftRadius: "5px",
+                      borderBottomRightRadius: "5px",
+                    }}
+                  >
+                    <MdLibraryAdd size={20} />
+                    <BsFillFuelPumpDieselFill size={20} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-slate-800 text-white"
+                  style={{ borderRadius: "6px" }}
+                >
+                  <p>Add Stion Pumps</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
             <TooltipProvider>
@@ -366,16 +394,32 @@ const ClientStations = () => {
             {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
           </div>
           <div className="flex flex-row gap-1">
-            <Button
-              onClick={() => handleEditStation(row.original)}
-              className="bg-none border border-slate-300 hover:border-slate-500 text-slate-800 transition-colors duration-300 flex items-center justify-center p-2"
-              style={{ borderRadius: "40%" }}
-            >
-              <MdEdit className="w-5 h-5" />
-            </Button>
-            <Button
-              onClick={() => handleDeleteStation(row.original)}
-              className="
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleEditStation(row.original)}
+                    className="bg-none border border-slate-300 hover:border-slate-500 text-slate-600 transition-colors duration-300 flex items-center justify-center p-2"
+                    style={{ borderRadius: "40%" }}
+                  >
+                    <MdEdit className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-slate-800 text-white"
+                  style={{ borderRadius: "6px" }}
+                >
+                  <p>Edit station Details</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleDeleteStation(row.original)}
+                    className="
             bg-none
             text-rose-500
             hover:bg-none
@@ -395,10 +439,19 @@ const ClientStations = () => {
             justify-center
             cursor-pointer
           "
-              style={{ borderRadius: "40%", outline: "none" }}
-            >
-              <MdDelete className="w-6 h-6" />
-            </Button>
+                    style={{ borderRadius: "40%", outline: "none" }}
+                  >
+                    <MdDelete className="w-6 h-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-rose-400 text-white"
+                  style={{ borderRadius: "6px" }}
+                >
+                  <p>Delete station</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       ),
@@ -560,11 +613,11 @@ const ClientStations = () => {
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
           <DialogTrigger asChild>
             <Button
-              className="bg-blue-500 hover:bg-blue-600 text-white sm:order-2"
+              className="flex flex-row bg-blue-500 hover:bg-blue-600 text-white sm:order-2"
               style={{ borderRadius: "5px" }}
               onClick={() => setIsAddModalOpen(true)}
             >
-              Add Station
+              <FaPlus className="mr-2" /> Add Station
             </Button>
           </DialogTrigger>
           <DialogContent
