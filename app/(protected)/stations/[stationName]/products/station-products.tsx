@@ -22,12 +22,13 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AddProductModal } from "./add-product-modal";
 
 interface Product {
   [key: string]: string;
 }
 
-const StationProducts = () => {
+const StationProducts: React.FC = () => {
   const params = useParams();
   const searchParams = useSearchParams();
   const stationName = params?.stationName as string;
@@ -35,10 +36,10 @@ const StationProducts = () => {
 
   const [products, setProducts] = useState<Product>({});
   const [filteredProducts, setFilteredProducts] = useState<Product>({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     if (stationId) {
@@ -50,7 +51,7 @@ const StationProducts = () => {
     filterProducts();
   }, [searchTerm, products]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (): Promise<void> => {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
       const response = await fetch(
@@ -69,7 +70,7 @@ const StationProducts = () => {
     }
   };
 
-  const filterProducts = () => {
+  const filterProducts = (): void => {
     if (searchTerm === "") {
       setFilteredProducts(products);
     } else {
@@ -86,6 +87,10 @@ const StationProducts = () => {
     }
   };
 
+  const handleProductAdded = (): void => {
+    fetchProducts();
+  };
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-screen">
@@ -95,41 +100,31 @@ const StationProducts = () => {
 
   if (error)
     return (
-      <div
-        className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 m-4"
-        role="alert"
-      >
-        <p className="font-bold">Error</p>
-        <p>{error}</p>
+      <div className="flex flex-col items-center justify-center h-screen">
+        <FaSadTear className="text-6xl text-red-500 mb-4" />
+        <h2 className="text-2xl font-bold mb-2">Error</h2>
+        <p className="text-gray-600">{error}</p>
       </div>
     );
 
-  const GridView = () => (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.2 }}
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    >
+  const GridView: React.FC = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {Object.entries(filteredProducts).map(([key, value], index) => (
         <motion.div
-          key={key}
+          key={index}
+          className="bg-white p-4 rounded-lg shadow-md"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 }}
-          className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300"
+          transition={{ duration: 0.3, delay: index * 0.1 }}
         >
-          <div className="flex items-center mb-4">
-            <FaGasPump className="text-2xl text-blue-500 mr-3" />
-            <h2 className="text-xl font-semibold text-gray-700">{key}</h2>
-          </div>
-          <p className="text-3xl font-bold text-green-600">{value}</p>
+          <h3 className="text-lg font-semibold mb-2">{key}</h3>
+          <p className="text-gray-600">{value}</p>
         </motion.div>
       ))}
-    </motion.div>
+    </div>
   );
 
-  const ListView = () => (
+  const ListView: React.FC = () => (
     <Table>
       <TableHeader>
         <TableRow>
@@ -140,7 +135,7 @@ const StationProducts = () => {
       <TableBody>
         {Object.entries(filteredProducts).map(([key, value]) => (
           <TableRow key={key}>
-            <TableCell className="font-medium">{key}</TableCell>
+            <TableCell>{key}</TableCell>
             <TableCell>{value}</TableCell>
           </TableRow>
         ))}
@@ -148,7 +143,7 @@ const StationProducts = () => {
     </Table>
   );
 
-  const EmptyState = () => (
+  const EmptyState: React.FC = () => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -163,33 +158,22 @@ const StationProducts = () => {
         selling products. Maybe they are out chasing rainbows or hunting for
         unicorns?
       </p>
-      <Button
-        variant="default"
-        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white"
-        onClick={() => {
-          /* Implement add product functionality */
-        }}
-        style={{ borderRadius: "6px" }}
-      >
-        <FaPlus className="mr-2" /> Add the first product
-      </Button>
+
+      <AddProductModal
+        stationId={stationId || ""}
+        onProductAdded={handleProductAdded}
+      />
     </motion.div>
   );
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-3xl font-bold mb-6 text-center text-gray-800"
-      >
+      <h1 className="text-3xl font-bold mb-8">
         Products for {decodeURIComponent(stationName)}
-      </motion.h1>
-      <div className="flex flex-col md:flex-row justify-between mb-4 items-center space-y-4 md:space-y-0">
-        <div className="flex items-center space-x-2">
+      </h1>
+      <div className="flex items-center mb-4 space-x-4">
+        <div className="flex space-x-2">
           <Button
-            variant="outline"
-            size="icon"
             onClick={() => setViewMode("grid")}
             className={`relative p-2 overflow-hidden rounded-full transition-all duration-300 ${
               viewMode === "grid"
@@ -198,16 +182,9 @@ const StationProducts = () => {
             } hover:shadow-lg hover:scale-105`}
             style={{ borderRadius: "12px" }}
           >
-            <span
-              className={`absolute inset-0 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-opacity duration-300 ${
-                viewMode === "grid" ? "opacity-30" : "opacity-0"
-              }`}
-            ></span>
-            <FaThLarge className="relative z-10" />
+            <FaThLarge />
           </Button>
           <Button
-            variant="outline"
-            size="icon"
             onClick={() => setViewMode("list")}
             className={`relative p-2 overflow-hidden rounded-full transition-all duration-300 ${
               viewMode === "list"
@@ -216,43 +193,29 @@ const StationProducts = () => {
             } hover:shadow-lg hover:scale-105`}
             style={{ borderRadius: "12px" }}
           >
-            <span
-              className={`absolute inset-0 rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-opacity duration-300 ${
-                viewMode === "list" ? "opacity-30" : "opacity-0"
-              }`}
-            ></span>
-            <FaThList className="relative z-10" />
+            <FaThList />
           </Button>
         </div>
-        <div className="flex-grow mx-4 max-w-3xl w-full">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder={`Search products for ${decodeURIComponent(
-                stationName
-              )}`}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full h-12 pl-4 pr-12 text-lg rounded-full border-2 border-gray-300 focus:border-blue-500 focus:outline-none"
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={filterProducts}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-500"
-            >
-              <FaSearch className="w-5 h-5" />
-            </Button>
-          </div>
+
+        <div className="flex-grow relative">
+          <Input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchTerm(e.target.value)
+            }
+            className="w-full h-12 pl-4 pr-12 text-lg rounded-full border-2 border-gray-300 focus:border-blue-500 focus:outline-none"
+          />
+          <FaSearch className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
-        <Button
-          variant="default"
-          className="flex flex-row gap-1 bg-blue-500 hover:bg-blue-600 text-white"
-          style={{ borderRadius: "6px" }}
-        >
-          <FaPlus className="mr-2" /> Add Product
-        </Button>
+
+        <AddProductModal
+          stationId={stationId || ""}
+          onProductAdded={handleProductAdded}
+        />
       </div>
+
       {Object.keys(filteredProducts).length === 0 ? (
         <EmptyState />
       ) : viewMode === "grid" ? (
