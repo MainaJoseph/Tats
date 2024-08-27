@@ -88,7 +88,18 @@ const ChartsPage = () => {
 
   return (
     <div className="w-full h-fit">
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="">
+        <ChartTwo
+          onSumCountChange={setSumCount}
+          onSumVolumeChange={setSumVolume}
+          onProductSumVolumesChange={setProductSumVolumes}
+          onSumAmountChange={setSumAmount}
+          onProductSumAmountsChange={setProductSumAmounts}
+          onProductSumCountChange={setProductSumCount}
+        />
+      </div>
+
+      <div className="mt-8 mb-24 grid grid-cols-1 md:grid-cols-3 gap-4">
         {loading ? (
           <>
             <CardSkeleton />
@@ -148,17 +159,6 @@ const ChartsPage = () => {
             </CardDataStats>
           </>
         )}
-      </div>
-
-      <div className="mt-10">
-        <ChartTwo
-          onSumCountChange={setSumCount}
-          onSumVolumeChange={setSumVolume}
-          onProductSumVolumesChange={setProductSumVolumes}
-          onSumAmountChange={setSumAmount}
-          onProductSumAmountsChange={setProductSumAmounts}
-          onProductSumCountChange={setProductSumCount}
-        />
       </div>
     </div>
   );
