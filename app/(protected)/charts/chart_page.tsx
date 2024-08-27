@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import ChartOne from "@/app/components/dashboard_components/Charts/ChartOne";
+import ChartTwo from "@/app/components/dashboard_components/Charts/ChartTwo";
 
 const ChartsPage = () => {
   const [sumCount, setSumCount] = useState(0);
@@ -19,7 +19,7 @@ const ChartsPage = () => {
 
   return (
     <div className="w-full h-fit">
-      <ChartOne
+      <ChartTwo
         onSumCountChange={setSumCount}
         onSumVolumeChange={setSumVolume}
         onProductSumVolumesChange={setProductSumVolumes}
