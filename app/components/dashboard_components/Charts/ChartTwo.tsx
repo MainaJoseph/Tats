@@ -104,7 +104,7 @@ const ChartTwo: React.FC<ChartTwoProps> = ({
   onProductSumCountChange,
 }) => {
   const [data, setData] = useState<ChartData[]>([]);
-  const [timeFrame, setTimeFrame] = useState<string>("day");
+  const [timeFrame, setTimeFrame] = useState<string>("daily");
   const [xAxisLabels, setXAxisLabels] = useState<string[]>([]);
   const [chartType, setChartType] = useState<"line" | "bar" | "area" | "pie">(
     "line"
@@ -380,11 +380,11 @@ const ChartTwo: React.FC<ChartTwoProps> = ({
               } ${
                 frame === "daily"
                   ? "rounded-l-lg"
-                  : frame === "month"
+                  : frame === "monthly"
                   ? "rounded-r-lg"
                   : ""
               } border ${
-                frame === "week" ? "border-l-0 border-r-0" : ""
+                frame === "weekly" ? "border-l-0 border-r-0" : ""
               } focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-blue-700`}
             >
               {frame.charAt(0).toUpperCase() + frame.slice(1)}

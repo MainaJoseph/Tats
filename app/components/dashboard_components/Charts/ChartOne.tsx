@@ -104,7 +104,7 @@ const ChartOne: React.FC<ChartOneProps> = ({
   onProductSumCountChange,
 }) => {
   const [data, setData] = useState<ChartData[]>([]);
-  const [timeFrame, setTimeFrame] = useState<string>("day");
+  const [timeFrame, setTimeFrame] = useState<string>("daily");
   const [xAxisLabels, setXAxisLabels] = useState<string[]>([]);
   const [chartType, setChartType] = useState<"line" | "bar" | "area" | "pie">(
     "line"
@@ -131,11 +131,11 @@ const ChartOne: React.FC<ChartOneProps> = ({
       case "daily":
         url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDateTime}`;
         break;
-      case "week":
+      case "weekly":
         fromDateTime = getPastDate(7);
         url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=day&fromDateTime=${fromDateTime}&toDateTime=${currentDateTime}`;
         break;
-      case "month":
+      case "monthly":
         fromDateTime = getStartOfYearDate();
         url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=month&fromDateTime=${fromDateTime}&toDateTime=${currentDateTime}`;
         break;
@@ -366,13 +366,13 @@ const ChartOne: React.FC<ChartOneProps> = ({
                   ? "text-blue-700 bg-blue-100 border-blue-300"
                   : "text-gray-700 bg-white hover:bg-gray-50 border-gray-300"
               } ${
-                frame === "day"
+                frame === "daily"
                   ? "rounded-l-lg"
-                  : frame === "month"
+                  : frame === "monthly"
                   ? "rounded-r-lg"
                   : ""
               } border ${
-                frame === "week" ? "border-l-0 border-r-0" : ""
+                frame === "weekly" ? "border-l-0 border-r-0" : ""
               } focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-blue-700`}
               style={{ borderRadius: "6px" }}
             >
