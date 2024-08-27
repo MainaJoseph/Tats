@@ -128,7 +128,7 @@ const ChartOne: React.FC<ChartOneProps> = ({
     let fromDateTime = currentDateTime;
 
     switch (timeFrame) {
-      case "day":
+      case "daily":
         url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDateTime}`;
         break;
       case "week":
@@ -152,7 +152,7 @@ const ChartOne: React.FC<ChartOneProps> = ({
       let formattedData: ChartData[];
       let labels: string[];
 
-      if (timeFrame === "day") {
+      if (timeFrame === "daily") {
         labels = generateHourlyLabels();
         formattedData = labels.map((label) => {
           const dataItem: ChartData = { datetime: label, label };
@@ -226,14 +226,14 @@ const ChartOne: React.FC<ChartOneProps> = ({
     let end: Date = currentDate;
 
     switch (timeFrame) {
-      case "day":
+      case "daily":
         start = new Date(currentDate.setHours(0, 0, 0, 0));
         break;
-      case "week":
+      case "weekly":
         start = new Date(currentDate);
         start.setDate(currentDate.getDate() - 7);
         break;
-      case "month":
+      case "monthly":
         start = new Date(currentDate.getFullYear(), 0, 1);
         break;
       default:
@@ -357,7 +357,7 @@ const ChartOne: React.FC<ChartOneProps> = ({
           className="inline-flex rounded-md shadow-sm"
           style={{ borderRadius: "6px" }}
         >
-          {["day", "week", "month"].map((frame) => (
+          {["daily", "weekly", "monthly"].map((frame) => (
             <button
               key={frame}
               onClick={() => setTimeFrame(frame)}
