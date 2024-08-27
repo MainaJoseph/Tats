@@ -1,8 +1,8 @@
 "use client";
 
+import { memo } from "react";
 import Container from "@/app/components/Container";
 import { MdManageAccounts } from "react-icons/md";
-
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { format } from "date-fns";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { LogoutAccount } from "./logout-account";
 import { UpdatedTabs } from "../UpdatedTabs";
 
-export const AccountProfile = () => {
+export const AccountProfile = memo(() => {
   const user = useCurrentUser();
 
   const formattedDate = user?.createdAt
@@ -80,4 +80,6 @@ export const AccountProfile = () => {
       </Container>
     </div>
   );
-};
+});
+
+AccountProfile.displayName = "AccountProfile";
