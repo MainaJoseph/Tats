@@ -62,11 +62,6 @@ const menuGroups = [
           { label: "Detailed Transactions", route: "/transaction_report_v2" },
         ],
       },
-      {
-        icon: <IoMdPersonAdd className="text-white" size={22} />,
-        label: "Profile",
-        route: "/profile",
-      },
     ],
   },
   {
@@ -75,7 +70,7 @@ const menuGroups = [
       {
         icon: <FaChartPie className="text-white" size={20} />,
         label: "Chart",
-        route: "/chart",
+        route: "/charts",
       },
       {
         icon: <CiSettings className="text-white" size={25} />,
@@ -84,15 +79,6 @@ const menuGroups = [
         children: [
           { label: "Manage Users", route: "/manage_users" },
           { label: "Company Settings", route: "/ui/buttons" },
-        ],
-      },
-      {
-        icon: <CiLogin className="text-white" size={22} />,
-        label: "Authentication",
-        route: "#",
-        children: [
-          { label: "Sign In", route: "/auth/signin" },
-          { label: "Sign Up", route: "/auth/signup" },
         ],
       },
     ],
