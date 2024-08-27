@@ -63,7 +63,14 @@ const ChartWrapper: React.FC = () => {
           onProductSumAmountsChange={handleProductSumAmountsChange}
           onProductSumCountChange={handleProductSumCountChange}
         />
-        <ChartTwo />
+        <ChartTwo
+          onSumCountChange={handleSumCountChange}
+          onSumVolumeChange={handleSumVolumeChange}
+          onProductSumVolumesChange={handleProductSumVolumesChange}
+          onSumAmountChange={handleSumAmountChange}
+          onProductSumAmountsChange={handleProductSumAmountsChange}
+          onProductSumCountChange={handleProductSumCountChange}
+        />
         <ChartThree />
       </div>
     </>
