@@ -128,14 +128,14 @@ const ChartTwo: React.FC<ChartTwoProps> = ({
     let fromDateTime = currentDateTime;
 
     switch (timeFrame) {
-      case "day":
+      case "daily":
         url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=hour&fromDateTime=${currentDateTime}`;
         break;
-      case "week":
+      case "weekly":
         fromDateTime = getPastDate(7);
         url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=day&fromDateTime=${fromDateTime}&toDateTime=${currentDateTime}`;
         break;
-      case "month":
+      case "monthly":
         fromDateTime = getStartOfYearDate();
         url = `${apiBaseUrl}/reports/v2/2?clientId=2&reportType=month&fromDateTime=${fromDateTime}&toDateTime=${currentDateTime}`;
         break;
@@ -152,7 +152,7 @@ const ChartTwo: React.FC<ChartTwoProps> = ({
       let formattedData: ChartData[];
       let labels: string[];
 
-      if (timeFrame === "day") {
+      if (timeFrame === "daily") {
         labels = generateHourlyLabels();
         formattedData = labels.map((label) => {
           const dataItem: ChartData = { datetime: label, label };
@@ -225,14 +225,14 @@ const ChartTwo: React.FC<ChartTwoProps> = ({
     let end: Date = currentDate;
 
     switch (timeFrame) {
-      case "day":
+      case "daily":
         start = new Date(currentDate.setHours(0, 0, 0, 0));
         break;
       case "week":
         start = new Date(currentDate);
         start.setDate(currentDate.getDate() - 7);
         break;
-      case "month":
+      case "monthly":
         start = new Date(currentDate.getFullYear(), 0, 1);
         break;
       default:
@@ -369,7 +369,7 @@ const ChartTwo: React.FC<ChartTwoProps> = ({
           className="inline-flex rounded-md shadow-sm"
           style={{ borderRadius: "8px" }}
         >
-          {["day", "week", "month"].map((frame) => (
+          {["daily", "weekly", "monthly"].map((frame) => (
             <button
               key={frame}
               onClick={() => setTimeFrame(frame)}
@@ -378,7 +378,7 @@ const ChartTwo: React.FC<ChartTwoProps> = ({
                   ? "text-white bg-blue-600 border-blue-600"
                   : "text-gray-700 bg-white hover:bg-gray-50 border-gray-300"
               } ${
-                frame === "day"
+                frame === "daily"
                   ? "rounded-l-lg"
                   : frame === "month"
                   ? "rounded-r-lg"
