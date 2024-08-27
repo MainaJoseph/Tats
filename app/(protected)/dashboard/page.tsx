@@ -1,5 +1,4 @@
 import Dashy from "@/app/components/dashboard_components/Dashboard/dash-comp";
-import ECommerce from "@/app/components/dashboard_components/Dashboard/E-commerce";
 import DefaultLayout from "@/app/components/dashboard_components/Layouts/DefaultLayout";
 import { Metadata } from "next";
 
