@@ -177,7 +177,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           </nav>
         </div>
 
-        <Link
+        {/* <Link
           href="/account"
           className="absolute bottom-0 left-0 w-full p-4 cursor-pointer"
         >
@@ -209,7 +209,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               <RxAvatar size={24} className="text-white" />
             </div>
           )}
-        </Link>
+        </Link> */}
       </aside>
     </ClickOutside>
   );

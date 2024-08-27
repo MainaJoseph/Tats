@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import NavBar from "@/app/components/Nav/Nav";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700"] });
 
@@ -15,18 +16,13 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let session;
-
-  try {
-    session = await auth();
-  } catch (error) {
-    console.error("Failed to fetch session", error);
-  }
+  const session = await auth();
   return (
     <SessionProvider session={session}>
       <html lang="en">
         <body className={`${poppins.className} text-slate-700`}>
-          <div className="flex flex-col min-h-screen dark:bg-boxdark-2 dark:text-bodydark">
+          <div className="flex flex-col min-h-screen">
+            <NavBar />
             <main className="flex-grow">{children}</main>
           </div>
         </body>
