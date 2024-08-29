@@ -1,5 +1,9 @@
+"use client";
+
 import React from "react";
 import { ChevronRight, Cloud, Zap, Activity } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import Link from "next/link";
 
 // Define types for the Feature component props
 interface FeatureProps {
@@ -79,54 +83,70 @@ const LaptopDisplay: React.FC = () => (
   </div>
 );
 
-const LandingPage: React.FC = () => (
-  <div className="min-h-screen bg-gray-50">
-    <main className="container mx-auto px-4 py-12">
-      <section className="text-center mb-20">
-        <h2 className="text-3xl font-bold text-gray-900">
-          Cloud-Based Atrium Automation Solution
-        </h2>
-        <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
-          Streamline your petrol station operations with our cutting-edge
-          automation system.
-        </p>
-        <div className="mt-8 space-x-4">
-          <Button primary>
-            Get Started <ChevronRight className="inline ml-2" size={20} />
-          </Button>
-          <Button>Learn More</Button>
+const LandingPage: React.FC = () => {
+  const user = useCurrentUser();
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <main className="container mx-auto px-4 py-12">
+        <section className="text-center mb-20">
+          <h2 className="text-3xl font-bold text-gray-900">
+            Cloud-Based Atrium Automation Solution
+          </h2>
+          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
+            Streamline your petrol station operations with our cutting-edge
+            automation system.
+          </p>
+          <div className="mt-8 space-x-4">
+            {user ? (
+              <Link href="/dashboard">
+                <Button primary>
+                  Dashboard <ChevronRight className="inline ml-2" size={20} />
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/auth/sign-up">
+                <Button primary>
+                  Get Started <ChevronRight className="inline ml-2" size={20} />
+                </Button>
+              </Link>
+            )}
+            <Button>Learn More</Button>
+          </div>
+        </section>
+
+        <section className="mb-20">
+          <LaptopDisplay />
+        </section>
+
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Feature
+            icon={<Cloud className="w-12 h-12 text-blue-500" />}
+            title="Cloud-Based Solution"
+            description="Access your data and controls from anywhere, anytime."
+          />
+          <Feature
+            icon={<Zap className="w-12 h-12 text-yellow-500" />}
+            title="Simple Automation"
+            description="Effortlessly manage your forecourt with no downtime."
+          />
+          <Feature
+            icon={<Activity className="w-12 h-12 text-green-500" />}
+            title="Remote Monitoring"
+            description="Keep an eye on your operations in real-time, from any device."
+          />
+        </section>
+      </main>
+
+      <footer className="bg-gray-800 text-white mt-20 py-8">
+        <div className="container mx-auto px-4 text-center">
+          <p>
+            &copy; 2024 Tats - Tovuti Automation System. All rights reserved.
+          </p>
         </div>
-      </section>
-
-      <section className="mb-20">
-        <LaptopDisplay />
-      </section>
-
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <Feature
-          icon={<Cloud className="w-12 h-12 text-blue-500" />}
-          title="Cloud-Based Solution"
-          description="Access your data and controls from anywhere, anytime."
-        />
-        <Feature
-          icon={<Zap className="w-12 h-12 text-yellow-500" />}
-          title="Simple Automation"
-          description="Effortlessly manage your forecourt with no downtime."
-        />
-        <Feature
-          icon={<Activity className="w-12 h-12 text-green-500" />}
-          title="Remote Monitoring"
-          description="Keep an eye on your operations in real-time, from any device."
-        />
-      </section>
-    </main>
-
-    <footer className="bg-gray-800 text-white mt-20 py-8">
-      <div className="container mx-auto px-4 text-center">
-        <p>&copy; 2024 Tats - Tovuti Automation System. All rights reserved.</p>
-      </div>
-    </footer>
-  </div>
-);
+      </footer>
+    </div>
+  );
+};
 
 export default LandingPage;
