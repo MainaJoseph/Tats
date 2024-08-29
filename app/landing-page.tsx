@@ -23,15 +23,27 @@ const Feature: React.FC<FeatureProps> = ({ icon, title, description }) => (
 interface ButtonProps {
   children: React.ReactNode;
   primary?: boolean;
+  onClick?: () => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ children, primary = false }) => (
+const Button: React.FC<ButtonProps> = ({
+  children,
+  primary = false,
+  onClick,
+}) => (
   <button
-    className={`px-6 py-2 rounded-full font-semibold ${
-      primary
-        ? "bg-blue-600 text-white hover:bg-blue-700"
-        : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-    } transition duration-300`}
+    onClick={onClick}
+    className={`
+      px-6 py-3 rounded-full font-semibold text-sm
+      transform transition duration-200 ease-in-out
+      shadow-md hover:shadow-lg active:scale-95
+      focus:outline-none focus:ring-2 focus:ring-offset-2
+      ${
+        primary
+          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 focus:ring-blue-500"
+          : "bg-white text-gray-800 hover:bg-gray-100 focus:ring-gray-500"
+      }
+    `}
   >
     {children}
   </button>
